@@ -291,10 +291,10 @@
     "wallpaper": {
       "enabled": true,
       "overviewEnabled": false,
-      "directory": "/home/frost/.nixos/assets/wallpapers",
+      "directory": "/home/frost/media/images/wallpapers",
       "monitorDirectories": [
         {
-          "directory": "/home/frost/.nixos/assets/wallpapers",
+          "directory": "/home/frost/media/images/wallpapers",
           "name": "eDP-1",
           "wallpaper": ""
         }
@@ -692,7 +692,7 @@
     "openedPanel": "",
     "lockScreenActive": false,
     "wallpapers": {
-      "eDP-1": "/home/frost/.nixos/assets/wallpapers/x1.jpg"
+      "eDP-1": "/home/frost/media/images/wallpapers/x1.jpg"
     },
     "desktopWidgetsEditMode": false,
     "display": {
