@@ -1,5 +1,4 @@
 { self, inputs, ... }: {
-
   flake.nixosModules.laptopConfiguration = { pkgs, lib, ... }: {
     imports = [ 
       self.nixosModules.laptopHardware
@@ -89,8 +88,6 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = self.stateVersion; # Did you read the comment?
-
     nix.settings.experimental-features = [ "nix-command" "flakes" ];
   };
-
 }

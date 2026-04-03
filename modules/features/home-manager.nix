@@ -6,7 +6,9 @@
       useGlobalPkgs = true;
       useUserPackages = true;
       extraSpecialArgs = { inherit self; };
-      users = self.homeModules;
+      users = builtins.mapAttrs
+        (name: _: import "${self.outPath}/users/${name}")
+	(builtins.readDir "${self.outPath}/users");
     };
   };
 }
