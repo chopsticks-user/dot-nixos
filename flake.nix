@@ -9,12 +9,16 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nvf = {
+      url = "github:notashelf/nvf";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs: inputs.flake-parts.lib.mkFlake 
-    { inherit inputs; } 
-    {
-      imports = [ (inputs.import-tree ./modules) ];
-      flake.stateVersion = "26.05";
-    };
+  { inherit inputs; } 
+  {
+    imports = [ (inputs.import-tree ./modules) ];
+    flake.stateVersion = "26.05";
+  };
 }

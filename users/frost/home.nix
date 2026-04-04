@@ -1,10 +1,7 @@
-{ config, pkgs, self, ... }: {
+{ config, self, ... }: {
   home.stateVersion = self.stateVersion;
   home.username = "frost";
   home.homeDirectory = "/home/frost";
-  home.packages = with pkgs; [
-    kitty
-  ];
 
   xdg.userDirs = {
     enable = true;

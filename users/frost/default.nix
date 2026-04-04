@@ -8,5 +8,6 @@
     ./firefox.nix
     ./themes.nix
     ./neovim.nix
+    ./kitty.nix
   ];
 }
