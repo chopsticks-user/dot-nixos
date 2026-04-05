@@ -10,8 +10,4 @@
     ./neovim.nix
     ./kitty.nix
   ];
-
-  programs.fastfetch = {
-    enable = true;
-  };
 }
