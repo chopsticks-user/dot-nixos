@@ -3,7 +3,7 @@
     ./home.nix
     ./hyprland.nix
     ./noctalia.nix
-    ./bash.nix
+    ./zsh.nix
     ./git.nix
     ./firefox.nix
     ./themes.nix
@@ -11,5 +11,6 @@
     ./kitty.nix
     ./lf.nix
     ./ssh.nix
+    ./zoxide.nix
   ];
 }

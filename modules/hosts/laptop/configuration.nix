@@ -49,7 +49,8 @@
       isNormalUser = true;
       description = "Frost";
       extraGroups = [ "networkmanager" "wheel" ];
-      packages = with pkgs; [];
+      packages = with pkgs; [ ];
+      shell = pkgs.zsh;
     };
 
 # Allow unfree packages
@@ -73,6 +74,8 @@
     environment.sessionVariables = {
       NH_OS_FLAKE = "$HOME/.nixos";
     };
+    
+    programs.zsh.enable = true;
 
 # Some programs need SUID wrappers, can be configured further or are
 # started in user sessions.
