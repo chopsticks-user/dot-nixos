@@ -10,5 +10,6 @@
     ./neovim.nix
     ./kitty.nix
     ./lf.nix
+    ./ssh.nix
   ];
 }

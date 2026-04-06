@@ -10,7 +10,7 @@
     boot.loader.systemd-boot.enable = true;
     boot.loader.efi.canTouchEfiVariables = true;
 
-    networking.hostName = "andromeda"; # Define your hostname.
+    networking.hostName = "perseus"; # Define your hostname.
 # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
 # Configure network proxy if necessary
@@ -59,11 +59,11 @@
 # $ nix search wget
     environment.systemPackages = with pkgs; [
       lshw
-      fastfetch
-      nvitop
-      glances
-      wget
-      nh
+        fastfetch
+        nvitop
+        glances
+        wget
+        nh
     ];
 
 # Some programs need SUID wrappers, can be configured further or are
@@ -77,7 +77,13 @@
 # List services that you want to enable:
 
 # Enable the OpenSSH daemon.
-# services.openssh.enable = true;
+    services.openssh = {
+      enable = true;
+      settings = {
+        PasswordAuthentication = true;
+        PermitRootLogin = "no";
+      };
+    };
 
 # Open ports in the firewall.
 # networking.firewall.allowedTCPPorts = [ ... ];
@@ -136,3 +142,4 @@
     hardware.nvidia-container-toolkit.enable = true;
   };
 }
+
