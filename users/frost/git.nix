@@ -3,8 +3,8 @@
     enable = true;
     settings = {
       user = {
-	name = "chopsticks-user";
-	email = "frostyfrost273@gmail.com";
+        name = "chopsticks-user";
+        email = "frostyfrost273@gmail.com";
       };
       init.defaultBranch = "main";
       pull.rebase = false;
