@@ -9,6 +9,9 @@
       };
       exec-once = [
         "noctalia-shell"
+        "fcitx5 -d"
+      ];
+      env = [
       ];
       bind = let
         workspaces = builtins.genList (i: i + 1) 10;
