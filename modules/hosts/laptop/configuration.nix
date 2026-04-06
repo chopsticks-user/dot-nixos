@@ -5,7 +5,7 @@
       self.nixosModules.hyprland
       self.nixosModules.homeManager
     ];
-
+    
 # Bootloader.
     boot.loader.systemd-boot.enable = true;
     boot.loader.efi.canTouchEfiVariables = true;
@@ -59,12 +59,20 @@
 # $ nix search wget
     environment.systemPackages = with pkgs; [
       lshw
-        fastfetch
-        nvitop
-        glances
-        wget
-        nh
+      fastfetch
+      nvitop
+      glances
+      wget
     ];
+
+    programs.nh = {
+      enable = true;
+      clean.enable = true;
+      clean.extraArgs = "--keep-since 7d --keep 8";
+    };
+    environment.sessionVariables = {
+      NH_OS_FLAKE = "$HOME/.nixos";
+    };
 
 # Some programs need SUID wrappers, can be configured further or are
 # started in user sessions.
