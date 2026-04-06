@@ -63,6 +63,7 @@
       nvitop
       glances
       wget
+      nh
     ];
 
 # Some programs need SUID wrappers, can be configured further or are
