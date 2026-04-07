@@ -1,7 +1,7 @@
-{ ... }: {
+{ constants, ... }: {
   programs.firefox = {
     enable = true;
-    profiles.frost = {
+    profiles."${constants.username}" = {
       settings = {
         "ui.systemUsesDarkTheme" = 1;
         "browser.theme.constant-theme" = 2;

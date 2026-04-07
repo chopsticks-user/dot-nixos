@@ -1,10 +1,10 @@
-{ pkgs, ... }: {
+{ pkgs, constants, ... }: {
   features.hyprland.enable = true;
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  networking.hostName = "perseus";
+  networking.hostName = constants.hostname;
   networking.networkmanager.enable = true;
 
   time.timeZone = "America/New_York";
@@ -73,8 +73,8 @@
   };
 
   environment.sessionVariables = {
-    NH_OS_FLAKE = "$HOME/.nixos";
-    NH_HOME_FLAKE = "$HOME/.nixos";
+    NH_OS_FLAKE = constants.config-path;
+    NH_HOME_FLAKE = constants.config-path;
   };
 
   programs.zsh.enable = true;

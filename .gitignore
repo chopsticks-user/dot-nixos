@@ -1,6 +1,8 @@
-# Ignore build outputs from performing a nix-build or `nix build` command
+# nix
 result
 result-*
-
-# Ignore automatically generated direnv output
 .direnv
+
+# IDEs
+.idea
+.vscode

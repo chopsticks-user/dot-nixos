@@ -1,4 +1,4 @@
-{ config, ... }: {
+{ config, constants, ... }: {
   imports = [
     ./hyprland.nix
     ./noctalia.nix
@@ -15,8 +15,8 @@
   ];
 
   home.stateVersion = "26.05";
-  home.username = "frost";
-  home.homeDirectory = "/home/frost";
+  home.username = constants.username;
+  home.homeDirectory = constants.home-dir;
 
   xdg.userDirs = {
     enable = true;

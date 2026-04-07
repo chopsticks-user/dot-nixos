@@ -19,6 +19,18 @@
     let
       lib = nixpkgs.lib;
 
+      global-constants = {
+        config-path = "$HOME/.nixos";
+        system = {
+          supported = [
+            "x86_64-linux"
+            "aarch64-linux"
+          ];
+          default = "x86_64-linux";
+        };
+        default-password = "password";
+      };
+
       mkHost = hostname:
         let
           system =
@@ -27,7 +39,15 @@
             else "x86_64-linux";
         in lib.nixosSystem {
           inherit system;
-          specialArgs = { inherit inputs; };
+          specialArgs = {
+            inherit inputs;
+            constants = global-constants // {
+              inherit hostname;
+              system = {
+                current = system;
+              };
+            };
+          };
           modules = [
             ./features
             ./hosts/${hostname}/system.nix
@@ -35,12 +55,16 @@
           ] ++ map (username: ./users/${username}/info.nix) usernames;
         };
 
-      systems = [ "x86_64-linux" "aarch64-linux" ];
-
       mkUser = system: username:
         home-manager.lib.homeManagerConfiguration {
           pkgs = nixpkgs.legacyPackages.${system};
-          extraSpecialArgs = { inherit inputs; };
+          extraSpecialArgs = {
+            inherit inputs;
+            constants = global-constants // {
+              inherit username;
+              home-dir = "/home/${username}";
+            };
+          };
           modules = [
             ./users/${username}/home.nix
           ];
@@ -55,6 +79,6 @@
         lib.listToAttrs (map (username:
           lib.nameValuePair "${username}@${system}" (mkUser system username)
         ) usernames)
-      ) systems);
+      ) global-constants.system.supported);
     };
 }

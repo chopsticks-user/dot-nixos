@@ -10,7 +10,7 @@
     };
     profileExtra = ''
       if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
-	start-hyprland
+	      start-hyprland
       fi
     '';
     shellAliases = {
