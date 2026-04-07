@@ -18,7 +18,13 @@
   outputs = inputs: inputs.flake-parts.lib.mkFlake 
   { inherit inputs; } 
   {
-    imports = [ (inputs.import-tree ./modules) ];
-    flake.stateVersion = "26.05";
+    imports = [ 
+      ./parts.nix
+      (inputs.import-tree ./hosts) 
+      (inputs.import-tree ./features) 
+    ];
+    flake.constants = {
+      flake-path = "$HOME/.nixos";
+    };
   };
 }
