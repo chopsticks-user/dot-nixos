@@ -56,13 +56,6 @@
     variant = "";
   };
 
-  users.users.frost = {
-    isNormalUser = true;
-    description = "Frost";
-    extraGroups = [ "networkmanager" "wheel" ];
-    shell = pkgs.zsh;
-  };
-
   nixpkgs.config.allowUnfree = true;
 
   environment.systemPackages = with pkgs; [

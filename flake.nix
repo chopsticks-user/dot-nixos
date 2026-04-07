@@ -32,7 +32,7 @@
             ./features
             ./hosts/${hostname}/system.nix
             ./hosts/${hostname}/hardware.nix
-          ];
+          ] ++ map (username: ./users/${username}/info.nix) usernames;
         };
 
       systems = [ "x86_64-linux" "aarch64-linux" ];
