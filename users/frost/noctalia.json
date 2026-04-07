@@ -5,17 +5,17 @@
       "barType": "simple",
       "position": "top",
       "monitors": [],
-      "density": "default",
+      "density": "compact",
       "showOutline": false,
-      "showCapsule": true,
+      "showCapsule": false,
       "capsuleOpacity": 1,
       "capsuleColorKey": "none",
       "widgetSpacing": 6,
       "contentPadding": 2,
       "fontScale": 1,
       "enableExclusionZoneInset": true,
-      "backgroundOpacity": 0.93,
-      "useSeparateOpacity": false,
+      "backgroundOpacity": 0,
+      "useSeparateOpacity": true,
       "marginVertical": 4,
       "marginHorizontal": 4,
       "frameThickness": 8,
@@ -75,6 +75,7 @@
             "maxWidth": 145,
             "scrollingMode": "hover",
             "showIcon": true,
+            "showText": true,
             "textColor": "none",
             "useFixedWidth": false
           },
@@ -199,7 +200,7 @@
       "showSessionButtonsOnLockScreen": true,
       "showHibernateOnLockScreen": false,
       "enableLockScreenMediaControls": false,
-      "enableShadows": true,
+      "enableShadows": false,
       "enableBlurBehind": true,
       "shadowDirection": "bottom_right",
       "shadowOffsetX": 2,
@@ -242,7 +243,8 @@
           "Del"
         ]
       },
-      "reverseScroll": false
+      "reverseScroll": false,
+      "smoothScrollEnabled": true
     },
     "ui": {
       "fontDefault": "Sans Serif",
@@ -250,8 +252,8 @@
       "fontDefaultScale": 1,
       "fontFixedScale": 1,
       "tooltipsEnabled": true,
-      "scrollbarAlwaysVisible": true,
-      "boxBorderEnabled": false,
+      "scrollbarAlwaysVisible": false,
+      "boxBorderEnabled": true,
       "panelBackgroundOpacity": 0.93,
       "translucentWidgets": false,
       "panelsAttachedToBar": true,
@@ -262,6 +264,7 @@
       "name": "Charlottesville, VA",
       "weatherEnabled": true,
       "weatherShowEffects": true,
+      "weatherTaliaMascotAlways": false,
       "useFahrenheit": false,
       "use12hourFormat": false,
       "showWeekNumberInCalendar": false,
@@ -270,7 +273,8 @@
       "analogClockInCalendar": false,
       "firstDayOfWeek": -1,
       "hideWeatherTimezone": false,
-      "hideWeatherCityName": false
+      "hideWeatherCityName": false,
+      "autoLocate": false
     },
     "calendar": {
       "cards": [
@@ -303,6 +307,7 @@
       "showHiddenFiles": false,
       "viewMode": "browse",
       "setWallpaperOnAllMonitors": true,
+      "linkLightAndDarkWallpapers": true,
       "fillMode": "crop",
       "fillColor": "#000000",
       "useSolidColor": false,
@@ -486,7 +491,6 @@
       "indicatorOpacity": 0.6
     },
     "network": {
-      "airplaneModeEnabled": false,
       "bluetoothRssiPollingEnabled": false,
       "bluetoothRssiPollIntervalMs": 60000,
       "networkPanelView": "wifi",
@@ -632,7 +636,8 @@
       "manualSunrise": "06:30",
       "manualSunset": "18:30",
       "generationMethod": "tonal-spot",
-      "monitorForColors": ""
+      "monitorForColors": "",
+      "syncGsettings": true
     },
     "templates": {
       "activeTemplates": [],
@@ -692,7 +697,7 @@
     "openedPanel": "",
     "lockScreenActive": false,
     "wallpapers": {
-      "eDP-1": "/home/frost/media/images/wallpapers/x1.jpg"
+      "eDP-1": "/home/frost/media/images/wallpapers/wallhaven-vg8mo8_3840x2160.jpg"
     },
     "desktopWidgetsEditMode": false,
     "display": {
@@ -713,7 +718,7 @@
       "lastSeenTs": 1775164302000
     },
     "changelogState": {
-      "lastSeenVersion": "v4.7.1"
+      "lastSeenVersion": "v4.7.5"
     },
     "colorSchemesList": {
       "schemes": [],
