@@ -1,4 +1,4 @@
-{ config, pkgs, constants, self, ... }: {
+{ config, pkgs, self, ... }: {
   imports = [
     ./home.nix
     ./hyprland.nix

@@ -23,8 +23,5 @@
       (inputs.import-tree ./hosts) 
       (inputs.import-tree ./features) 
     ];
-    flake.constants = {
-      flake-path = "$HOME/.nixos";
-    };
   };
 }

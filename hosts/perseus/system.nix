@@ -1,5 +1,5 @@
 { self, inputs, ... }: {
-  flake.nixosModules.perseus = { constants, config, pkgs, lib, ... }: {
+  flake.nixosModules.perseus = { config, pkgs, lib, ... }: {
     imports = [ 
       self.nixosModules.perseus-hardware
       self.nixosModules.feature-hyprland
@@ -10,7 +10,7 @@
     boot.loader.systemd-boot.enable = true;
     boot.loader.efi.canTouchEfiVariables = true;
 
-    networking.hostName = constants.hostname; # Define your hostname.
+    networking.hostName = "perseus"; # Define your hostname.
 # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
 # Configure network proxy if necessary
@@ -100,7 +100,7 @@
       clean.extraArgs = "--keep-since 7d --keep 8";
     };
     environment.sessionVariables = {
-      NH_OS_FLAKE = constants.flake-path;
+      NH_OS_FLAKE = "$HOME/.nixos";
     };
 
     programs.zsh.enable = true;
@@ -136,7 +136,7 @@
 # this value at the release version of the first install of this system.
 # Before changing this value read the documentation for this option
 # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-    system.stateVersion = constants.state-version; # Did you read the comment?
+    system.stateVersion = "26.05"; # Did you read the comment?
       nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
     boot.kernelParams = [ 
@@ -180,5 +180,5 @@
     };
     hardware.nvidia-container-toolkit.enable = true;
   };
-                       }
+}
 

@@ -1,5 +1,5 @@
 { config, self, constants, ... }: {
-  home.stateVersion = constants.state-version;
+  home.stateVersion = "26.05";
   home.username = "frost";
   home.homeDirectory = "/home/frost";
 
