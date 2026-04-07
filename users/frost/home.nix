@@ -1,4 +1,4 @@
-{ config, constants, ... }: {
+{ pkgs, config, constants, ... }: {
   imports = [
     ./hyprland.nix
     ./noctalia.nix
@@ -12,6 +12,12 @@
     ./ssh.nix
     ./zoxide.nix
     ./dev.nix
+  ];
+
+  home.packages = with pkgs; [
+    lolcat
+    cowsay
+    fortune
   ];
 
   home.stateVersion = "26.05";

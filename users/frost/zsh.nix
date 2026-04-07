@@ -21,6 +21,7 @@
       ignoreAllDups = true;
     };
     initContent = ''
+      fortune | cowsay | lolcat
       PROMPT="[%F{blue}%*%f %F{yellow}%n@%m%f %F{green}%2~%f]%# "
     '';
     # plugins = [
