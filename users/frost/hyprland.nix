@@ -1,6 +1,8 @@
 { ... }: {
+  xdg.portal.config.common.default = "*";
   wayland.windowManager.hyprland = {
     enable = true;
+    package = null;
     settings = {
       "$mod" = "SUPER";
       general = {
@@ -40,4 +42,4 @@
         ];
     };
   };
-         }
+}

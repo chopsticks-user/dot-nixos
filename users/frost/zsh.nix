@@ -22,7 +22,6 @@
     };
     initContent = ''
       PROMPT="[%F{blue}%*%f %F{yellow}%n@%m%f %F{green}%2~%f]%# "
-      eval "$(zoxide init --cmd cd zsh)"
     '';
     # plugins = [
       # {

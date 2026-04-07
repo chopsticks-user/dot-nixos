@@ -1,4 +1,18 @@
-{ config, self, constants, ... }: {
+{ config, ... }: {
+  imports = [
+    ./hyprland.nix
+    ./noctalia.nix
+    ./zsh.nix
+    ./git.nix
+    ./firefox.nix
+    ./themes.nix
+    ./neovim.nix
+    ./kitty.nix
+    ./lf.nix
+    ./ssh.nix
+    ./zoxide.nix
+  ];
+
   home.stateVersion = "26.05";
   home.username = "frost";
   home.homeDirectory = "/home/frost";
