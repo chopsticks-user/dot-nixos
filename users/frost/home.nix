@@ -11,6 +11,7 @@
     ./lf.nix
     ./ssh.nix
     ./zoxide.nix
+    ./dev.nix
   ];
 
   home.stateVersion = "26.05";
