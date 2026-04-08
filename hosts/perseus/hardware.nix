@@ -1,6 +1,8 @@
 {config, ...}: {
   imports = [./generated.nix];
 
+  nixpkgs.config.allowUnfree = true;
+
   hardware = {
     graphics.enable = true;
     nvidia-container-toolkit.enable = true;
@@ -46,6 +48,5 @@
     NVD_BACKEND = "direct";
   };
 
-  services.xserver.videoDrivers = ["nvidia"];
+  services.xserver.videoDrivers = ["modesetting" "nvidia"];
 }
-
