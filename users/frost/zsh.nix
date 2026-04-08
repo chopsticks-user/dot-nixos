@@ -23,7 +23,16 @@
     initContent = ''
       fortune | cowsay | lolcat
 
-      PROMPT='[%F{blue}%*%f %F{yellow}%n@%m%f %F{green}%2~%f]%# '
+      setopt PROMPT_SUBST
+      _nix_prompt_char() {
+        case $IN_NIX_SHELL in
+          pure) print -n "%F{208}%#%f" ;;
+          impure) print -n "%F{red}%#%f" ;;
+          *) print -n "%#" ;;
+        esac
+      }
+      PROMPT='[%F{blue}%*%f %F{yellow}%n@%m%f %F{green}%2~%f]$(_nix_prompt_char) '
+      unset _nix_prompt_char
     '';
     # plugins = [
     # {

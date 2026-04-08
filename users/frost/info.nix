@@ -1,12 +1,18 @@
 # belongs to nixosConfigurations
 # todo: move to hosts
-{ pkgs, constants, ... }: {
+{
+  pkgs,
+  constants,
+  ...
+}: {
+  programs.zsh.enable = true;
+
   # constants doesn't have .username here; username must be hardcoded
   users.users.frost = {
     isNormalUser = true;
     description = "Frost";
     initialPassword = constants.default-password;
-    extraGroups = [ "wheel" "networkmanager" ];
+    extraGroups = ["wheel" "networkmanager"];
     shell = pkgs.zsh;
   };
 }
