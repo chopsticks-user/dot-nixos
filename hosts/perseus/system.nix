@@ -6,11 +6,15 @@
   system.stateVersion = "26.05";
   nix.settings.experimental-features = ["nix-command" "flakes"];
 
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader = {
+    systemd-boot.enable = true;
+    efi.canTouchEfiVariables = true;
+  };
 
-  networking.hostName = constants.hostname;
-  networking.networkmanager.enable = true;
+  networking = {
+    hostName = constants.hostname;
+    networkmanager.enable = true;
+  };
 
   time.timeZone = "America/New_York";
 
@@ -24,8 +28,10 @@
     wev
   ];
 
-  features.fcitx.enable = true;
-  features.hyprland.enable = true;
-  features.nh.enable = true;
-  features.ssh.enable = true;
+  features = {
+    fcitx.enable = true;
+    hyprland.enable = true;
+    nh.enable = true;
+    ssh.enable = true;
+  };
 }
