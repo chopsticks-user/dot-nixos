@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{pkgs, ...}: {
   programs.zsh = {
     enable = true;
     enableCompletion = true;
@@ -10,7 +10,7 @@
     };
     profileExtra = ''
       if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
-	      start-hyprland
+       start-hyprland
       fi
     '';
     shellAliases = {
@@ -22,17 +22,18 @@
     };
     initContent = ''
       fortune | cowsay | lolcat
-      PROMPT="[%F{blue}%*%f %F{yellow}%n@%m%f %F{green}%2~%f]%# "
+
+      PROMPT='[%F{blue}%*%f %F{yellow}%n@%m%f %F{green}%2~%f]%# '
     '';
     # plugins = [
-      # {
-        # name = pkgs.zsh-autosuggestions.pname;
-        # src = "${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions";
-      # }
-      # {
-        # name = pkgs.zsh-syntax-highlighting.pname;
-        # src = "${pkgs.zsh-syntax-highlighting}/share/zsh-syntax-highlighting";
-      # }
+    # {
+    # name = pkgs.zsh-autosuggestions.pname;
+    # src = "${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions";
+    # }
+    # {
+    # name = pkgs.zsh-syntax-highlighting.pname;
+    # src = "${pkgs.zsh-syntax-highlighting}/share/zsh-syntax-highlighting";
+    # }
     # ];
   };
 

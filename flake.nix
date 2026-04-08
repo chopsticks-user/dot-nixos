@@ -3,82 +3,94 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
     nvf = {
       url = "github:notashelf/nvf";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = { nixpkgs, home-manager, ... } @ inputs:
-    let
-      lib = nixpkgs.lib;
+  outputs = {
+    nixpkgs,
+    home-manager,
+    ...
+  } @ inputs: let
+    lib = nixpkgs.lib;
 
-      global-constants = {
-        config-path = "$HOME/.nixos";
-        system = {
-          supported = [
-            "x86_64-linux"
-            "aarch64-linux"
-          ];
-          default = "x86_64-linux";
-        };
-        default-password = "password";
+    global-constants = {
+      config-path = "$HOME/.nixos";
+      system = {
+        supported = [
+          "x86_64-linux"
+          "x86_64-darwin"
+          "aarch64-linux"
+          "aarch64-darwin"
+        ];
+        default = "x86_64-linux";
       };
+      default-password = "password";
+    };
 
-      mkHost = hostname:
-        let
-          system =
-            if builtins.pathExists ./hosts/${hostname}/arch
-            then lib.fileContents ./hosts/${hostname}/arch
-            else "x86_64-linux";
-        in lib.nixosSystem {
-          inherit system;
-          specialArgs = {
-            inherit inputs;
-            constants = global-constants // {
+    mkHost = hostname: let
+      system =
+        if builtins.pathExists ./hosts/${hostname}/arch
+        then lib.fileContents ./hosts/${hostname}/arch
+        else "x86_64-linux";
+    in
+      lib.nixosSystem {
+        inherit system;
+        specialArgs = {
+          inherit inputs;
+          constants =
+            global-constants
+            // {
               inherit hostname;
               system = {
                 current = system;
               };
             };
-          };
-          modules = [
+        };
+        modules =
+          [
             ./features
             ./hosts/${hostname}/system.nix
             ./hosts/${hostname}/hardware.nix
-          ] ++ map (username: ./users/${username}/info.nix) usernames;
-        };
+          ]
+          ++ map (username: ./users/${username}/info.nix) usernames;
+      };
 
-      mkUser = system: username:
-        home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.${system};
-          extraSpecialArgs = {
-            inherit inputs;
-            constants = global-constants // {
+    mkUser = system: username:
+      home-manager.lib.homeManagerConfiguration {
+        pkgs = nixpkgs.legacyPackages.${system};
+        extraSpecialArgs = {
+          inherit inputs;
+          constants =
+            global-constants
+            // {
               inherit username;
               home-dir = "/home/${username}";
             };
-          };
-          modules = [
-            ./users/${username}/home.nix
-          ];
         };
+        modules = [
+          ./users/${username}/home.nix
+        ];
+      };
 
-      hostnames = builtins.attrNames (builtins.readDir ./hosts);
-      usernames = builtins.attrNames (builtins.readDir ./users);
-
-    in {
-      nixosConfigurations = lib.genAttrs hostnames mkHost;
-      homeConfigurations = lib.mergeAttrsList (map (system:
-        lib.listToAttrs (map (username:
-          lib.nameValuePair "${username}@${system}" (mkUser system username)
-        ) usernames)
-      ) global-constants.system.supported);
-    };
+    hostnames = builtins.attrNames (builtins.readDir ./hosts);
+    usernames = builtins.attrNames (builtins.readDir ./users);
+  in {
+    nixosConfigurations = lib.genAttrs hostnames mkHost;
+    homeConfigurations = lib.mergeAttrsList (map (
+        system:
+          lib.listToAttrs (map (
+              username:
+                lib.nameValuePair "${username}@${system}" (mkUser system username)
+            )
+            usernames)
+      )
+      global-constants.system.supported);
+  };
 }

@@ -1,4 +1,9 @@
-{ pkgs, config, constants, ... }: {
+{
+  pkgs,
+  config,
+  constants,
+  ...
+}: {
   imports = [
     ./hyprland.nix
     ./noctalia.nix
@@ -12,6 +17,7 @@
     ./ssh.nix
     ./zoxide.nix
     ./dev.nix
+    ./obs.nix
   ];
 
   home.packages = with pkgs; [
