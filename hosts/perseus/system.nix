@@ -22,7 +22,10 @@
     enable = true;
     man = {
       enable = true;
-      cache.enable = false;
+      cache = {
+        enable = true;
+        generateAtRuntime = true;
+      };
     };
     dev.enable = true;
     doc.enable = true;

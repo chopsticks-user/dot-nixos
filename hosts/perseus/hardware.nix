@@ -1,5 +1,15 @@
-{config, ...}: {
-  imports = [./generated.nix];
+{
+  config,
+  inputs,
+  ...
+}: {
+  imports = [
+    inputs.nixos-hardware.nixosModules.asus-fx504gd
+    inputs.nixos-hardware.nixosModules.common-cpu-intel
+    inputs.nixos-hardware.nixosModules.common-gpu-nvidia
+    inputs.nixos-hardware.nixosModules.common-pc-ssd
+    ./generated.nix
+  ];
 
   nixpkgs.config.allowUnfree = true;
 
@@ -7,19 +17,13 @@
     graphics.enable = true;
     nvidia-container-toolkit.enable = true;
     nvidia = {
-      modesetting.enable = true;
+      open = false;
       powerManagement = {
         enable = true;
         finegrained = true;
       };
-      open = false;
-      nvidiaSettings = true;
       package = config.boot.kernelPackages.nvidiaPackages.legacy_580;
       prime = {
-        offload = {
-          enable = true;
-          enableOffloadCmd = true;
-        };
         intelBusId = "PCI:0:2:0";
         nvidiaBusId = "PCI:1:0:0";
       };
