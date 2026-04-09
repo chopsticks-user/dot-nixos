@@ -32,7 +32,6 @@
         esac
       }
       PROMPT='[%F{blue}%*%f %F{yellow}%n@%m%f %F{green}%2~%f]$(_nix_prompt_char) '
-      unset _nix_prompt_char
     '';
     # plugins = [
     # {

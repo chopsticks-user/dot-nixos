@@ -7,12 +7,12 @@
   imports = [
     ./hyprland.nix
     ./noctalia.nix
-    ./zsh.nix
+    ./shell.nix
     ./git.nix
-    ./firefox.nix
+    ./browser.nix
     ./themes.nix
-    ./neovim.nix
-    ./kitty.nix
+    ./editor.nix
+    ./terminal.nix
     ./file-manager.nix
     ./ssh.nix
     ./zoxide.nix
@@ -26,10 +26,23 @@
       lolcat
       cowsay
       fortune
+      nerd-fonts.fira-code
+      fira
+      noto-fonts-color-emoji
     ];
     stateVersion = "26.05";
     username = constants.username;
     homeDirectory = constants.home-dir;
+  };
+
+  fonts.fontconfig = {
+    enable = true;
+    defaultFonts = {
+      monospace = ["FiraCode Nerd Font Mono"];
+      sansSerif = ["Fira Sans"];
+      serif = ["Fira Sans"];
+      emoji = ["Noto Color Emoji"];
+    };
   };
 
   xdg.userDirs = {
