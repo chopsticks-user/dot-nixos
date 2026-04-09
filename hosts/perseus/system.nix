@@ -22,7 +22,7 @@
     enable = true;
     man = {
       enable = true;
-      cache.enable = true;
+      cache.enable = false;
     };
     dev.enable = true;
     doc.enable = true;
@@ -38,6 +38,8 @@
     wikiman
     tldr
     btop-cuda
+    lazyjournal
+    ncdu
   ];
 
   features = {

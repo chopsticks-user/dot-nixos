@@ -6,8 +6,13 @@
     settings = {
       "$mod" = "SUPER";
       general = {
-        gaps_out = 5;
-        gaps_in = 5;
+        gaps_out = 0;
+        gaps_in = 0;
+        border_size = 1;
+        "col.active_border" = "rgba(88888888)";
+        "col.inactive_border" = "rgba(00000088)";
+        allow_tearing = true;
+        resize_on_border = true;
       };
       exec-once = [
         "noctalia-shell"
