@@ -57,8 +57,7 @@
         modules =
           [
             ./features
-            ./hosts/${hostname}/system.nix
-            ./hosts/${hostname}/hardware.nix
+            ./hosts/${hostname}
           ]
           ++ map (username: ./users/${username}/info.nix) usernames;
       };

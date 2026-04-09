@@ -4,10 +4,10 @@
   ...
 }: {
   imports = [
-    inputs.nixos-hardware.nixosModules.asus-fx504gd
     inputs.nixos-hardware.nixosModules.common-cpu-intel
-    inputs.nixos-hardware.nixosModules.common-gpu-nvidia
+    inputs.nixos-hardware.nixosModules.common-gpu-nvidia-nonprime
     inputs.nixos-hardware.nixosModules.common-pc-ssd
+    inputs.nixos-hardware.nixosModules.common-pc
     ./generated.nix
   ];
 
@@ -20,16 +20,9 @@
     };
     nvidia-container-toolkit.enable = true;
     nvidia = {
-      open = false;
-      powerManagement = {
-        enable = true;
-        finegrained = true;
-      };
-      package = config.boot.kernelPackages.nvidiaPackages.legacy_580;
-      prime = {
-        intelBusId = "PCI:0:2:0";
-        nvidiaBusId = "PCI:1:0:0";
-      };
+      open = true;
+      package = config.boot.kernelPackages.nvidiaPackages.production;
+      powerManagement.enable = true;
       videoAcceleration = true;
     };
   };
