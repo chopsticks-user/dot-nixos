@@ -22,7 +22,7 @@
     enable = true;
     man = {
       enable = true;
-      generateCaches = true;
+      cache.enable = true;
     };
     dev.enable = true;
     doc.enable = true;
@@ -32,13 +32,12 @@
   environment.systemPackages = with pkgs; [
     lshw
     fastfetch
-    glances
     wget
     wev
     psmisc
     wikiman
     tldr
-    nvtopPackages.full
+    btop-cuda
   ];
 
   features = {

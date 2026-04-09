@@ -1,4 +1,4 @@
-{ ... }: {
+{...}: {
   programs.git = {
     enable = true;
     settings = {
@@ -14,5 +14,9 @@
   programs.gh = {
     enable = true;
     settings = {};
+  };
+
+  programs.lazygit = {
+    enable = true;
   };
 }
