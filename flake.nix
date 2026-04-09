@@ -75,7 +75,7 @@
             };
         };
         modules = [
-          ./users/${username}/home.nix
+          ./users/${username}
         ];
       };
 

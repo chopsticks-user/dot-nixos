@@ -21,7 +21,7 @@
       ignoreAllDups = true;
     };
     initContent = ''
-      fortune | cowsay | lolcat
+      # fortune | cowsay | lolcat
 
       setopt PROMPT_SUBST
       _nix_prompt_char() {

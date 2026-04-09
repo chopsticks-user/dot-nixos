@@ -18,13 +18,27 @@
 
   time.timeZone = "America/New_York";
 
+  documentation = {
+    enable = true;
+    man = {
+      enable = true;
+      generateCaches = true;
+    };
+    dev.enable = true;
+    doc.enable = true;
+    info.enable = true;
+  };
+
   environment.systemPackages = with pkgs; [
     lshw
     fastfetch
-    nvitop
     glances
     wget
     wev
+    psmisc
+    wikiman
+    tldr
+    nvtopPackages.full
   ];
 
   features = {

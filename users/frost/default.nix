@@ -13,22 +13,24 @@
     ./themes.nix
     ./neovim.nix
     ./kitty.nix
-    ./lf.nix
+    ./file-manager.nix
     ./ssh.nix
     ./zoxide.nix
     ./dev.nix
     ./obs.nix
+    ./rmpc.nix
   ];
 
-  home.packages = with pkgs; [
-    lolcat
-    cowsay
-    fortune
-  ];
-
-  home.stateVersion = "26.05";
-  home.username = constants.username;
-  home.homeDirectory = constants.home-dir;
+  home = {
+    packages = with pkgs; [
+      lolcat
+      cowsay
+      fortune
+    ];
+    stateVersion = "26.05";
+    username = constants.username;
+    homeDirectory = constants.home-dir;
+  };
 
   xdg.userDirs = {
     enable = true;
