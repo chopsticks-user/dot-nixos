@@ -17,7 +17,7 @@ nh home switch -c "$username@$arch"
 
 cp -r ~/.nixos/wallpapers/* ~/media/images/wallpapers/
 
-nh clean --all
+nh clean all
 
 reboot
 
