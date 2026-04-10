@@ -10,7 +10,7 @@ username=$3
 
 cp /etc/nixos/hardware-configuration.nix \
   "$HOME/.nixos/hosts/$host/generated.nix"
-git -C ~/.nixos add "~/.nixos/hosts/$host/generated.nix"
+git -C ~/.nixos add "$HOME/.nixos/hosts/$host/generated.nix"
 
 cp -r ~/.nixos/wallpapers/* ~/media/wallpapers/
 
