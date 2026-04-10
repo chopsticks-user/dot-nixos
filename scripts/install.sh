@@ -12,10 +12,10 @@ cp /etc/nixos/hardware-configuration.nix \
   "$HOME/.nixos/hosts/$host/generated.nix"
 git -C ~/.nixos add "$HOME/.nixos/hosts/$host/generated.nix"
 
-cp -r ~/.nixos/wallpapers/* ~/media/wallpapers/
-
 nh os switch -H "$host"
 nh home switch -c "$username@$arch"
+
+cp -r ~/.nixos/wallpapers/* ~/media/wallpapers/
 
 nh clean --all
 
