@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+trap 'echo "error on line $LINENO, exiting..."; exit 1' ERR
+
 arch = $1
 hostname = $2
 username = $3
@@ -18,4 +20,6 @@ nh os switch -H "$hostname"
 nh home switch -c "$username@$arch"
 
 nh clean --all
+
+reboot
 

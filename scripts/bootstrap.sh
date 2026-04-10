@@ -1,16 +1,20 @@
 #!/usr/bin/env bash
 
-hostname = $1
+trap 'echo "error on line $LINENO, exiting..."; exit 1' ERR
+
+host=$1
 
 cd ~/.nixos
 
 sudo nix --experimental-features "nix-command flakes" \ 
   run github:nix-community/disko/latest -- --flake \
-  ".#$hostname" --mode destroy,format,mount
+  ".#$host" --mode destroy,format,mount
   
 sudo nixos-generate-config --no-filesystems --root /mnt
 cp /mnt/etc/nixos/hardware-configuration.nix \
-  "./hosts/$hostname/generated.nix"
+  "./hosts/$host/generated.nix"
 
-sudo nixos-install --flake ".#$hostname" --no-root-password
+sudo nixos-install --flake ".#$host" --no-root-password
+
+reboot
 
