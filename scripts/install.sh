@@ -25,6 +25,9 @@ sudo -r cp /mnt/usb/* ~/.nixos/
 sudo umount /mnt/usb
 sudo rm -rf /mnt/usb
 
+sudo cp /etc/nixos/hardware-configuration.nix \
+  ~/.nixos/hosts/andromeda/generated.nix
+
 nh os switch -H andromeda
 nh home switch -c frost@x86_64-linux
 
