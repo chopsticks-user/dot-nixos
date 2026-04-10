@@ -2,9 +2,9 @@
 
 trap 'echo "error on line $LINENO, exiting..."; exit 1' ERR
 
-arch = $1
-hostname = $2
-username = $3
+arch=$1
+hostname=$2
+username=$3
 
 # refer to flake.nix for the default password for all users
 
