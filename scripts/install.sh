@@ -9,7 +9,7 @@ username=$3
 # refer to flake.nix for the default password for all users
 
 cp /etc/nixos/hardware-configuration.nix \
-  "~/.nixos/hosts/$host/generated.nix"
+  "$HOME/.nixos/hosts/$host/generated.nix"
 git -C ~/.nixos add "~/.nixos/hosts/$host/generated.nix"
 
 cp -r ~/.nixos/wallpapers/* ~/media/wallpapers/
