@@ -1,7 +1,7 @@
 {
   disko.devices = {
     disk.andromeda = {
-      device = "/dev/nvme1n1";
+      device = "/dev/nvme-KINGSTON_SNVS1000G_50026B7684F89EE9";
       type = "disk";
       content = {
         type = "gpt";
