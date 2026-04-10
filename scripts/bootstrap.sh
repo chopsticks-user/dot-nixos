@@ -13,6 +13,7 @@ sudo nix --experimental-features "nix-command flakes" \
 sudo nixos-generate-config --no-filesystems --root /mnt
 cp /mnt/etc/nixos/hardware-configuration.nix \
   "./hosts/$host/generated.nix"
+git add "./hosts/$host/generated.nix"
 
 sudo nixos-install --flake ".#$host" --no-root-password
 
