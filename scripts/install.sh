@@ -15,7 +15,7 @@ git -C ~/.nixos add "$HOME/.nixos/hosts/$host/generated.nix"
 nh os switch -H "$host"
 nh home switch -c "$username@$arch"
 
-cp -r ~/.nixos/wallpapers/* ~/media/wallpapers/
+cp -r ~/.nixos/wallpapers/* ~/media/images/wallpapers/
 
 nh clean --all
 
