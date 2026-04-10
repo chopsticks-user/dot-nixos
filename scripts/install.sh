@@ -19,5 +19,3 @@ nh home switch -c "$username@$arch"
 
 nh clean --all
 
-reboot
-

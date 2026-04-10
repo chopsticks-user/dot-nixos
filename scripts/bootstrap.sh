@@ -14,5 +14,3 @@ cp /mnt/etc/nixos/hardware-configuration.nix \
 
 sudo nixos-install --flake ".#$hostname" --no-root-password
 
-reboot
-
