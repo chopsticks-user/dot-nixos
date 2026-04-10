@@ -1,33 +1,25 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-sudo mkdir /usb
-sudo mount /dev/sda3 /usb
-sudo cp /usb/* /etc/nixos
+trap 'echo "error on line $LINENO, exiting..."; exit 1' ERR
 
-sudo nix --experimental-features "nix-command flakes" \ 
-  run github:nix-community/disko/latest -- --flake \
-  /etc/nixos#andromeda --mode destroy,format,mount
-  
-sudo nixos-generate-config --no-filesystems --root /mnt
-cp /mnt/etc/nixos/hardware-configuration.nix \
-  /etc/nixos/hosts/andromeda/generated.nix
-
-sudo nixos-install --flake /etc/nixos#hostname --no-root-password
-
-reboot
+arch = $1
+hostname = $2
+username = $3
 
 # refer to flake.nix for the default password for all users
 
-sudo mkdir -p /mnt/usb
-sudo mount /dev/sda3 /mnt/usb
-mkdir ~/.nixos
-sudo -r cp /mnt/usb/* ~/.nixos/
-sudo umount /mnt/usb
-sudo rm -rf /mnt/usb
+nix-shell -p git --run \
+  "git clone https://github.com/chopsticks-user/dot-nixos ~/.nixos"
 
 sudo cp /etc/nixos/hardware-configuration.nix \
-  ~/.nixos/hosts/andromeda/generated.nix
+  "~/.nixos/hosts/$hostname/generated.nix"
 
-nh os switch -H andromeda
-nh home switch -c frost@x86_64-linux
+cp -r ~/.nixos/wallpapers/* ~/media/wallpapers/
+
+nh os switch -H "$hostname"
+nh home switch -c "$username@$arch"
+
+nh clean --all
+
+reboot
 
