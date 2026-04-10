@@ -45,6 +45,7 @@
     ncdu
     wl-clipboard
     efibootmgr
+    git
   ];
 
   features = {
