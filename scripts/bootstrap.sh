@@ -6,7 +6,7 @@ host=$1
 
 cd ~/.nixos
 
-sudo nix --experimental-features "nix-command flakes" \ 
+sudo nix --experimental-features "nix-command flakes" \
   run github:nix-community/disko/latest -- --flake \
   ".#$host" --mode destroy,format,mount
   
