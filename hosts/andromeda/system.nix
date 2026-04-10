@@ -43,6 +43,7 @@
     btop-cuda
     lazyjournal
     ncdu
+    wl-clipboard
   ];
 
   features = {
