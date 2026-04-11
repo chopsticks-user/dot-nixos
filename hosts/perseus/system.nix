@@ -44,7 +44,9 @@
     lazyjournal
     ncdu
     wl-clipboard
+    efibootmgr
     git
+    jq
   ];
 
   features = {

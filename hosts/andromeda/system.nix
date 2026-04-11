@@ -46,6 +46,7 @@
     wl-clipboard
     efibootmgr
     git
+    jq
   ];
 
   features = {
