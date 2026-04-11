@@ -3,7 +3,7 @@
     enable = true;
     font = {
       name = "FiraCode Nerd Font Mono";
-      size = 9;
+      size = 10;
     };
     settings = {
       background_opacity = "0.6";
