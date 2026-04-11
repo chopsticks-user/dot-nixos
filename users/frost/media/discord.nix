@@ -1,4 +1,8 @@
 {lib, ...}: {
+  nixpkgs.config.allowUnfreePackages = [
+    "discord"
+  ];
+
   programs.discord = {
     enable = true;
     settings = lib.mkForce {
@@ -13,8 +17,4 @@
       IS_MINIMIZED = false;
     };
   };
-
-  nixpkgs.config.allowUnfreePackages = [
-    "discord"
-  ];
 }

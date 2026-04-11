@@ -1,4 +1,8 @@
 {...}: {
+  programs.rmpc = {
+    enable = true;
+  };
+
   services.mpd = {
     enable = true;
     musicDirectory = "/home/frost";
@@ -6,9 +10,5 @@
       listenAddress = "any";
       startWhenNeeded = true;
     };
-  };
-
-  programs.rmpc = {
-    enable = true;
   };
 }
