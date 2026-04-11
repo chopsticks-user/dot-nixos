@@ -1,6 +1,8 @@
 {...}: {
   imports = [
     ./home.nix
+    ./xbds.nix
+    ./fonts.nix
     ./hyprland.nix
     ./noctalia.nix
     ./shell.nix
