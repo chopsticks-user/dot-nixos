@@ -16,8 +16,10 @@ in {
     };
 
     environment.sessionVariables = {
+      NH_FLAKE = constants.config-path;
       NH_OS_FLAKE = constants.config-path;
       NH_HOME_FLAKE = constants.config-path;
+      NH_SHOW_ACTIVATION_LOGS = "1";
     };
   };
 }
