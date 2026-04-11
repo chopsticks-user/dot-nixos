@@ -33,6 +33,7 @@
   };
 
   environment.systemPackages = with pkgs; [
+    home-manager
     lshw
     fastfetch
     wget
