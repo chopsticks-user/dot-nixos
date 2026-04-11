@@ -11,7 +11,10 @@
     ./generated.nix
   ];
 
-  nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.allowUnfreePackages = [
+    "nvidia-x11"
+    "nvidia-settings"
+  ];
 
   hardware = {
     graphics = {

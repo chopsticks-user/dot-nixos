@@ -1,9 +1,4 @@
 {lib, ...}: {
-  nixpkgs.config.allowUnfreePredicate = pkg:
-    builtins.elem (lib.getName pkg) [
-      "discord"
-    ];
-
   programs.discord = {
     enable = true;
     settings = lib.mkForce {
@@ -18,4 +13,8 @@
       IS_MINIMIZED = false;
     };
   };
+
+  nixpkgs.config.allowUnfreePackages = [
+    "discord"
+  ];
 }
