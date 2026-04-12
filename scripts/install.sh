@@ -8,12 +8,14 @@ username=$3
 
 # refer to flake.nix for the default password for all users
 
+git clone https://github.com/chopsticks-user/dot-nixos .nixos
+cd ~/.nixos
+
 cp /etc/nixos/hardware-configuration.nix \
   "$HOME/.nixos/hosts/$host/generated.nix"
-git -C ~/.nixos add "$HOME/.nixos/hosts/$host/generated.nix"
+git add .
 
 nh home switch -c "$username@$arch"
-
 cp -r ~/.nixos/wallpapers/* ~/media/images/wallpapers/
 
 nh clean all
