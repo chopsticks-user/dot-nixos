@@ -8,6 +8,8 @@ username=$3
 
 # refer to flake.nix for the default password for all users
 
+cd ~
+rm -rf .nixos
 git clone https://github.com/chopsticks-user/dot-nixos .nixos
 cd ~/.nixos
 
