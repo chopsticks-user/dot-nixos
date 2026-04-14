@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+trap 'echo "error on line $LINENO, exiting..."; exit 1' ERR
+
 output_dev=${1:-/dev/sda}
 
 cd ~/.nixos

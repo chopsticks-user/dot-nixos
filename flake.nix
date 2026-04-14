@@ -100,7 +100,7 @@
       // {
         iso = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
-          modules = [./iso.nix];
+          modules = [./scripts/iso.nix];
         };
       };
     homeConfigurations = lib.mergeAttrsList (map (
