@@ -95,7 +95,14 @@
     hostnames = builtins.attrNames (builtins.readDir ./hosts);
     usernames = builtins.attrNames (builtins.readDir ./users);
   in {
-    nixosConfigurations = lib.genAttrs hostnames mkHost;
+    nixosConfigurations =
+      (lib.genAttrs hostnames mkHost)
+      // {
+        iso = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [./iso.nix];
+        };
+      };
     homeConfigurations = lib.mergeAttrsList (map (
         system:
           lib.listToAttrs (map (
