@@ -1,6 +1,6 @@
 {
   disko.devices = {
-    disk.andromeda = {
+    disk.perseus = {
       device = "/dev/disk/by-id/ata-WDC_WDS240G2G0B-00EPW0_19094F806822";
       type = "disk";
       content = {
