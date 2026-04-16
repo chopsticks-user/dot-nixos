@@ -1,5 +1,4 @@
-# belongs to nixosConfigurations
-# todo: move to hosts
+# this file belongs to nixosConfigurations
 {
   pkgs,
   constants,

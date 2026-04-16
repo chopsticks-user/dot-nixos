@@ -1,5 +1,0 @@
-{...}: {
-  programs.superfile = {
-    enable = true;
-  };
-}

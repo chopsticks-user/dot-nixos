@@ -19,7 +19,6 @@
   hardware = {
     graphics = {
       enable = true;
-      enable32Bit = true;
     };
     nvidia-container-toolkit.enable = true;
     nvidia = {

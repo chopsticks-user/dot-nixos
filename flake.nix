@@ -72,7 +72,7 @@
             ./features
             ./hosts/${hostname}
           ]
-          ++ map (username: ./users/${username}/core/info.nix) usernames;
+          ++ map (username: ./users/${username}/system.nix) usernames;
       };
 
     mkUser = system: username:
@@ -88,6 +88,7 @@
             };
         };
         modules = [
+          ./profiles
           ./users/${username}
         ];
       };
