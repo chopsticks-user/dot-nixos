@@ -42,6 +42,19 @@ in {
           esac
         }
         PROMPT='[%F{blue}%*%f %F{yellow}%n@%m%f %F{green}%2~%f]$(_nix_prompt_char) '
+
+        nh() {
+          if [[ "$1 $2" == "home switch" ]]; then
+            local os
+            case "$(uname -s)" in
+              Linux)  os="linux" ;;
+              Darwin) os="darwin" ;;
+            esac
+             command nh home switch -c "$(whoami)@$(uname -m)-''${os}" "''${@:3}"
+          else
+            command nh "$@"
+          fi
+        }
       '';
       # plugins = [
       # {
