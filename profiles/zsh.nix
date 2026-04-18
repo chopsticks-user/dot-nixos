@@ -8,6 +8,11 @@
 in {
   options.profiles.zsh = {
     enable = lib.mkEnableOption "zsh";
+    shellAliases = lib.mkOption {
+      type = lib.types.attrsOf lib.types.str;
+      default = {};
+      description = "Shell aliases to add to zsh";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -25,8 +30,7 @@ in {
          start-hyprland
         fi
       '';
-      shellAliases = {
-      };
+      inherit (cfg) shellAliases;
       history = {
         size = 10000;
         ignoreDups = true;

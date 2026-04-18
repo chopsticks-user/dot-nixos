@@ -23,6 +23,8 @@
     wev
   ];
 
+  programs.nix-ld.enable = true;
+
   networking = {
     hostName = constants.hostname;
     networkmanager.enable = true;

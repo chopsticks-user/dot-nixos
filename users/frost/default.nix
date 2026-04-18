@@ -1,17 +1,32 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  constants,
+  ...
+}: {
   imports = [
     ./overlays
+  ];
+
+  nixpkgs.config.allowUnfreePackages = [
+    "rider"
   ];
 
   home.packages = with pkgs; [
     cloc
     tree
+    ilspycmd
+    jetbrains.rider
+    python3
   ];
 
   profiles = {
     core.enable = true;
 
-    zsh.enable = true;
+    zsh = {
+      enable = true;
+      shellAliases = {
+      };
+    };
 
     ssh.enable = true;
 
