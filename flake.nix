@@ -24,6 +24,7 @@
       url = "github:different-name/steam-config-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-alien.url = "github:thiagokokada/nix-alien";
   };
 
   outputs = {

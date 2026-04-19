@@ -1,6 +1,6 @@
 {
   pkgs,
-  constants,
+  inputs,
   ...
 }: {
   imports = [
@@ -11,13 +11,16 @@
     "rider"
   ];
 
-  home.packages = with pkgs; [
-    cloc
-    tree
-    ilspycmd
-    jetbrains.rider
-    python3
-  ];
+  home.packages = with pkgs;
+    [
+      cloc
+      tree
+      jetbrains.rider
+      godot
+    ]
+    ++ [
+      inputs.nix-alien.packages.${stdenv.hostPlatform.system}.nix-alien
+    ];
 
   profiles = {
     core.enable = true;
