@@ -58,33 +58,4 @@
 
     obs.enable = true;
   };
-
-  programs.direnv = {
-    enable = true;
-    nix-direnv.enable = true;
-    silent = true;
-  };
-
-  home.file = let
-    mkClionEntry = {
-      name,
-      dir,
-    }: {
-      ".local/share/applications/clion-${name}.desktop".text = ''
-        [Desktop Entry]
-        Name=CLion (${name})
-        Exec=nix develop ${dir} --command clion ${dir}
-        Icon=clion
-        Type=Application
-        Categories=Development;IDE;
-      '';
-    };
-    projects = [
-      {
-        name = "andromeda";
-        dir = "${constants.home-dir}/dev/andromeda";
-      }
-    ];
-  in
-    builtins.foldl' (acc: p: acc // mkClionEntry p) {} projects;
 }

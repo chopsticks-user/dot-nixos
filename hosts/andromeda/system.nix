@@ -21,6 +21,8 @@
   environment.systemPackages = with pkgs; [
     wl-clipboard
     wev
+    zip
+    unzip
   ];
 
   networking = {

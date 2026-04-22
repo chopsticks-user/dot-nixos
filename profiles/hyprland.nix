@@ -37,6 +37,12 @@ in {
         ];
         env = [
         ];
+        # fix Unreal Engine's issues with hyprland and xwayland
+        windowrule = [
+          "no_anim on, match:class ^(UnrealEditor)$, match:title ^\\w*$"
+          "no_initial_focus on, match:class ^(UnrealEditor)$, match:title ^\\w*$"
+          "no_focus on, match:class ^(UnrealEditor)$, match:title ^$"
+        ];
         bind = let
           workspaces = builtins.genList (i: i + 1) 10;
           wsKey = i:
