@@ -38,14 +38,13 @@ in {
       };
       initContent = ''
         setopt PROMPT_SUBST
-        _nix_prompt_char() {
-          case $IN_NIX_SHELL in
-            pure) print -n "%F{208}%#%f" ;;
-            impure) print -n "%F{red}%#%f" ;;
-            *) print -n "%#" ;;
-          esac
+        _prompt_info() {
+          local info=""
+          [ -n "$CONTAINER_ID" ] && info+="[distrobox:$CONTAINER_ID]"
+          [ -n "$IN_NIX_SHELL" ] && info+="[nix-shell]"
+          echo "$info"
         }
-        PROMPT='[%F{blue}%*%f %F{yellow}%n@%m%f %F{green}%2~%f]$(_nix_prompt_char) '
+        PROMPT="[%F{blue}%*%f %F{yellow}%n@%m%f %F{green}%2~%f]\$(_prompt_info)%% "
 
         nh() {
           if [[ "$1 $2" == "home switch" ]]; then

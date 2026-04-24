@@ -31,4 +31,9 @@
   };
 
   time.timeZone = "America/New_York";
+
+  virtualisation.podman = {
+    enable = true;
+    dockerCompat = true;
+  };
 }

@@ -11,6 +11,7 @@
   nixpkgs.config.allowUnfreePackages = [
     "rider"
     "clion"
+    "claude-code"
   ];
 
   home.packages = with pkgs;
@@ -57,5 +58,34 @@
     discord.enable = true;
 
     obs.enable = true;
+  };
+
+  programs.claude-code = {
+    enable = true;
+    enableMcpIntegration = true;
+  };
+
+  programs.distrobox = {
+    enable = true;
+    enableSystemdUnit = true;
+
+    settings = {
+      container_manager = "podman";
+      container_always_pull = "1";
+      container_additional_volumes = "/nix/store:/nix/store:ro";
+    };
+
+    containers = {
+      arch = {
+        image = "archlinux:latest";
+        init = false;
+        init_hooks = [
+          "pacman -Syu --noconfirm"
+          "pacman -S --needed --noconfirm base-devel git"
+          "git clone https://aur.archlinux.org/paru.git /tmp/paru"
+          "cd /tmp/paru && makepkg -si --noconfirm"
+        ];
+      };
+    };
   };
 }
