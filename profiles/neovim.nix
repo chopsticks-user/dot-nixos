@@ -182,7 +182,7 @@ in {
             nix.enable = true;
             rust.enable = true;
             go.enable = true;
-            ts.enable = true;
+            typescript.enable = true;
             clang.enable = true;
             cmake.enable = true;
           };

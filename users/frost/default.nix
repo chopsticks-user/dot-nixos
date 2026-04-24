@@ -75,16 +75,12 @@
       container_additional_volumes = "/nix/store:/nix/store:ro";
     };
 
+    # run distrobox assemble create --file ~/.config/distrobox/containers.ini --verbose 2>&1
+    # if containers don't exist
     containers = {
       arch = {
         image = "archlinux:latest";
         init = false;
-        init_hooks = [
-          "pacman -Syu --noconfirm"
-          "pacman -S --needed --noconfirm base-devel git"
-          "git clone https://aur.archlinux.org/paru.git /tmp/paru"
-          "cd /tmp/paru && makepkg -si --noconfirm"
-        ];
       };
     };
   };
