@@ -24,7 +24,10 @@
       url = "github:different-name/steam-config-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nix-alien.url = "github:thiagokokada/nix-alien";
+    nix-alien = {
+      url = "github:thiagokokada/nix-alien";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
@@ -32,7 +35,7 @@
     home-manager,
     ...
   } @ inputs: let
-    lib = nixpkgs.lib;
+    inherit (nixpkgs) lib;
 
     global-constants = {
       config-path = "$HOME/.nixos";
@@ -47,6 +50,14 @@
       };
       default-password = "password";
     };
+
+    mkIso = system:
+      lib.nixosSystem {
+        inherit system;
+        modules = [
+          ./scripts/iso.nix
+        ];
+      };
 
     mkHost = hostname: let
       system =
@@ -78,7 +89,7 @@
 
     mkUser = system: username:
       home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.${system};
+        pkgs = import nixpkgs {inherit system;};
         extraSpecialArgs = {
           inherit inputs;
           constants =
@@ -99,12 +110,11 @@
   in {
     nixosConfigurations =
       (lib.genAttrs hostnames mkHost)
-      // {
-        iso = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          modules = [./scripts/iso.nix];
-        };
-      };
+      // lib.listToAttrs (map (
+          system:
+            lib.nameValuePair "iso-${system}" (mkIso system)
+        )
+        global-constants.system.supported);
     homeConfigurations = lib.mergeAttrsList (map (
         system:
           lib.listToAttrs (map (

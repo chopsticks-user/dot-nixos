@@ -2,6 +2,7 @@
   xdg.userDirs = {
     enable = true;
     createDirectories = true;
+    setSessionVariables = true;
     desktop = "${config.home.homeDirectory}/.xdg-ignore";
     templates = "${config.home.homeDirectory}/.xdg-ignore";
     publicShare = "${config.home.homeDirectory}/.xdg-ignore";
@@ -11,8 +12,9 @@
     music = "${config.home.homeDirectory}/media/audio";
     videos = "${config.home.homeDirectory}/media/videos";
     extraConfig = {
-      XDG_MEDIA_DIR = "${config.home.homeDirectory}/media";
       XDG_DEV_DIR = "${config.home.homeDirectory}/dev";
+      XDG_BOX_DIR = "${config.home.homeDirectory}/boxes";
+      XDG_MEDIA_DIR = "${config.home.homeDirectory}/media";
       XDG_WALLPAPERS_DIR = "${config.home.homeDirectory}/media/images/wallpapers";
       XDG_SCREENSHOTS_DIR = "${config.home.homeDirectory}/media/images/screenshots";
       XDG_SCREENCASTS_DIR = "${config.home.homeDirectory}/media/videos/screencasts";

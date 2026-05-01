@@ -10,5 +10,8 @@
     ./discord.nix
     ./obs.nix
     ./gaming.nix
+    ./claude.nix
+    ./zed.nix
+    ./distrobox.nix
   ];
 }
