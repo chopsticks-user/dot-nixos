@@ -12,12 +12,12 @@
     music = "${config.home.homeDirectory}/media/audio";
     videos = "${config.home.homeDirectory}/media/videos";
     extraConfig = {
-      XDG_DEV_DIR = "${config.home.homeDirectory}/dev";
-      XDG_BOX_DIR = "${config.home.homeDirectory}/boxes";
-      XDG_MEDIA_DIR = "${config.home.homeDirectory}/media";
-      XDG_WALLPAPERS_DIR = "${config.home.homeDirectory}/media/images/wallpapers";
-      XDG_SCREENSHOTS_DIR = "${config.home.homeDirectory}/media/images/screenshots";
-      XDG_SCREENCASTS_DIR = "${config.home.homeDirectory}/media/videos/screencasts";
+      DEV = "${config.home.homeDirectory}/dev";
+      BOXES = "${config.home.homeDirectory}/boxes";
+      MEDIA = "${config.home.homeDirectory}/media";
+      WALLPAPERS = "${config.home.homeDirectory}/media/images/wallpapers";
+      SCREENSHOTS = "${config.home.homeDirectory}/media/images/screenshots";
+      SCREENCASTS = "${config.home.homeDirectory}/media/videos/screencasts";
     };
   };
 }
