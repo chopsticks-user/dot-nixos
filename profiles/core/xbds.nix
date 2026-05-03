@@ -8,6 +8,7 @@
     publicShare = "${config.home.homeDirectory}/.xdg-ignore";
     documents = "${config.home.homeDirectory}/documents";
     download = "${config.home.homeDirectory}/downloads";
+    projects = "${config.home.homeDirectory}/projects";
     pictures = "${config.home.homeDirectory}/media/images";
     music = "${config.home.homeDirectory}/media/audio";
     videos = "${config.home.homeDirectory}/media/videos";

@@ -27,7 +27,7 @@ in {
         arch = {
           image = "archlinux:latest";
           init = false;
-          volume = "${constants.home-dir}/dev:${constants.home-dir}/dev";
+          volume = "${constants.home-dir}/projects:${constants.home-dir}/projects";
           additional_packages = "base-devel git clang cmake ninja rust";
           pre_init_hooks = [
             "export SHELL=/bin/bash"

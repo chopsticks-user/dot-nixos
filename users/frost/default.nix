@@ -3,14 +3,12 @@
   inputs,
   ...
 }: {
-  imports = [
-    ./overlays
-  ];
-
   nixpkgs.config.allowUnfreePackages = [
     "rider"
     "clion"
     "claude-code"
+    "unreal-engine"
+    "unreal-engine-run"
   ];
 
   home.packages = with pkgs;
@@ -22,6 +20,9 @@
       jetbrains.clion
       godot
       blender
+      unreal-engine
+      unreal-engine.run
+      unreal-engine.run-free
     ]
     ++ [
       inputs.nix-alien.packages.${stdenv.hostPlatform.system}.nix-alien

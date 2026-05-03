@@ -37,6 +37,12 @@
   } @ inputs: let
     inherit (nixpkgs) lib;
 
+    overlays = [
+      (final: prev: {
+        unreal-engine = final.callPackage ./pkgs/unreal-engine/package.nix {};
+      })
+    ];
+
     global-constants = {
       config-path = "$HOME/.nixos";
       system = {
@@ -80,6 +86,7 @@
         };
         modules =
           [
+            {nixpkgs.overlays = overlays;}
             inputs.disko.nixosModules.disko
             ./features
             ./hosts/${hostname}
@@ -89,7 +96,7 @@
 
     mkUser = system: username:
       home-manager.lib.homeManagerConfiguration {
-        pkgs = import nixpkgs {inherit system;};
+        pkgs = import nixpkgs {inherit system overlays;};
         extraSpecialArgs = {
           inherit inputs;
           constants =
