@@ -149,7 +149,27 @@
     dontBuild = true;
     preferLocalBuild = true;
     dontStrip = true;
-    autoPatchelfIgnoreMissingDeps = true;
+    autoPatchelfIgnoreMissingDeps = [
+      "libandroid.so"
+      "libc.musl-x86_64.so.1"
+      "libc++_shared.so"
+      "libgdbm.so.4"
+      "libGLESv3.so"
+      "libicudata.so.53"
+      "libicudata.so.64"
+      "libicui18n.so.53"
+      "libicui18n.so.64"
+      "libicule.so.53"
+      "libicutu.so.64"
+      "libicuuc.so.53"
+      "libicuuc.so.64"
+      "liblog.so"
+      "liblttng-ust.so.0"
+      "libOpenSLES.so"
+      "libpskernel.so"
+      "libreadline.so.6"
+      "libUnrealEditor-uLangCore.so"
+    ];
   };
 
   buildRuntimeEnv = args:
