@@ -1,8 +1,4 @@
-{
-  pkgs,
-  inputs,
-  ...
-}: {
+{pkgs, ...}: {
   nixpkgs.config.allowUnfreePackages = [
     "rider"
     "clion"
@@ -11,22 +7,17 @@
     "unreal-engine-run"
   ];
 
-  home.packages = with pkgs;
-    [
-      cloc
-      tree
-
-      jetbrains.rider
-      jetbrains.clion
-      godot
-      blender
-      unreal-engine
-      unreal-engine.run
-      unreal-engine.run-free
-    ]
-    ++ [
-      inputs.nix-alien.packages.${stdenv.hostPlatform.system}.nix-alien
-    ];
+  home.packages = with pkgs; [
+    cloc
+    tree
+    jetbrains.rider
+    jetbrains.clion
+    godot
+    blender
+    unreal-engine
+    unreal-engine.run
+    unreal-engine.run-free
+  ];
 
   profiles = {
     core.enable = true;

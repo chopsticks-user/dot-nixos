@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.11";
     nixos-hardware.url = "github:nixos/nixos-hardware/master";
     disko = {
       url = "github:nix-community/disko";
@@ -32,16 +33,11 @@
 
   outputs = {
     nixpkgs,
+    nixpkgs-stable,
     home-manager,
     ...
   } @ inputs: let
     inherit (nixpkgs) lib;
-
-    overlays = [
-      (final: prev: {
-        unreal-engine = final.callPackage ./pkgs/unreal-engine/package.nix {};
-      })
-    ];
 
     global-constants = {
       config-path = "$HOME/.nixos";
@@ -56,6 +52,17 @@
       };
       default-password = "password";
     };
+
+    overlays = [
+      (final: _: {
+        unreal-engine = final.callPackage ./pkgs/unreal-engine/package.nix {};
+      })
+    ];
+
+    mkPkgsStable = system:
+      import nixpkgs-stable {
+        inherit system overlays;
+      };
 
     mkIso = system:
       lib.nixosSystem {
@@ -75,6 +82,7 @@
         inherit system;
         specialArgs = {
           inherit inputs;
+          pkgs-stable = mkPkgsStable system;
           constants =
             global-constants
             // {
@@ -96,9 +104,12 @@
 
     mkUser = system: username:
       home-manager.lib.homeManagerConfiguration {
-        pkgs = import nixpkgs {inherit system overlays;};
+        pkgs = import nixpkgs {
+          inherit system overlays;
+        };
         extraSpecialArgs = {
           inherit inputs;
+          pkgs-stable = mkPkgsStable system;
           constants =
             global-constants
             // {

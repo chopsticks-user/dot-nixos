@@ -1,8 +1,4 @@
-{
-  pkgs,
-  constants,
-  ...
-}: {
+{constants, ...}: {
   features = {
     core = {
       enable = true;
@@ -17,13 +13,6 @@
     fcitx.enable = true;
     ssh.enable = true;
   };
-
-  environment.systemPackages = with pkgs; [
-    wl-clipboard
-    wev
-    zip
-    unzip
-  ];
 
   networking = {
     hostName = constants.hostname;

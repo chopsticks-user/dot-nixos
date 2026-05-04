@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }: let
   cfg = config.features.core;
@@ -54,6 +55,9 @@ in {
       jq
       wget
       wev
+      zip
+      unzip
+      inputs.nix-alien.packages.${stdenv.hostPlatform.system}.nix-alien
     ];
   };
 }
