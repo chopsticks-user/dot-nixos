@@ -62,21 +62,18 @@
   glibc,
   vulkan-loader,
   udev,
+  gnumake,
+  openssl,
 }: let
-  versions = callPackage ./versions.nix {};
-
-  found-version =
+  found-version = let
+    versions = callPackage ./versions.nix {};
+  in
     if version == null
     then lib.head versions
     else
       lib.findFirst (v: v.version == version)
       (throw "No registered Unreal Engine version found to match version=${toString version}")
       versions;
-
-  src =
-    if source == null
-    then found-version.src
-    else source;
 
   unwrappedLibs = [
     alsa-lib
@@ -127,12 +124,14 @@
       clang
       cmake
       dotnet-sdk
+      gnumake
+      openssl
     ];
 
   ue-unwrapped = stdenv.mkDerivation {
     pname = "unreal-engine";
     inherit (found-version) version;
-    inherit src;
+    src = lib.defaultTo found-version.src source;
     sourceRoot = ".";
     nativeBuildInputs = [
       autoPatchelfHook
@@ -200,14 +199,7 @@
           ++ extraPkgs pkgs;
 
         profile = ''
-          # SDL2 inotify fallback — udev events unreliable in bwrap containers
-          export SDL_JOYSTICK_DISABLE_UDEV=1
-
-          # Use system GPU drivers from NixOS
-          export LIBGL_DRIVERS_PATH=/run/opengl-driver/lib/dri:/run/opengl-driver-32/lib/dri
-          export __EGL_VENDOR_LIBRARY_DIRS=/run/opengl-driver/share/glvnd/egl_vendor.d:/run/opengl-driver-32/share/glvnd/egl_vendor.d
-          export LIBVA_DRIVERS_PATH=/run/opengl-driver/lib/dri:/run/opengl-driver-32/lib/dri
-          export VDPAU_DRIVER_PATH=/run/opengl-driver/lib/vdpau:/run/opengl-driver-32/lib/vdpau
+          export LD_LIBRARY_PATH=/usr/lib64:/usr/lib:$LD_LIBRARY_PATH
 
           set -a
           ${lib.toShellVars extraEnv}
@@ -217,9 +209,9 @@
         '';
 
         extraPreBwrapCmds = ''
-          export UE_CACHE="$HOME/.cache/unreal-engine"
-          mkdir -p "$UE_CACHE"/{upper,work}
+          export UE_CACHE="''${XDG_CACHE_HOME:-$HOME/.cache}/unreal-engine"
 
+          mkdir -p "$UE_CACHE"/{upper,work}
           MARKER="$UE_CACHE/upper/.initialized-$(basename ${ue-unwrapped})"
           if [ ! -e "$MARKER" ]; then
             rm -f "$UE_CACHE/upper"/.initialized-*
@@ -259,7 +251,6 @@ in
     extraPkgs = pkgs: [ue-unwrapped] ++ extraPkgs pkgs;
 
     runScript = writeShellScript "unreal-engine-launcher" ''
-      export LD_LIBRARY_PATH=/usr/lib64:/usr/lib:$LD_LIBRARY_PATH
       exec ${ue-unwrapped}/Engine/Binaries/Linux/UnrealEditor ${extraArgs} "$@"
     '';
 

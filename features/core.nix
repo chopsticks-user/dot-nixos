@@ -3,16 +3,9 @@
   lib,
   pkgs,
   inputs,
+  constants,
   ...
-}: let
-  cfg = config.features.core;
-  btop-pkg =
-    if cfg.gpu == "nvidia"
-    then pkgs.btop-cuda
-    else if cfg.gpu == "amd"
-    then pkgs.btop-rocm
-    else pkgs.btop;
-in {
+}: {
   options.features.core = {
     enable = lib.mkEnableOption "core";
     kernel = lib.mkOption {
@@ -32,32 +25,45 @@ in {
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    system.stateVersion = cfg.state-version;
-    nix.settings = {
-      experimental-features = ["nix-command" "flakes"];
-      cores = 0;
-      max-jobs = "auto";
-    };
-    boot.kernelPackages = pkgs."linuxPackages_${cfg.kernel}";
+  config = let
+    cfg = config.features.core;
+  in
+    lib.mkIf cfg.enable {
+      system.stateVersion = cfg.state-version;
+      nix.settings = {
+        experimental-features = ["nix-command" "flakes"];
+        cores = 0;
+        max-jobs = "auto";
+      };
+      boot.kernelPackages = pkgs."linuxPackages_${cfg.kernel}";
 
-    environment.systemPackages = with pkgs; [
-      home-manager
-      efibootmgr
-      git
-      psmisc
-      lshw
-      fastfetch
-      btop-pkg
-      lazyjournal
-      ncdu
-      wl-clipboard
-      jq
-      wget
-      wev
-      zip
-      unzip
-      inputs.nix-alien.packages.${stdenv.hostPlatform.system}.nix-alien
-    ];
-  };
+      environment.systemPackages = let
+        inherit (inputs.nix-alien.packages.${constants.system.current}) nix-alien;
+        btop =
+          if cfg.gpu == "nvidia"
+          then pkgs.btop-cuda
+          else if cfg.gpu == "amd"
+          then pkgs.btop-rocm
+          else pkgs.btop;
+      in
+        with pkgs; [
+          home-manager
+          efibootmgr
+          git
+          psmisc
+          lshw
+          fastfetch
+          btop
+          lazyjournal
+          ncdu
+          wl-clipboard
+          jq
+          wget
+          wev
+          zip
+          unzip
+          nix-alien
+          inotify-tools
+        ];
+    };
 }
