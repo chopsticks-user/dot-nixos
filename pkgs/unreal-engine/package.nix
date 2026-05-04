@@ -9,15 +9,15 @@
   unzip,
   writeShellScript,
   makeDesktopItem,
-  # User-facing extensions
-  extraPkgs ? pkgs: [],
+  # extensions
+  extraPkgs ? _: [],
   extraProfile ? "",
   extraPreBwrapCmds ? "",
   extraBwrapArgs ? [],
   extraArgs ? "",
   extraEnv ? {},
   privateTmp ? true,
-  # buildInputs
+  # required for ue-unwrapped
   alsa-lib,
   atk,
   at-spi2-atk,
@@ -55,7 +55,7 @@
   libxfixes,
   libxrandr,
   libxcb,
-  # FHS runtime
+  # runtime only
   clang,
   cmake,
   dotnet-sdk,
@@ -118,14 +118,16 @@
     libxcb
   ];
 
-  runtimeLibs = [
-    glibc
-    vulkan-loader
-    udev
-    clang
-    cmake
-    dotnet-sdk
-  ];
+  runtimeLibs =
+    unwrappedLibs
+    ++ [
+      glibc
+      vulkan-loader
+      udev
+      clang
+      cmake
+      dotnet-sdk
+    ];
 
   ue-unwrapped = stdenv.mkDerivation {
     pname = "unreal-engine";
@@ -172,7 +174,15 @@
     ];
   };
 
-  buildRuntimeEnv = args:
+  buildRuntimeEnv = {
+    extraPkgs ? _: [],
+    extraProfile ? "",
+    extraPreBwrapCmds ? "",
+    extraBwrapArgs ? [],
+    extraEnv ? {},
+    privateTmp ? true,
+    ...
+  } @ args:
     buildFHSEnv (
       (removeAttrs args [
         "extraPkgs"
@@ -186,9 +196,8 @@
         inherit privateTmp;
 
         targetPkgs = pkgs:
-          unwrappedLibs
-          ++ runtimeLibs
-          ++ (args.extraPkgs or (_: []) pkgs);
+          runtimeLibs
+          ++ extraPkgs pkgs;
 
         profile = ''
           # SDL2 inotify fallback — udev events unreliable in bwrap containers
@@ -207,52 +216,46 @@
           ${extraProfile}
         '';
 
-        inherit extraPreBwrapCmds;
-        inherit extraBwrapArgs;
+        extraPreBwrapCmds = ''
+          export UE_CACHE="$HOME/.cache/unreal-engine"
+          mkdir -p "$UE_CACHE"/{upper,work}
+
+          MARKER="$UE_CACHE/upper/.initialized-$(basename ${ue-unwrapped})"
+          if [ ! -e "$MARKER" ]; then
+            rm -f "$UE_CACHE/upper"/.initialized-*
+            (cd ${ue-unwrapped} && find . -type d -print0) \
+              | (cd "$UE_CACHE/upper" && xargs -0 mkdir -p)
+            touch "$MARKER"
+          fi
+
+          ${extraPreBwrapCmds}
+        '';
+
+        extraBwrapArgs =
+          [
+            "--overlay-src"
+            "${ue-unwrapped}"
+
+            "--overlay"
+            "\${UE_CACHE}/upper"
+            "\${UE_CACHE}/work"
+            "${ue-unwrapped}"
+          ]
+          ++ extraBwrapArgs;
       }
     );
-
-  makeRunner = {
-    name,
-    packages,
-    license,
-  }:
-    buildRuntimeEnv {
-      inherit name;
-      extraPkgs = pkgs: packages ++ extraPkgs pkgs;
-
-      runScript = writeShellScript name ''
-        if [ $# -eq 0 ]; then
-          echo "Usage: ${name} command-to-run args..." >&2
-          exit 1
-        fi
-        exec "$@"
-      '';
-
-      meta = {
-        description = "Run commands in the FHS environment used for Unreal Engine";
-        mainProgram = name;
-        inherit license;
-        platforms = ["x86_64-linux"];
-      };
-    };
-
-  desktopItem = makeDesktopItem {
-    name = "unreal-engine";
-    desktopName = "Unreal Engine";
-    comment = "Unreal Engine 5 Editor";
-    exec = "unreal-engine %F";
-    icon = "unreal-engine";
-    terminal = false;
-    type = "Application";
-    categories = ["Development" "IDE"];
-    startupNotify = false;
-  };
 in
   buildRuntimeEnv {
     name = "unreal-engine";
     inherit (found-version) version;
 
+    inherit
+      extraProfile
+      extraPreBwrapCmds
+      extraBwrapArgs
+      extraEnv
+      privateTmp
+      ;
     extraPkgs = pkgs: [ue-unwrapped] ++ extraPkgs pkgs;
 
     runScript = writeShellScript "unreal-engine-launcher" ''
@@ -260,7 +263,19 @@ in
       exec ${ue-unwrapped}/Engine/Binaries/Linux/UnrealEditor ${extraArgs} "$@"
     '';
 
-    extraInstallCommands = ''
+    extraInstallCommands = let
+      desktopItem = makeDesktopItem {
+        name = "unreal-engine";
+        desktopName = "Unreal Engine";
+        comment = "Unreal Engine 5 Editor";
+        exec = "unreal-engine %F";
+        icon = "unreal-engine";
+        terminal = false;
+        type = "Application";
+        categories = ["Development" "IDE"];
+        startupNotify = false;
+      };
+    in ''
       install -Dm444 ${desktopItem}/share/applications/unreal-engine.desktop \
         $out/share/applications/unreal-engine.desktop
       install -Dm444 ${ue-unwrapped}/Engine/Content/Editor/Slate/Icons/EditorAppIcon.png \
@@ -272,12 +287,45 @@ in
       homepage = "https://www.unrealengine.com/";
       license = lib.licenses.unfree;
       sourceProvenance = with lib.sourceTypes; [binaryNativeCode];
-      maintainers = with lib.maintainers; [];
+      maintainers = [];
       platforms = ["x86_64-linux"];
       mainProgram = "unreal-engine";
     };
 
-    passthru = {
+    passthru = let
+      makeRunner = {
+        name,
+        packages,
+        license,
+      }:
+        buildRuntimeEnv {
+          inherit name;
+
+          inherit
+            extraProfile
+            extraPreBwrapCmds
+            extraBwrapArgs
+            extraEnv
+            privateTmp
+            ;
+          extraPkgs = pkgs: packages ++ extraPkgs pkgs;
+
+          runScript = writeShellScript name ''
+            if [ $# -eq 0 ]; then
+              echo "Usage: ${name} command-to-run args..." >&2
+              exit 1
+            fi
+            exec "$@"
+          '';
+
+          meta = {
+            description = "Run commands in the FHS environment used for Unreal Engine";
+            mainProgram = name;
+            inherit license;
+            platforms = ["x86_64-linux"];
+          };
+        };
+    in {
       inherit buildRuntimeEnv;
       run = makeRunner {
         name = "unreal-engine-run";
