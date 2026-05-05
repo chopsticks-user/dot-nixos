@@ -53,9 +53,10 @@
       default-password = "password";
     };
 
+    # todo: bulk import and accept arguments from system or user callsite
     overlays = [
       (final: _: {
-        unreal-engine = final.callPackage ./pkgs/unreal-engine/package.nix {};
+        unreal-engine = final.callPackage ./overlays/unreal-engine/package.nix {};
       })
     ];
 

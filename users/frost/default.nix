@@ -3,8 +3,6 @@
     "rider"
     "clion"
     "claude-code"
-    "unreal-engine"
-    "unreal-engine-run"
   ];
 
   home.packages = with pkgs; [
@@ -14,9 +12,6 @@
     jetbrains.clion
     godot
     blender
-    #unreal-engine
-    #unreal-engine.run
-    #unreal-engine.run-free
   ];
 
   profiles = {
@@ -40,7 +35,6 @@
     gaming.enable = true;
     discord.enable = true;
     obs.enable = true;
-    claude.enable = true;
     distrobox.enable = true;
     zed.enable = true;
   };
