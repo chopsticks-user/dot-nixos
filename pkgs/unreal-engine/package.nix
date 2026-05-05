@@ -54,6 +54,7 @@
   libxext,
   libxfixes,
   libxrandr,
+  libgbm,
   libxcb,
   # runtime only
   clang,
@@ -64,114 +65,64 @@
   udev,
   gnumake,
   openssl,
+  vulkan-validation-layers,
+  libX11,
+  libXext,
+  libXrender,
+  libXi,
+  libXcursor,
+  libXrandr,
+  libXScrnSaver,
+  libXfixes,
+  libXcomposite,
+  libXdamage,
+  pulseaudio,
+  libpulseaudio,
+  gcc,
+  libXinerama,
+  curl,
+  gtk3,
+  libxslt,
+  icu,
+  SDL2,
+  systemd,
+  cups,
+  gdk-pixbuf,
 }: let
-  found-version = let
-    versions = callPackage ./versions.nix {};
+  unreal-engine-unwrapped = let
+    defaultTarget = let
+      versions = callPackage ./versions.nix {};
+    in
+      if version == null
+      then lib.head versions
+      else
+        lib.findFirst (v: v.version == version)
+        (throw "No registered Unreal Engine version found to match version=${toString version}")
+        versions;
   in
-    if version == null
-    then lib.head versions
-    else
-      lib.findFirst (v: v.version == version)
-      (throw "No registered Unreal Engine version found to match version=${toString version}")
-      versions;
-
-  unwrappedLibs = [
-    alsa-lib
-    atk
-    at-spi2-atk
-    at-spi2-core
-    avahi
-    bzip2
-    cairo
-    dbus
-    libdrm
-    expat
-    mesa
-    gdbm
-    glib
-    libGL
-    libGLU
-    lttng-ust
-    lz4
-    xz
-    ncurses5
-    nspr
-    nss
-    pango
-    readline
-    sqlite
-    libuuid
-    libxkbcommon
-    zlib
-    zstd
-    fontconfig
-    freetype
-    libx11
-    libxcomposite
-    libxdamage
-    libxext
-    libxfixes
-    libxrandr
-    libxcb
-  ];
-
-  runtimeLibs =
-    unwrappedLibs
-    ++ [
-      glibc
-      vulkan-loader
-      udev
-      clang
-      cmake
-      dotnet-sdk
-      gnumake
-      openssl
-    ];
-
-  ue-unwrapped = stdenv.mkDerivation {
-    pname = "unreal-engine";
-    inherit (found-version) version;
-    src = lib.defaultTo found-version.src source;
-    sourceRoot = ".";
-    nativeBuildInputs = [
-      autoPatchelfHook
-      unzip
-    ];
-    buildInputs = unwrappedLibs;
-    noDumpEnvVars = true;
-    installPhase = ''
-      runHook preInstall
-      mkdir -p $out
-      cp -r . $out
-      rm -f $out/rc
-      runHook postInstall
-    '';
-    dontConfigure = true;
-    dontBuild = true;
-    preferLocalBuild = true;
-    dontStrip = true;
-    autoPatchelfIgnoreMissingDeps = [
-      "libandroid.so"
-      "libc.musl-x86_64.so.1"
-      "libc++_shared.so"
-      "libgdbm.so.4"
-      "libGLESv3.so"
-      "libicudata.so.53"
-      "libicudata.so.64"
-      "libicui18n.so.53"
-      "libicui18n.so.64"
-      "libicule.so.53"
-      "libicutu.so.64"
-      "libicuuc.so.53"
-      "libicuuc.so.64"
-      "liblog.so"
-      "liblttng-ust.so.0"
-      "libOpenSLES.so"
-      "libpskernel.so"
-      "libreadline.so.6"
-      "libUnrealEditor-uLangCore.so"
-    ];
-  };
+    stdenv.mkDerivation {
+      pname = "unreal-engine-unwrapped";
+      inherit (defaultTarget) version;
+      src = lib.defaultTo defaultTarget.src source;
+      sourceRoot = ".";
+      nativeBuildInputs = [
+        unzip
+      ];
+      noDumpEnvVars = true;
+      installPhase = ''
+        runHook preInstall
+        mkdir -p $out
+        cp -r . $out
+        rm -f $out/rc
+        runHook postInstall
+      '';
+      dontConfigure = true;
+      dontBuild = true;
+      dontPatchELF = true;
+      noAuditTmpdir = true;
+      preferLocalBuild = true;
+      dontStrip = true;
+    };
 
   buildRuntimeEnv = {
     extraPkgs ? _: [],
@@ -195,7 +146,77 @@
         inherit privateTmp;
 
         targetPkgs = pkgs:
-          runtimeLibs
+          [
+            glibc
+            vulkan-loader
+            udev
+            clang
+            cmake
+            dotnet-sdk
+            gnumake
+            openssl
+
+            # vulkan
+            vulkan-loader
+            vulkan-validation-layers
+            mesa
+            libGL
+            libGLU
+
+            # X11 libraries
+            libX11
+            libXext
+            libXrender
+            libXi
+            libXcursor
+            libXrandr
+            libXinerama
+            libxcb
+            libXScrnSaver
+            libXfixes
+            libXcomposite
+            libXdamage
+
+            # Audio
+            alsa-lib
+            pulseaudio
+            libpulseaudio
+
+            # Core system libraries
+            glibc
+            stdenv.cc.cc.lib
+            gcc.cc.lib
+
+            # Other runtime dependencies
+            libxkbcommon
+            fontconfig
+            freetype
+            zlib
+            openssl
+            curl
+            gtk3
+            ncurses5
+            libuuid
+            libxslt
+            icu
+            SDL2
+            udev
+            systemd
+            dbus
+            nss
+            nspr
+            at-spi2-atk
+            at-spi2-core
+            cups
+            libdrm
+            expat
+            cairo
+            pango
+            gdk-pixbuf
+            glib
+            atk
+            libgbm
+          ]
           ++ extraPkgs pkgs;
 
         profile = ''
@@ -212,10 +233,10 @@
           export UE_CACHE="''${XDG_CACHE_HOME:-$HOME/.cache}/unreal-engine"
 
           mkdir -p "$UE_CACHE"/{upper,work}
-          MARKER="$UE_CACHE/upper/.initialized-$(basename ${ue-unwrapped})"
+          MARKER="$UE_CACHE/upper/.initialized-$(basename ${unreal-engine-unwrapped})"
           if [ ! -e "$MARKER" ]; then
             rm -f "$UE_CACHE/upper"/.initialized-*
-            (cd ${ue-unwrapped} && find . -type d -print0) \
+            (cd ${unreal-engine-unwrapped} && find . -type d -print0) \
               | (cd "$UE_CACHE/upper" && xargs -0 mkdir -p)
             touch "$MARKER"
           fi
@@ -226,20 +247,20 @@
         extraBwrapArgs =
           [
             "--overlay-src"
-            "${ue-unwrapped}"
+            "${unreal-engine-unwrapped}"
 
             "--overlay"
             "\${UE_CACHE}/upper"
             "\${UE_CACHE}/work"
-            "${ue-unwrapped}"
+            "${unreal-engine-unwrapped}"
           ]
           ++ extraBwrapArgs;
       }
     );
 in
   buildRuntimeEnv {
-    name = "unreal-engine";
-    inherit (found-version) version;
+    pname = "unreal-engine";
+    inherit (unreal-engine-unwrapped) version;
 
     inherit
       extraProfile
@@ -248,10 +269,10 @@ in
       extraEnv
       privateTmp
       ;
-    extraPkgs = pkgs: [ue-unwrapped] ++ extraPkgs pkgs;
+    extraPkgs = pkgs: [unreal-engine-unwrapped] ++ extraPkgs pkgs;
 
-    runScript = writeShellScript "unreal-engine-launcher" ''
-      exec ${ue-unwrapped}/Engine/Binaries/Linux/UnrealEditor ${extraArgs} "$@"
+    runScript = writeShellScript "unreal-engine-wrapped" ''
+      exec ${unreal-engine-unwrapped}/Engine/Binaries/Linux/UnrealEditor ${extraArgs} "$@"
     '';
 
     extraInstallCommands = let
@@ -269,7 +290,7 @@ in
     in ''
       install -Dm444 ${desktopItem}/share/applications/unreal-engine.desktop \
         $out/share/applications/unreal-engine.desktop
-      install -Dm444 ${ue-unwrapped}/Engine/Content/Editor/Slate/Icons/EditorAppIcon.png \
+      install -Dm444 ${unreal-engine-unwrapped}/Engine/Content/Editor/Slate/Icons/EditorAppIcon.png \
         $out/share/icons/hicolor/24x24/apps/unreal-engine.png
     '';
 
@@ -285,12 +306,13 @@ in
 
     passthru = let
       makeRunner = {
-        name,
+        pname,
         packages,
         license,
       }:
         buildRuntimeEnv {
-          inherit name;
+          inherit pname;
+          inherit (unreal-engine-unwrapped) version;
 
           inherit
             extraProfile
@@ -301,9 +323,9 @@ in
             ;
           extraPkgs = pkgs: packages ++ extraPkgs pkgs;
 
-          runScript = writeShellScript name ''
+          runScript = writeShellScript pname ''
             if [ $# -eq 0 ]; then
-              echo "Usage: ${name} command-to-run args..." >&2
+              echo "Usage: ${pname} command-to-run args..." >&2
               exit 1
             fi
             exec "$@"
@@ -311,7 +333,7 @@ in
 
           meta = {
             description = "Run commands in the FHS environment used for Unreal Engine";
-            mainProgram = name;
+            mainProgram = pname;
             inherit license;
             platforms = ["x86_64-linux"];
           };
@@ -319,12 +341,12 @@ in
     in {
       inherit buildRuntimeEnv;
       run = makeRunner {
-        name = "unreal-engine-run";
-        packages = [ue-unwrapped];
+        pname = "unreal-engine-run";
+        packages = [unreal-engine-unwrapped];
         license = lib.licenses.unfree;
       };
       run-free = makeRunner {
-        name = "unreal-engine-run-free";
+        pname = "unreal-engine-run-free";
         packages = [];
         license = lib.licenses.free;
       };

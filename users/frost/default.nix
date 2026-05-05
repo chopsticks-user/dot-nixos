@@ -14,9 +14,9 @@
     jetbrains.clion
     godot
     blender
-    unreal-engine
-    unreal-engine.run
-    unreal-engine.run-free
+    #unreal-engine
+    #unreal-engine.run
+    #unreal-engine.run-free
   ];
 
   profiles = {
