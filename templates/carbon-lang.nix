@@ -22,59 +22,43 @@
           build --host_copt=-Wno-error=unused-command-line-argument
           build --host_cxxopt=-Wno-error=unused-command-line-argument
         '';
-      in {
-        devShells.default =
-          (pkgs.buildFHSEnv {
-            name = "carbon-dev";
-            targetPkgs = p:
-              (with p; [
-                bazelisk
-                pre-commit
-                python3
-              ])
-              ++ (with llvmPkgs; [
-                clang
-                lld
-                lldb
-                clang-tools
-                llvm
-              ])
-              ++ (with pkgs; [
-                zlib
-                zstd
-              ]);
-            runScript = "zsh";
-            profile = ''
-              export CC=${llvmPkgs.libcxxClang}/bin/clang
-              export CXX=${llvmPkgs.libcxxClang}/bin/clang++
-
-              install -m 644 ${userBazelrc} "$PWD/user.bazelrc"
-            '';
-          }).env;
-
-        apps = {
-          install = {
-            type = "app";
-            program = toString (pkgs.writeShellScript "install" ''
-              PROJECT_PATH="''${1:-$(git rev-parse --show-toplevel)}"
-              mkdir -p ~/.local/share/applications
-              cat > ~/.local/share/applications/clion-${meta.name}.desktop << DESKTOP
-              [Desktop Entry]
-              Name=CLion (${meta.name})
-              Exec=nix develop $PROJECT_PATH -c clion $PROJECT_PATH
-              Icon=clion
-              Type=Application
-              Categories=Development;
-              DESKTOP
-            '');
-          };
-          uninstall = {
-            type = "app";
-            program = toString (pkgs.writeShellScript "uninstall" ''
-              rm -f ~/.local/share/applications/clion-${meta.name}.desktop
-            '');
-          };
+        fhs = pkgs.buildFHSEnv {
+          name = "${meta.name}-fhs";
+          targetPkgs = p:
+            (with p; [
+              bazelisk
+              pre-commit
+              python3
+            ])
+            ++ (with llvmPkgs; [
+              clang
+              lld
+              lldb
+              clang-tools
+              llvm
+              libcxx
+            ])
+            ++ (with pkgs; [
+              zlib
+              zstd
+              (p.runCommand "bazel" {} ''
+                mkdir -p $out/bin
+                ln -s ${p.bazelisk}/bin/bazelisk $out/bin/bazel
+              '')
+            ]);
+          runScript = pkgs.writeShellScript "${meta.name}-fhs" ''
+            alias bazel=bazelisk
+            if [ $# -eq 0 ]; then exec zsh; else exec "$@"; fi
+          '';
+          profile = ''
+            export CC=${llvmPkgs.libcxxClang}/bin/clang
+            export CXX=${llvmPkgs.libcxxClang}/bin/clang++
+            export PATH="${pkgs.bazelisk}/bin:$PATH"
+            install -m 644 ${userBazelrc} "$(git rev-parse --show-toplevel)/user.bazelrc"
+          '';
         };
+      in {
+        devShells.default = fhs.env;
       }
     );
 }

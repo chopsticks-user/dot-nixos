@@ -58,6 +58,10 @@ in {
             command nh "$@"
           fi
         }
+
+        execnhu() {
+          nohup setsid "$@" >/dev/null 2>&1 &
+        }
       '';
       # plugins = [
       # {
