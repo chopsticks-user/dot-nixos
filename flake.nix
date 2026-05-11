@@ -160,6 +160,11 @@
           description = "";
           welcomeText = "";
         };
+        development-fhs = {
+          path = ./templates/development-fhs;
+          description = "";
+          welcomeText = "";
+        };
         default = self.templates.development;
       };
     };

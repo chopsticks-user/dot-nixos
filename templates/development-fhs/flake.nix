@@ -28,14 +28,27 @@
       system:
       let
         pkgs = import nixpkgs { inherit system; };
+        fhs =
+          let
+
+          in
+          pkgs.buildFHSEnv {
+            name = "${meta.name}";
+            targetPkgs = p: (with p; [ ]);
+
+            runScript = pkgs.writeShellScript "${meta.name}-fhs" ''
+              if [ $# -eq 0 ]; then
+                exec "$(getent passwd "$USER" | cut -d: -f7)"
+              else
+                exec "$@"
+              fi
+            '';
+
+            profile = "";
+          };
       in
       {
-        devShells.default = pkgs.mkShell {
-          packages = with pkgs; [
-          ];
-
-          shellHook = "";
-        };
+        devShells.default = fhs.env;
         apps =
           let
             desktopEntry = "${meta.desktopPath}/${meta.ide.exec}-${meta.name}.desktop";
@@ -55,7 +68,7 @@
                     cat > ${desktopEntry} <<DESKTOP
                     [Desktop Entry]
                     Name=${meta.ide.name} (${meta.name})
-                    Exec=nix develop ${developCmdArgumentPath} -c ${meta.ide.exec} $PROJECT_PATH
+                    Exec=nix run ${developCmdArgumentPath} -- ${meta.ide.exec} $PROJECT_PATH
                     Icon=${meta.ide.icon}
                     Type=Application
                     Categories=Development;
