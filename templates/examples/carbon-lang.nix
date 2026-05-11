@@ -47,7 +47,7 @@
           '';
         in
           pkgs.buildFHSEnv {
-            name = "${meta.name}-fhs";
+            inherit (meta) name;
             targetPkgs = p:
               (with p; [
                 bazelisk
@@ -66,12 +66,17 @@
                 zlib
                 zstd
                 stdenv.cc.libc.dev
+              ])
+              ++ [
                 (p.runCommand "bazel" {} ''
                   mkdir -p $out/bin
                   ln -s ${p.bazelisk}/bin/bazelisk $out/bin/bazel
                 '')
-              ]);
-            runScript = pkgs.writeShellScript "${meta.name}-fhs" ''
+                (p.writeShellScriptBin "carbon" ''
+                  exec ${p.bazelisk}/bin/bazelisk run --config=ci //toolchain -- "$@"
+                '')
+              ];
+            runScript = pkgs.writeShellScript "${meta.name}" ''
               if [ $# -eq 0 ]; then
                 exec "$(getent passwd "$USER" | cut -d: -f7)"
               else
@@ -92,7 +97,7 @@
         in {
           default = {
             type = "app";
-            program = "${fhs}/bin/${meta.name}-fhs";
+            program = "${fhs}/bin/${meta.name}";
           };
           install = let
             developCmdArgumentPath =
@@ -116,20 +121,22 @@
           };
           uninstall = {
             type = "app";
-            program = toString (pkgs.writeShellScript "uninstall" ''
-              set -eu
-              rm -rf \
-                "$HOME/.cache/bazel" \
-                "$HOME/.cache/bazelisk \
-                "$HOME/.cache/bazel-disk-cache" \
-                "$HOME/.cache/carbon-lang-build-cache"
+            program = toString (
+              pkgs.writeShellScript "uninstall" ''
+                set -eu
+                rm -rf \
+                  "$HOME/.cache/bazel" \
+                  "$HOME/.cache/bazelisk \
+                  "$HOME/.cache/bazel-disk-cache" \
+                  "$HOME/.cache/carbon-lang-build-cache"
 
-              if repo="$(git rev-parse --show-toplevel 2>/dev/null)"; then
-                rm -rf "$repo"/bazel-* "$repo/user.bazelrc"
-              fi
+                if repo="$(git rev-parse --show-toplevel 2>/dev/null)"; then
+                  rm -rf "$repo"/bazel-* "$repo/user.bazelrc"
+                fi
 
-              rm -f ${desktopEntry}
-            '');
+                rm -f ${desktopEntry}
+              ''
+            );
           };
         };
       }

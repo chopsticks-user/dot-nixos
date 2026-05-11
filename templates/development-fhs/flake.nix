@@ -33,10 +33,11 @@
 
           in
           pkgs.buildFHSEnv {
-            name = "${meta.name}";
-            targetPkgs = p: (with p; [ ]);
+            inherit (meta) name;
+            targetPkgs = p: [
+            ];
 
-            runScript = pkgs.writeShellScript "${meta.name}-fhs" ''
+            runScript = pkgs.writeShellScript "${meta.name}" ''
               if [ $# -eq 0 ]; then
                 exec "$(getent passwd "$USER" | cut -d: -f7)"
               else
@@ -54,6 +55,10 @@
             desktopEntry = "${meta.desktopPath}/${meta.ide.exec}-${meta.name}.desktop";
           in
           {
+            default = {
+              type = "app";
+              program = "${fhs}/bin/${meta.name}";
+            };
             install =
               let
                 developCmdArgumentPath =
