@@ -37,6 +37,7 @@
 
   outputs =
     {
+      self,
       nixpkgs,
       nixpkgs-stable,
       home-manager,
@@ -152,5 +153,14 @@
           )
         ) global-constants.system.supported
       );
+
+      templates = {
+        development = {
+          path = ./templates/development;
+          description = "";
+          welcomeText = "";
+        };
+        default = self.templates.development;
+      };
     };
 }
