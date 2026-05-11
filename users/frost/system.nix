@@ -5,8 +5,6 @@
   ...
 }:
 {
-  programs.zsh.enable = true;
-
   # constants doesn't have .username here; username must be hardcoded
   users.users.frost = {
     isNormalUser = true;
@@ -17,5 +15,14 @@
       "networkmanager"
     ];
     shell = pkgs.zsh;
+  };
+
+  programs = {
+    zsh.enable = true;
+  };
+
+  features = {
+    hyprland.enable = true;
+    distrobox.enable = true;
   };
 }

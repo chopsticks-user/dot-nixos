@@ -1,6 +1,5 @@
 # nix
-result
-result-*
+result*
 .direnv
 
 # IDEs

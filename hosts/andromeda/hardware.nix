@@ -2,13 +2,12 @@
   config,
   inputs,
   ...
-}:
-{
-  imports = [
-    inputs.nixos-hardware.nixosModules.common-cpu-intel
-    inputs.nixos-hardware.nixosModules.common-gpu-nvidia-nonprime
-    inputs.nixos-hardware.nixosModules.common-pc-ssd
-    inputs.nixos-hardware.nixosModules.common-pc
+}: {
+  imports = with inputs.nixos-hardware.nixosModules; [
+    common-cpu-intel
+    common-gpu-nvidia-nonprime
+    common-pc-ssd
+    common-pc
     ./generated.nix
   ];
 

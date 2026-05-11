@@ -10,7 +10,6 @@
     grub.enable = true;
     nh.enable = true;
     docs.enable = true;
-    hyprland.enable = true;
     fcitx.enable = true;
     ssh.enable = true;
   };
@@ -21,9 +20,4 @@
   };
 
   time.timeZone = "America/New_York";
-
-  virtualisation.podman = {
-    enable = true;
-    dockerCompat = true;
-  };
 }

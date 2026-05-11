@@ -8,5 +8,6 @@
     ./ssh.nix
     ./grub.nix
     ./docs.nix
+    ./distrobox.nix
   ];
 }
