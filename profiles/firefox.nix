@@ -3,9 +3,11 @@
   config,
   constants,
   ...
-}: let
+}:
+let
   cfg = config.profiles.firefox;
-in {
+in
+{
   options.profiles.firefox = {
     enable = lib.mkEnableOption "firefox";
   };
@@ -44,20 +46,25 @@ in {
           "browser.eme.ui.firstContentShown" = true;
           "browser.engagement.fxa-toolbar-menu-button.has-used" = true;
           "browser.firefox-view.feature-tour" = "{\"screen\":\"\",\"complete\":true}";
-          "browser.ipProtection.locationListCache" = "[{\"name\":\"CatchAll Anycast\",\"code\":\"US\",\"cities\":[{\"name\":\"USA\",\"code\":\"Q30\",\"servers\":[{\"port\":2499,\"hostname\":\"p.m1.fastly-masque.net\",\"quarantined\":false,\"protocols\":[{\"name\":\"connect\",\"host\":\"p.m1.fastly-masque.net\",\"port\":2499,\"scheme\":\"https\"}]}]}]}]";
+          "browser.ipProtection.locationListCache" =
+            "[{\"name\":\"CatchAll Anycast\",\"code\":\"US\",\"cities\":[{\"name\":\"USA\",\"code\":\"Q30\",\"servers\":[{\"port\":2499,\"hostname\":\"p.m1.fastly-masque.net\",\"quarantined\":false,\"protocols\":[{\"name\":\"connect\",\"host\":\"p.m1.fastly-masque.net\",\"port\":2499,\"scheme\":\"https\"}]}]}]}]";
           "browser.laterrun.bookkeeping.profileCreationTime" = 1775861104;
           "browser.laterrun.bookkeeping.sessionCount" = 1;
           "browser.laterrun.enabled" = true;
           "browser.migration.version" = 165;
-          "browser.ml.chat.nimbus" = "ai-chatbot-page-summarization-mvp-treatment-a-callout-badge-rollout-v4:treatment-a-callout-badge";
-          "browser.newtabpage.activity-stream.discoverystream.sections.interestPicker.visibleSections" = "top_stories_section,small-wins,food,in-the-zeitgeist,music,nfl,headlines,downtime,home,connections,government,education,photojournalism,featured-videos,arts,explained,society-parenting,long-reads,education-science,finance";
-          "browser.newtabpage.activity-stream.discoverystream.spoc.impressions" = "{\"CAISC2ZpbmFuY2VidXp6\":[1775937082483,1775937090186,1775937102235,1775937111903,1775938517013,1775940980355,1775941029671,1775941875062,1775942339466,1775943302589],\"CAISEmVuZXJneWJpbGxjcnVuY2hlcg\":[1775943302607]}";
+          "browser.ml.chat.nimbus" =
+            "ai-chatbot-page-summarization-mvp-treatment-a-callout-badge-rollout-v4:treatment-a-callout-badge";
+          "browser.newtabpage.activity-stream.discoverystream.sections.interestPicker.visibleSections" =
+            "top_stories_section,small-wins,food,in-the-zeitgeist,music,nfl,headlines,downtime,home,connections,government,education,photojournalism,featured-videos,arts,explained,society-parenting,long-reads,education-science,finance";
+          "browser.newtabpage.activity-stream.discoverystream.spoc.impressions" =
+            "{\"CAISC2ZpbmFuY2VidXp6\":[1775937082483,1775937090186,1775937102235,1775937111903,1775938517013,1775940980355,1775941029671,1775941875062,1775942339466,1775943302589],\"CAISEmVuZXJneWJpbGxjcnVuY2hlcg\":[1775943302607]}";
           "browser.newtabpage.activity-stream.impressionId" = "{b9612aa1-b3e0-4491-9a58-f586ebeb0239}";
           "browser.newtabpage.activity-stream.telemetry.surfaceId" = "NEW_TAB_EN_US";
           "browser.newtabpage.enabled" = true;
           "browser.newtabpage.pinned" = "[]";
           "browser.newtabpage.storageVersion" = 1;
-          "browser.pageActions.persistedActions" = "{\"ids\":[\"bookmark\"],\"idsInUrlbar\":[\"bookmark\"],\"idsInUrlbarPreProton\":[],\"version\":1}";
+          "browser.pageActions.persistedActions" =
+            "{\"ids\":[\"bookmark\"],\"idsInUrlbar\":[\"bookmark\"],\"idsInUrlbarPreProton\":[],\"version\":1}";
           "browser.pagethumbnails.storage_version" = 3;
           "browser.policies.applied" = true;
           "browser.proton.toolbar.version" = 3;
@@ -81,7 +88,8 @@ in {
           "browser.toolbars.bookmarks.visibility" = "always";
           "browser.topsites.contile.cacheValidFor" = 10800;
           "browser.topsites.contile.lastFetch" = 1775943221;
-          "browser.uiCustomization.state" = "{\"placements\":{\"widget-overflow-fixed-list\":[],\"unified-extensions-area\":[\"_6b733b82-9261-47ee-a595-2dda294a4d08_-browser-action\",\"addon_darkreader_org-browser-action\",\"_react-devtools-browser-action\",\"stringieee_gmail_com-browser-action\",\"_dbd5152f-0107-427d-96a5-416684b6e50b_-browser-action\",\"song-id_losnappas-browser-action\",\"_bc118c9c-5c07-4347-b502-657d03d87065_-browser-action\"],\"nav-bar\":[\"back-button\",\"forward-button\",\"stop-reload-button\",\"customizableui-special-spring1\",\"vertical-spacer\",\"urlbar-container\",\"customizableui-special-spring2\",\"downloads-button\",\"fxa-toolbar-menu-button\",\"unified-extensions-button\",\"ublock0_raymondhill_net-browser-action\"],\"toolbar-menubar\":[\"menubar-items\"],\"TabsToolbar\":[\"firefox-view-button\",\"tabbrowser-tabs\",\"new-tab-button\",\"alltabs-button\"],\"vertical-tabs\":[],\"PersonalToolbar\":[\"import-button\",\"personal-bookmarks\"]},\"seen\":[\"developer-button\",\"screenshot-button\",\"_6b733b82-9261-47ee-a595-2dda294a4d08_-browser-action\",\"addon_darkreader_org-browser-action\",\"_react-devtools-browser-action\",\"stringieee_gmail_com-browser-action\",\"_dbd5152f-0107-427d-96a5-416684b6e50b_-browser-action\",\"song-id_losnappas-browser-action\",\"_bc118c9c-5c07-4347-b502-657d03d87065_-browser-action\",\"ublock0_raymondhill_net-browser-action\"],\"dirtyAreaCache\":[\"nav-bar\",\"vertical-tabs\",\"PersonalToolbar\",\"unified-extensions-area\",\"toolbar-menubar\",\"TabsToolbar\"],\"currentVersion\":23,\"newElementCount\":2}";
+          "browser.uiCustomization.state" =
+            "{\"placements\":{\"widget-overflow-fixed-list\":[],\"unified-extensions-area\":[\"_6b733b82-9261-47ee-a595-2dda294a4d08_-browser-action\",\"addon_darkreader_org-browser-action\",\"_react-devtools-browser-action\",\"stringieee_gmail_com-browser-action\",\"_dbd5152f-0107-427d-96a5-416684b6e50b_-browser-action\",\"song-id_losnappas-browser-action\",\"_bc118c9c-5c07-4347-b502-657d03d87065_-browser-action\"],\"nav-bar\":[\"back-button\",\"forward-button\",\"stop-reload-button\",\"customizableui-special-spring1\",\"vertical-spacer\",\"urlbar-container\",\"customizableui-special-spring2\",\"downloads-button\",\"fxa-toolbar-menu-button\",\"unified-extensions-button\",\"ublock0_raymondhill_net-browser-action\"],\"toolbar-menubar\":[\"menubar-items\"],\"TabsToolbar\":[\"firefox-view-button\",\"tabbrowser-tabs\",\"new-tab-button\",\"alltabs-button\"],\"vertical-tabs\":[],\"PersonalToolbar\":[\"import-button\",\"personal-bookmarks\"]},\"seen\":[\"developer-button\",\"screenshot-button\",\"_6b733b82-9261-47ee-a595-2dda294a4d08_-browser-action\",\"addon_darkreader_org-browser-action\",\"_react-devtools-browser-action\",\"stringieee_gmail_com-browser-action\",\"_dbd5152f-0107-427d-96a5-416684b6e50b_-browser-action\",\"song-id_losnappas-browser-action\",\"_bc118c9c-5c07-4347-b502-657d03d87065_-browser-action\",\"ublock0_raymondhill_net-browser-action\"],\"dirtyAreaCache\":[\"nav-bar\",\"vertical-tabs\",\"PersonalToolbar\",\"unified-extensions-area\",\"toolbar-menubar\",\"TabsToolbar\"],\"currentVersion\":23,\"newElementCount\":2}";
           "browser.urlbar.lastUrlbarSearchSeconds" = 1775943310;
           "browser.urlbar.placeholderName" = "Google";
           "browser.urlbar.quickactions.timesShownOnboardingLabel" = 3;
@@ -109,7 +117,8 @@ in {
           "extensions.blocklist.pingCountVersion" = -1;
           "extensions.colorway-builtin-themes-cleanup" = 1;
           "extensions.databaseSchema" = 37;
-          "extensions.dnr.lastStoreUpdateTag.7c2b640a-d211-460e-a3d5-201281aab9be" = "{e40b0787-aff8-4a49-bc8b-df029d1a7703}";
+          "extensions.dnr.lastStoreUpdateTag.7c2b640a-d211-460e-a3d5-201281aab9be" =
+            "{e40b0787-aff8-4a49-bc8b-df029d1a7703}";
           "extensions.getAddons.cache.lastUpdate" = 1775861135;
           "extensions.getAddons.databaseSchema" = 6;
           "extensions.lastAppBuildId" = "20260403140140";
@@ -117,18 +126,24 @@ in {
           "extensions.lastPlatformVersion" = "149.0.2";
           "extensions.pendingOperations" = false;
           "extensions.pictureinpicture.enable_picture_in_picture_overrides" = true;
-          "extensions.quarantinedDomains.list" = "autoatendimento.bb.com.br,ibpf.sicredi.com.br,ibpj.sicredi.com.br,internetbanking.caixa.gov.br,www.ib12.bradesco.com.br,www2.bancobrasil.com.br";
+          "extensions.quarantinedDomains.list" =
+            "autoatendimento.bb.com.br,ibpf.sicredi.com.br,ibpj.sicredi.com.br,internetbanking.caixa.gov.br,www.ib12.bradesco.com.br,www2.bancobrasil.com.br";
           "extensions.signatureCheckpoint" = 1;
           "extensions.webextensions.ExtensionStorageIDB.migrated.@react-devtools" = true;
           "extensions.webextensions.ExtensionStorageIDB.migrated.addon@darkreader.org" = true;
           "extensions.webextensions.ExtensionStorageIDB.migrated.song-id@losnappas" = true;
           "extensions.webextensions.ExtensionStorageIDB.migrated.stringieee@gmail.com" = true;
           "extensions.webextensions.ExtensionStorageIDB.migrated.uBlock0@raymondhill.net" = true;
-          "extensions.webextensions.ExtensionStorageIDB.migrated.{6b733b82-9261-47ee-a595-2dda294a4d08}" = true;
-          "extensions.webextensions.ExtensionStorageIDB.migrated.{a5260852-8d08-4979-8116-38f1129dfd22}" = true;
-          "extensions.webextensions.ExtensionStorageIDB.migrated.{bc118c9c-5c07-4347-b502-657d03d87065}" = true;
-          "extensions.webextensions.ExtensionStorageIDB.migrated.{dbd5152f-0107-427d-96a5-416684b6e50b}" = true;
-          "extensions.webextensions.uuids" = "{\"data-leak-blocker@mozilla.com\":\"34bca731-768d-4491-a47d-4f1b1527a16d\",\"formautofill@mozilla.org\":\"1162f606-c985-4b3f-902f-34caa3738ce0\",\"ipp-activator@mozilla.com\":\"3262c851-ede5-4c48-9924-094ed6d25189\",\"pictureinpicture@mozilla.org\":\"14bdffd6-a019-404c-9431-968e93ccf28b\",\"addons-search-detection@mozilla.com\":\"e21a77aa-1514-43a4-8342-788a228a1695\",\"webcompat@mozilla.org\":\"9a310967-e580-48bf-b3e8-4eafebbc122d\",\"newtab@mozilla.org\":\"6bcef125-a757-4438-8400-9869c7584629\",\"default-theme@mozilla.org\":\"96821c29-0378-4acc-8fe4-f67219e2c41c\",\"{6b733b82-9261-47ee-a595-2dda294a4d08}\":\"7c2b640a-d211-460e-a3d5-201281aab9be\",\"{a5260852-8d08-4979-8116-38f1129dfd22}\":\"e9c39ecf-0326-4b2d-a49c-e2b9180acde8\",\"addon@darkreader.org\":\"9fe72872-a0a0-4060-8bac-a878d34f26da\",\"@react-devtools\":\"fde5f002-e6f1-47ac-a748-bf0022b12491\",\"stringieee@gmail.com\":\"f6bc3c3f-be03-46dd-b2da-6b4fb8c1730f\",\"{dbd5152f-0107-427d-96a5-416684b6e50b}\":\"ebdef3ff-80ce-4630-9b98-8ae998042082\",\"song-id@losnappas\":\"5c6a52f4-9baf-4435-9581-82e0c4031b8d\",\"{bc118c9c-5c07-4347-b502-657d03d87065}\":\"9a14a427-efc7-48fb-999a-2ee36f41bb76\",\"uBlock0@raymondhill.net\":\"3de384de-7cd7-4b75-9eb4-d4a84eb4f7a6\"}";
+          "extensions.webextensions.ExtensionStorageIDB.migrated.{6b733b82-9261-47ee-a595-2dda294a4d08}" =
+            true;
+          "extensions.webextensions.ExtensionStorageIDB.migrated.{a5260852-8d08-4979-8116-38f1129dfd22}" =
+            true;
+          "extensions.webextensions.ExtensionStorageIDB.migrated.{bc118c9c-5c07-4347-b502-657d03d87065}" =
+            true;
+          "extensions.webextensions.ExtensionStorageIDB.migrated.{dbd5152f-0107-427d-96a5-416684b6e50b}" =
+            true;
+          "extensions.webextensions.uuids" =
+            "{\"data-leak-blocker@mozilla.com\":\"34bca731-768d-4491-a47d-4f1b1527a16d\",\"formautofill@mozilla.org\":\"1162f606-c985-4b3f-902f-34caa3738ce0\",\"ipp-activator@mozilla.com\":\"3262c851-ede5-4c48-9924-094ed6d25189\",\"pictureinpicture@mozilla.org\":\"14bdffd6-a019-404c-9431-968e93ccf28b\",\"addons-search-detection@mozilla.com\":\"e21a77aa-1514-43a4-8342-788a228a1695\",\"webcompat@mozilla.org\":\"9a310967-e580-48bf-b3e8-4eafebbc122d\",\"newtab@mozilla.org\":\"6bcef125-a757-4438-8400-9869c7584629\",\"default-theme@mozilla.org\":\"96821c29-0378-4acc-8fe4-f67219e2c41c\",\"{6b733b82-9261-47ee-a595-2dda294a4d08}\":\"7c2b640a-d211-460e-a3d5-201281aab9be\",\"{a5260852-8d08-4979-8116-38f1129dfd22}\":\"e9c39ecf-0326-4b2d-a49c-e2b9180acde8\",\"addon@darkreader.org\":\"9fe72872-a0a0-4060-8bac-a878d34f26da\",\"@react-devtools\":\"fde5f002-e6f1-47ac-a748-bf0022b12491\",\"stringieee@gmail.com\":\"f6bc3c3f-be03-46dd-b2da-6b4fb8c1730f\",\"{dbd5152f-0107-427d-96a5-416684b6e50b}\":\"ebdef3ff-80ce-4630-9b98-8ae998042082\",\"song-id@losnappas\":\"5c6a52f4-9baf-4435-9581-82e0c4031b8d\",\"{bc118c9c-5c07-4347-b502-657d03d87065}\":\"9a14a427-efc7-48fb-999a-2ee36f41bb76\",\"uBlock0@raymondhill.net\":\"3de384de-7cd7-4b75-9eb4-d4a84eb4f7a6\"}";
           "gecko.handlerService.defaultHandlersVersion" = 1;
           "identity.fxaccounts.account.device.name" = "frost’s Firefox on andromeda";
           "identity.fxaccounts.account.telemetry.sanitized_uid" = "31d1bf0e78d6ec5439a65167e01393f3";
@@ -138,7 +153,8 @@ in {
           "idle.lastDailyNotification" = 1775864652;
           "media.eme.enabled" = true;
           "media.gmp-gmpopenh264.abi" = "x86_64-gcc3";
-          "media.gmp-gmpopenh264.hashValue" = "f5246bf14d038adf4ce0c4360262ab722bc3de4220f047c3d542b4c564074b4877dc8659e3125c5171c749e7ce93f20cc63777eb5e1539e960670cbc5f30ac85";
+          "media.gmp-gmpopenh264.hashValue" =
+            "f5246bf14d038adf4ce0c4360262ab722bc3de4220f047c3d542b4c564074b4877dc8659e3125c5171c749e7ce93f20cc63777eb5e1539e960670cbc5f30ac85";
           "media.gmp-gmpopenh264.lastDownload" = 1775861135;
           "media.gmp-gmpopenh264.lastInstallStart" = 1775861135;
           "media.gmp-gmpopenh264.lastUpdate" = 1775861135;
@@ -147,7 +163,8 @@ in {
           "media.gmp-manager.lastCheck" = 1775890929;
           "media.gmp-manager.lastEmptyCheck" = 1775890929;
           "media.gmp-widevinecdm.abi" = "x86_64-gcc3";
-          "media.gmp-widevinecdm.hashValue" = "421214210a09a9f9ed8ce482ef857f1c2b29ce1739240d1ec99a61caa3d80db3393752275722bdf5f503489f12a753215fe8a0c82de3aca23780d4ffe5792eb1";
+          "media.gmp-widevinecdm.hashValue" =
+            "421214210a09a9f9ed8ce482ef857f1c2b29ce1739240d1ec99a61caa3d80db3393752275722bdf5f503489f12a753215fe8a0c82de3aca23780d4ffe5792eb1";
           "media.gmp-widevinecdm.lastDownload" = 1775861135;
           "media.gmp-widevinecdm.lastInstallStart" = 1775861135;
           "media.gmp-widevinecdm.lastUpdate" = 1775861135;
@@ -271,7 +288,8 @@ in {
           "services.sync.syncInterval" = 600000;
           "services.sync.syncThreshold" = 300;
           "services.sync.username" = "frostyfrost273@gmail.com";
-          "sidebar.backupState" = "{\"command\":\"\",\"panelOpen\":false,\"launcherExpanded\":false,\"launcherVisible\":false}";
+          "sidebar.backupState" =
+            "{\"command\":\"\",\"panelOpen\":false,\"launcherExpanded\":false,\"launcherVisible\":false}";
           "sidebar.notification.badge.aichat" = true;
           "sidebar.visibility" = "hide-sidebar";
           "storage.vacuum.last.index" = 0;

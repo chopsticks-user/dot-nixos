@@ -3,9 +3,11 @@
   config,
   pkgs,
   ...
-}: let
+}:
+let
   cfg = config.features.fcitx;
-in {
+in
+{
   options.features.fcitx.enable = lib.mkEnableOption "fcitx";
 
   config = lib.mkIf cfg.enable {

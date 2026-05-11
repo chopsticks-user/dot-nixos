@@ -3,9 +3,11 @@
   config,
   pkgs,
   ...
-}: let
+}:
+let
   cfg = config.profiles.obs;
-in {
+in
+{
   options.profiles.obs = {
     enable = lib.mkEnableOption "obs";
   };

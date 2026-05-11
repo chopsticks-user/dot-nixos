@@ -10,12 +10,12 @@
   writeShellScript,
   makeDesktopItem,
   # extensions
-  extraPkgs ? _: [],
+  extraPkgs ? _: [ ],
   extraProfile ? "",
   extraPreBwrapCmds ? "",
-  extraBwrapArgs ? [],
+  extraBwrapArgs ? [ ],
   extraArgs ? "",
-  extraEnv ? {},
+  extraEnv ? { },
   privateTmp ? true,
   # required for ue-unwrapped
   alsa-lib,
@@ -88,18 +88,21 @@
   systemd,
   cups,
   gdk-pixbuf,
-}: let
-  unreal-engine-unwrapped = let
-    defaultTarget = let
-      versions = callPackage ./versions.nix {};
+}:
+let
+  unreal-engine-unwrapped =
+    let
+      defaultTarget =
+        let
+          versions = callPackage ./versions.nix { };
+        in
+        if version == null then
+          lib.head versions
+        else
+          lib.findFirst (
+            v: v.version == version
+          ) (throw "No registered Unreal Engine version found to match version=${toString version}") versions;
     in
-      if version == null
-      then lib.head versions
-      else
-        lib.findFirst (v: v.version == version)
-        (throw "No registered Unreal Engine version found to match version=${toString version}")
-        versions;
-  in
     stdenv.mkDerivation {
       pname = "unreal-engine-unwrapped";
       inherit (defaultTarget) version;
@@ -124,15 +127,16 @@
       dontStrip = true;
     };
 
-  buildRuntimeEnv = {
-    extraPkgs ? _: [],
-    extraProfile ? "",
-    extraPreBwrapCmds ? "",
-    extraBwrapArgs ? [],
-    extraEnv ? {},
-    privateTmp ? true,
-    ...
-  } @ args:
+  buildRuntimeEnv =
+    {
+      extraPkgs ? _: [ ],
+      extraProfile ? "",
+      extraPreBwrapCmds ? "",
+      extraBwrapArgs ? [ ],
+      extraEnv ? { },
+      privateTmp ? true,
+      ...
+    }@args:
     buildFHSEnv (
       (removeAttrs args [
         "extraPkgs"
@@ -145,7 +149,8 @@
       // {
         inherit privateTmp;
 
-        targetPkgs = pkgs:
+        targetPkgs =
+          pkgs:
           [
             glibc
             vulkan-loader
@@ -244,38 +249,38 @@
           ${extraPreBwrapCmds}
         '';
 
-        extraBwrapArgs =
-          [
-            "--overlay-src"
-            "${unreal-engine-unwrapped}"
+        extraBwrapArgs = [
+          "--overlay-src"
+          "${unreal-engine-unwrapped}"
 
-            "--overlay"
-            "\${UE_CACHE}/upper"
-            "\${UE_CACHE}/work"
-            "${unreal-engine-unwrapped}"
-          ]
-          ++ extraBwrapArgs;
+          "--overlay"
+          "\${UE_CACHE}/upper"
+          "\${UE_CACHE}/work"
+          "${unreal-engine-unwrapped}"
+        ]
+        ++ extraBwrapArgs;
       }
     );
 in
-  buildRuntimeEnv {
-    pname = "unreal-engine";
-    inherit (unreal-engine-unwrapped) version;
+buildRuntimeEnv {
+  pname = "unreal-engine";
+  inherit (unreal-engine-unwrapped) version;
 
-    inherit
-      extraProfile
-      extraPreBwrapCmds
-      extraBwrapArgs
-      extraEnv
-      privateTmp
-      ;
-    extraPkgs = pkgs: [unreal-engine-unwrapped] ++ extraPkgs pkgs;
+  inherit
+    extraProfile
+    extraPreBwrapCmds
+    extraBwrapArgs
+    extraEnv
+    privateTmp
+    ;
+  extraPkgs = pkgs: [ unreal-engine-unwrapped ] ++ extraPkgs pkgs;
 
-    runScript = writeShellScript "unreal-engine-wrapped" ''
-      exec ${unreal-engine-unwrapped}/Engine/Binaries/Linux/UnrealEditor ${extraArgs} "$@"
-    '';
+  runScript = writeShellScript "unreal-engine-wrapped" ''
+    exec ${unreal-engine-unwrapped}/Engine/Binaries/Linux/UnrealEditor ${extraArgs} "$@"
+  '';
 
-    extraInstallCommands = let
+  extraInstallCommands =
+    let
       desktopItem = makeDesktopItem {
         name = "unreal-engine";
         desktopName = "Unreal Engine";
@@ -284,32 +289,38 @@ in
         icon = "unreal-engine";
         terminal = false;
         type = "Application";
-        categories = ["Development" "IDE"];
+        categories = [
+          "Development"
+          "IDE"
+        ];
         startupNotify = false;
       };
-    in ''
+    in
+    ''
       install -Dm444 ${desktopItem}/share/applications/unreal-engine.desktop \
         $out/share/applications/unreal-engine.desktop
       install -Dm444 ${unreal-engine-unwrapped}/Engine/Content/Editor/Slate/Icons/EditorAppIcon.png \
         $out/share/icons/hicolor/24x24/apps/unreal-engine.png
     '';
 
-    meta = {
-      description = "The most powerful real-time 3D creation tool";
-      homepage = "https://www.unrealengine.com/";
-      license = lib.licenses.unfree;
-      sourceProvenance = with lib.sourceTypes; [binaryNativeCode];
-      maintainers = [];
-      platforms = ["x86_64-linux"];
-      mainProgram = "unreal-engine";
-    };
+  meta = {
+    description = "The most powerful real-time 3D creation tool";
+    homepage = "https://www.unrealengine.com/";
+    license = lib.licenses.unfree;
+    sourceProvenance = with lib.sourceTypes; [ binaryNativeCode ];
+    maintainers = [ ];
+    platforms = [ "x86_64-linux" ];
+    mainProgram = "unreal-engine";
+  };
 
-    passthru = let
-      makeRunner = {
-        pname,
-        packages,
-        license,
-      }:
+  passthru =
+    let
+      makeRunner =
+        {
+          pname,
+          packages,
+          license,
+        }:
         buildRuntimeEnv {
           inherit pname;
           inherit (unreal-engine-unwrapped) version;
@@ -335,20 +346,21 @@ in
             description = "Run commands in the FHS environment used for Unreal Engine";
             mainProgram = pname;
             inherit license;
-            platforms = ["x86_64-linux"];
+            platforms = [ "x86_64-linux" ];
           };
         };
-    in {
+    in
+    {
       inherit buildRuntimeEnv;
       run = makeRunner {
         pname = "unreal-engine-run";
-        packages = [unreal-engine-unwrapped];
+        packages = [ unreal-engine-unwrapped ];
         license = lib.licenses.unfree;
       };
       run-free = makeRunner {
         pname = "unreal-engine-run-free";
-        packages = [];
+        packages = [ ];
         license = lib.licenses.free;
       };
     };
-  }
+}

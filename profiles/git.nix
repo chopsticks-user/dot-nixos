@@ -2,9 +2,11 @@
   lib,
   config,
   ...
-}: let
+}:
+let
   cfg = config.profiles.git;
-in {
+in
+{
   options.profiles.git = {
     enable = lib.mkEnableOption "git";
     user = {
@@ -30,7 +32,7 @@ in {
 
       gh = {
         enable = true;
-        settings = {};
+        settings = { };
       };
     };
   };

@@ -2,7 +2,8 @@
   pkgs,
   constants,
   ...
-}: {
+}:
+{
   features = {
     core = {
       enable = true;

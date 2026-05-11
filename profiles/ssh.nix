@@ -2,9 +2,11 @@
   lib,
   config,
   ...
-}: let
+}:
+let
   cfg = config.profiles.ssh;
-in {
+in
+{
   options.profiles.ssh = {
     enable = lib.mkEnableOption "ssh";
   };

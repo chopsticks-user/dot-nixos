@@ -1,7 +1,8 @@
 {
   lib,
   requireFile,
-}: let
+}:
+let
   # sha256 obtained by "nix hash file --sri --type sha256 <INSTALLER_ZIP>"
   versions = [
     {
@@ -11,11 +12,13 @@
     }
   ];
 in
-  lib.flip map versions ({
+lib.flip map versions (
+  {
     version,
     sha256,
     installer,
-  }: {
+  }:
+  {
     inherit version;
     src = requireFile {
       name = installer;
@@ -28,4 +31,5 @@ in
       '';
       inherit sha256;
     };
-  })
+  }
+)

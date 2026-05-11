@@ -2,9 +2,11 @@
   lib,
   config,
   ...
-}: let
+}:
+let
   cfg = config.profiles.claude;
-in {
+in
+{
   options.profiles.claude = {
     enable = lib.mkEnableOption "claude";
   };

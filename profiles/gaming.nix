@@ -4,9 +4,11 @@
   pkgs,
   inputs,
   ...
-}: let
+}:
+let
   cfg = config.profiles.gaming;
-in {
+in
+{
   imports = [
     inputs.steam-config-nix.homeModules.default
   ];
@@ -31,7 +33,7 @@ in {
         ExecStart = "${pkgs.gamemode}/bin/gamemoded -r";
         Restart = "always";
       };
-      Install.WantedBy = ["default.target"];
+      Install.WantedBy = [ "default.target" ];
     };
 
     # todo: enable at system level to provide cpu-governed optimizations
@@ -48,7 +50,7 @@ in {
       closeSteam = true;
       defaultCompatTool = "proton_experimental";
 
-      apps = {};
+      apps = { };
     };
 
     home.sessionVariables = {

@@ -2,9 +2,11 @@
   lib,
   config,
   ...
-}: let
+}:
+let
   cfg = config.features.ssh;
-in {
+in
+{
   options.features.ssh.enable = lib.mkEnableOption "ssh";
 
   config = lib.mkIf cfg.enable {

@@ -3,7 +3,8 @@
   pkgs,
   constants,
   ...
-}: {
+}:
+{
   programs.zsh.enable = true;
 
   # constants doesn't have .username here; username must be hardcoded
@@ -11,7 +12,10 @@
     isNormalUser = true;
     description = "Tester";
     initialPassword = constants.default-password;
-    extraGroups = ["wheel" "networkmanager"];
+    extraGroups = [
+      "wheel"
+      "networkmanager"
+    ];
     shell = pkgs.zsh;
   };
 }

@@ -1,4 +1,5 @@
-{constants, ...}: {
+{ constants, ... }:
+{
   features = {
     core = {
       enable = true;

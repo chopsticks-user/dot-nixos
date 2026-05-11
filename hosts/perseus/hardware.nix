@@ -2,7 +2,8 @@
   config,
   inputs,
   ...
-}: {
+}:
+{
   imports = [
     inputs.nixos-hardware.nixosModules.asus-fx504gd
     inputs.nixos-hardware.nixosModules.common-cpu-intel
@@ -58,5 +59,8 @@
     NVD_BACKEND = "direct";
   };
 
-  services.xserver.videoDrivers = ["modesetting" "nvidia"];
+  services.xserver.videoDrivers = [
+    "modesetting"
+    "nvidia"
+  ];
 }

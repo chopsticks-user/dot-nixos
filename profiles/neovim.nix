@@ -3,14 +3,16 @@
   config,
   inputs,
   ...
-}: let
+}:
+let
   cfg = config.profiles.neovim;
-in {
+in
+{
   options.profiles.neovim = {
     enable = lib.mkEnableOption "neovim";
   };
 
-  imports = [inputs.nvf.homeManagerModules.default];
+  imports = [ inputs.nvf.homeManagerModules.default ];
 
   config = lib.mkIf cfg.enable {
     wayland.windowManager.hyprland.settings.input = {
@@ -190,7 +192,7 @@ in {
           };
           statusline.lualine = {
             enable = true;
-            componentSeparator = {};
+            componentSeparator = { };
           };
           telescope = {
             enable = true;

@@ -3,9 +3,11 @@
   lib,
   pkgs,
   ...
-}: let
+}:
+let
   cfg = config.features.docs;
-in {
+in
+{
   options.features.docs = {
     enable = lib.mkEnableOption "docs";
   };

@@ -3,14 +3,16 @@
   config,
   pkgs,
   ...
-}: let
+}:
+let
   cfg = config.profiles.zsh;
-in {
+in
+{
   options.profiles.zsh = {
     enable = lib.mkEnableOption "zsh";
     shellAliases = lib.mkOption {
       type = lib.types.attrsOf lib.types.str;
-      default = {};
+      default = { };
       description = "Shell aliases to add to zsh";
     };
   };

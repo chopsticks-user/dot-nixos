@@ -5,7 +5,8 @@
   inputs,
   constants,
   ...
-}: {
+}:
+{
   options.features.core = {
     enable = lib.mkEnableOption "core";
     kernel = lib.mkOption {
@@ -19,34 +20,47 @@
       description = "State version";
     };
     gpu = lib.mkOption {
-      type = lib.types.nullOr (lib.types.enum ["nvidia" "amd" "intel"]);
+      type = lib.types.nullOr (
+        lib.types.enum [
+          "nvidia"
+          "amd"
+          "intel"
+        ]
+      );
       default = null;
       description = "GPU type";
     };
   };
 
-  config = let
-    cfg = config.features.core;
-  in
+  config =
+    let
+      cfg = config.features.core;
+    in
     lib.mkIf cfg.enable {
       system.stateVersion = cfg.state-version;
       nix.settings = {
-        experimental-features = ["nix-command" "flakes"];
+        experimental-features = [
+          "nix-command"
+          "flakes"
+        ];
         cores = 0;
         max-jobs = "auto";
       };
       boot.kernelPackages = pkgs."linuxPackages_${cfg.kernel}";
 
-      environment.systemPackages = let
-        inherit (inputs.nix-alien.packages.${constants.system.current}) nix-alien;
-        btop =
-          if cfg.gpu == "nvidia"
-          then pkgs.btop-cuda
-          else if cfg.gpu == "amd"
-          then pkgs.btop-rocm
-          else pkgs.btop;
-      in
-        with pkgs; [
+      environment.systemPackages =
+        let
+          inherit (inputs.nix-alien.packages.${constants.system.current}) nix-alien;
+          btop =
+            if cfg.gpu == "nvidia" then
+              pkgs.btop-cuda
+            else if cfg.gpu == "amd" then
+              pkgs.btop-rocm
+            else
+              pkgs.btop;
+        in
+        with pkgs;
+        [
           home-manager
           efibootmgr
           git
@@ -66,6 +80,8 @@
           inotify-tools
           patchelf
           pkg-config
+          nixd
+          nixfmt
         ];
 
       programs = {

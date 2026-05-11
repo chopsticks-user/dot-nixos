@@ -3,9 +3,11 @@
   config,
   constants,
   ...
-}: let
+}:
+let
   cfg = config.profiles.distrobox;
-in {
+in
+{
   options.profiles.distrobox = {
     enable = lib.mkEnableOption "distrobox";
   };

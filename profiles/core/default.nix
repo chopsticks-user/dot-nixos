@@ -3,9 +3,11 @@
   config,
   constants,
   ...
-}: let
+}:
+let
   cfg = config.profiles.core;
-in {
+in
+{
   imports = [
     ./fonts.nix
     ./xdg.nix

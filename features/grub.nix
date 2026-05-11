@@ -2,9 +2,11 @@
   config,
   lib,
   ...
-}: let
+}:
+let
   cfg = config.features.grub;
-in {
+in
+{
   options.features.grub = {
     enable = lib.mkEnableOption "grub";
   };

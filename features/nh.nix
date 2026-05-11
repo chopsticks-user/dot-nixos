@@ -3,9 +3,11 @@
   config,
   constants,
   ...
-}: let
+}:
+let
   cfg = config.features.nh;
-in {
+in
+{
   options.features.nh.enable = lib.mkEnableOption "nh";
 
   config = lib.mkIf cfg.enable {

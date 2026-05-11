@@ -2,9 +2,11 @@
   lib,
   config,
   ...
-}: let
+}:
+let
   cfg = config.profiles.discord;
-in {
+in
+{
   options.profiles.discord = {
     enable = lib.mkEnableOption "discord";
   };
@@ -22,7 +24,7 @@ in {
         BACKGROUND_COLOR = "#121214";
         openH264Enabled = true;
         offloadAdmControls = true;
-        chromiumSwitches = {};
+        chromiumSwitches = { };
         MINIMIZE_TO_TRAY = false;
         IS_MAXIMIZED = true;
         IS_MINIMIZED = false;

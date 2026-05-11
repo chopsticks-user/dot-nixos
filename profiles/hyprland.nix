@@ -4,9 +4,11 @@
   pkgs,
   inputs,
   ...
-}: let
+}:
+let
   cfg = config.profiles.hyprland;
-in {
+in
+{
   imports = [
     inputs.noctalia.homeModules.default
   ];
@@ -43,20 +45,14 @@ in {
           "no_initial_focus on, match:class ^(UnrealEditor)$, match:title ^\\w*$"
           "no_focus on, match:class ^(UnrealEditor)$, match:title ^$"
         ];
-        bind = let
-          workspaces = builtins.genList (i: i + 1) 10;
-          wsKey = i:
-            if i == 10
-            then "0"
-            else toString i;
-          wsBind =
-            map (i: "$mod, ${wsKey i}, workspace, ${toString i}")
-            workspaces;
-          moveBind =
-            map (i: "$mod SHIFT, ${wsKey i}, movetoworkspace, ${toString i}")
-            workspaces;
-          noctaliaCmd = "noctalia-shell ipc call";
-        in
+        bind =
+          let
+            workspaces = builtins.genList (i: i + 1) 10;
+            wsKey = i: if i == 10 then "0" else toString i;
+            wsBind = map (i: "$mod, ${wsKey i}, workspace, ${toString i}") workspaces;
+            moveBind = map (i: "$mod SHIFT, ${wsKey i}, movetoworkspace, ${toString i}") workspaces;
+            noctaliaCmd = "noctalia-shell ipc call";
+          in
           wsBind
           ++ moveBind
           ++ [
@@ -99,7 +95,7 @@ in {
           iconMode = "tabler";
           ignoreMouseInput = false;
           overviewLayer = false;
-          pinnedApps = [];
+          pinnedApps = [ ];
           position = "center";
           screenshotAnnotationTool = "";
           showCategories = true;
@@ -109,7 +105,7 @@ in {
           viewMode = "list";
         };
         audio = {
-          mprisBlacklist = [];
+          mprisBlacklist = [ ];
           preferredPlayer = "";
           spectrumFrameRate = 30;
           spectrumMirrored = true;
@@ -139,7 +135,7 @@ in {
           middleClickAction = "none";
           middleClickCommand = "";
           middleClickFollowMouse = false;
-          monitors = [];
+          monitors = [ ];
           mouseWheelAction = "none";
           mouseWheelWrap = true;
           outerCorners = false;
@@ -148,7 +144,7 @@ in {
           rightClickAction = "controlCenter";
           rightClickCommand = "";
           rightClickFollowMouse = true;
-          screenOverrides = [];
+          screenOverrides = [ ];
           showCapsule = true;
           showOnWorkspaceSwitch = true;
           showOutline = false;
@@ -249,13 +245,13 @@ in {
             ];
             right = [
               {
-                blacklist = [];
+                blacklist = [ ];
                 chevronColor = "none";
                 colorizeIcons = false;
                 drawerEnabled = false;
                 hidePassive = false;
                 id = "Tray";
-                pinned = [];
+                pinned = [ ];
               }
               {
                 hideWhenZero = false;
@@ -301,7 +297,7 @@ in {
           };
         };
         brightness = {
-          backlightDeviceMappings = [];
+          backlightDeviceMappings = [ ];
           brightnessStep = 5;
           enableDdcSupport = false;
           enforceMinimum = true;
@@ -364,16 +360,16 @@ in {
           position = "close_to_bar_button";
           shortcuts = {
             left = [
-              {id = "Network";}
-              {id = "Bluetooth";}
-              {id = "WallpaperSelector";}
-              {id = "NoctaliaPerformance";}
+              { id = "Network"; }
+              { id = "Bluetooth"; }
+              { id = "WallpaperSelector"; }
+              { id = "NoctaliaPerformance"; }
             ];
             right = [
-              {id = "Notifications";}
-              {id = "PowerProfile";}
-              {id = "KeepAwake";}
-              {id = "NightLight";}
+              { id = "Notifications"; }
+              { id = "PowerProfile"; }
+              { id = "KeepAwake"; }
+              { id = "NightLight"; }
             ];
           };
         };
@@ -381,7 +377,7 @@ in {
           enabled = false;
           gridSnap = false;
           gridSnapScale = false;
-          monitorWidgets = [];
+          monitorWidgets = [ ];
           overviewEnabled = true;
         };
         dock = {
@@ -405,9 +401,9 @@ in {
           launcherIconColor = "none";
           launcherPosition = "end";
           launcherUseDistroLogo = false;
-          monitors = [];
+          monitors = [ ];
           onlySameOutput = true;
-          pinnedApps = [];
+          pinnedApps = [ ];
           pinnedStatic = false;
           position = "bottom";
           showDockIndicator = false;
@@ -434,23 +430,23 @@ in {
           forceBlackScreenCorners = false;
           iRadiusRatio = 1;
           keybinds = {
-            keyDown = ["Down"];
+            keyDown = [ "Down" ];
             keyEnter = [
               "Return"
               "Enter"
             ];
-            keyEscape = ["Esc"];
-            keyLeft = ["Left"];
-            keyRemove = ["Del"];
-            keyRight = ["Right"];
-            keyUp = ["Up"];
+            keyEscape = [ "Esc" ];
+            keyLeft = [ "Left" ];
+            keyRemove = [ "Del" ];
+            keyRight = [ "Right" ];
+            keyUp = [ "Up" ];
           };
           language = "";
           lockOnSuspend = true;
           lockScreenAnimations = false;
           lockScreenBlur = 0;
           lockScreenCountdownDuration = 10000;
-          lockScreenMonitors = [];
+          lockScreenMonitors = [ ];
           lockScreenTint = 0;
           passwordChars = false;
           radiusRatio = 1;
@@ -544,7 +540,7 @@ in {
           enabled = true;
           location = "top_right";
           lowUrgencyDuration = 3;
-          monitors = [];
+          monitors = [ ];
           normalUrgencyDuration = 8;
           overlayLayer = true;
           respectExpireTimeout = false;
@@ -573,7 +569,7 @@ in {
             2
           ];
           location = "top_right";
-          monitors = [];
+          monitors = [ ];
           overlayLayer = true;
         };
         plugins = {
@@ -672,7 +668,7 @@ in {
           warningColor = "";
         };
         templates = {
-          activeTemplates = [];
+          activeTemplates = [ ];
           enableUserTheming = false;
         };
         ui = {
@@ -694,7 +690,7 @@ in {
           directory = "/home/frost/media/images/wallpapers";
           enableMultiMonitorDirectories = false;
           enabled = true;
-          favorites = [];
+          favorites = [ ];
           fillColor = "#000000";
           fillMode = "crop";
           hideWallpaperFilenames = false;
