@@ -1,8 +1,4 @@
 {pkgs, ...}: {
-  imports = [
-    ./overlays
-  ];
-
   home.packages = with pkgs; [
     cloc
     tree

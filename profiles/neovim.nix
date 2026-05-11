@@ -51,7 +51,9 @@ in {
             vim.api.nvim_create_autocmd("UIEnter", {
               once = true,
               callback = function()
-                if vim.fn.isdirectory(vim.fn.argv(0)) == 1 then
+                local arg = vim.fn.argv(0)
+                if vim.fn.isdirectory(arg) == 1 then
+                  vim.cmd("cd " .. vim.fn.fnameescape(arg))
                   vim.cmd("Telescope find_files")
                 end
               end,

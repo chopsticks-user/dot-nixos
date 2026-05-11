@@ -40,8 +40,7 @@ in {
         setopt PROMPT_SUBST
         _prompt_info() {
           local info=""
-          [ -n "$CONTAINER_ID" ] && info+="[distrobox:$CONTAINER_ID]"
-          [ -n "$IN_NIX_SHELL" ] && info+="[nix-shell]"
+          info+="[l=$SHLVL,p=$(ps -o comm= -p $PPID)]"
           echo "$info"
         }
         PROMPT="[%F{blue}%*%f %F{yellow}%n@%m%f %F{green}%2~%f]\$(_prompt_info)%% "

@@ -29,6 +29,10 @@
       url = "github:thiagokokada/nix-alien";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-index-database = {
+      url = "github:nix-community/nix-index-database";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
@@ -99,6 +103,7 @@
             inputs.disko.nixosModules.disko
             ./features
             ./hosts/${hostname}
+            inputs.nix-index-database.nixosModules.default
           ]
           ++ map (username: ./users/${username}/system.nix) usernames;
       };

@@ -8,7 +8,7 @@
 in {
   imports = [
     ./fonts.nix
-    ./xbds.nix
+    ./xdg.nix
     ./zoxide.nix
   ];
 

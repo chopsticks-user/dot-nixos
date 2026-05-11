@@ -64,6 +64,14 @@
           unzip
           nix-alien
           inotify-tools
+          patchelf
+          pkg-config
         ];
+
+      programs = {
+        nix-index-database.comma.enable = true;
+        nix-index.enable = true;
+        command-not-found.enable = false;
+      };
     };
 }
