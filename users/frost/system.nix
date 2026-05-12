@@ -23,7 +23,7 @@
 
   features = {
     hyprland.enable = true;
-    distrobox.enable = true;
+    virtualization.enable = true;
     gaming.enable = true;
   };
 }

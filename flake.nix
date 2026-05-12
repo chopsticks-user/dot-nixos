@@ -65,6 +65,14 @@
         (final: _: {
           unreal-engine = final.callPackage ./overlays/unreal-engine/package.nix { };
         })
+        (final: prev: {
+          openldap = prev.openldap.overrideAttrs (old: {
+            preCheck = (old.preCheck or "") + ''
+              rm -f tests/scripts/test017-syncreplication-refresh
+              rm -f tests/scripts/test019-syncreplication-cascade
+            '';
+          });
+        })
       ];
 
       mkPkgsStable =

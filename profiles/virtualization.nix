@@ -5,13 +5,13 @@
   ...
 }:
 {
-  options.profiles.distrobox = {
-    enable = lib.mkEnableOption "distrobox";
+  options.profiles.virtualization = {
+    enable = lib.mkEnableOption "virtualization";
   };
 
   config =
     let
-      cfg = config.profiles.distrobox;
+      cfg = config.profiles.virtualization;
     in
     lib.mkIf cfg.enable {
       programs.distrobox = {

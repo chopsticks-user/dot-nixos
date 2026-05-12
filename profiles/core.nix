@@ -47,9 +47,8 @@
           dataHome = dataHomeDir;
           userDirs =
             let
-
               mediaHomeDir = "${homeDir}/media";
-              ignoreHomeDir = "${dataHomeDir}/.local/share/.xdg-ignore";
+              ignoreHomeDir = "${dataHomeDir}/.xdg-ignore";
             in
             {
               enable = true;

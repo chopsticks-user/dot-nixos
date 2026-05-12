@@ -1,4 +1,4 @@
-{ constants, ... }:
+{ constants, pkgs, ... }:
 {
   features = {
     core = {
@@ -12,8 +12,18 @@
     docs.enable = true;
     fcitx.enable = true;
     ssh.enable = true;
-    qemu.enable = true;
+    virtualization.enable = true;
   };
+
+  environment.systemPackages =
+    let
+      bottles-pkg = pkgs.bottles.override {
+        removeWarningPopup = true;
+      };
+    in
+    [
+      bottles-pkg
+    ];
 
   networking = {
     hostName = constants.hostname;

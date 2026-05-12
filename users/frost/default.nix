@@ -36,7 +36,7 @@
     gaming.enable = true;
     discord.enable = true;
     obs.enable = true;
-    distrobox.enable = true;
+    virtualization.enable = true;
     zed.enable = true;
   };
 }

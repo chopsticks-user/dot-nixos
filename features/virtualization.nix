@@ -6,19 +6,33 @@
 }:
 
 {
-  options.features.qemu = {
-    enable = lib.mkEnableOption "qemu";
+  options.features.virtualization = {
+    enable = lib.mkEnableOption "virtualization";
   };
 
   config =
     let
-      cfg = config.features.qemu;
+      cfg = config.features.virtualization;
     in
     lib.mkIf cfg.enable {
       environment.systemPackages = with pkgs; [
         qemu
         quickemu
+        virt-manager
+
+        wine
+        winetricks
+        bottles
+
+        distrobox
       ];
+
+      hardware.nvidia-container-toolkit.enable = true;
+
+      virtualisation.podman = {
+        enable = true;
+        dockerCompat = true;
+      };
 
       systemd.tmpfiles.rules = [ "L+ /var/lib/qemu/firmware - - - - ${pkgs.qemu}/share/qemu/firmware" ];
 
