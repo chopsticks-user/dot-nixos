@@ -1,7 +1,7 @@
 { ... }:
 {
   imports = [
-    ./core
+    ./core.nix
     ./firefox.nix
     ./neovim.nix
     ./zsh.nix
