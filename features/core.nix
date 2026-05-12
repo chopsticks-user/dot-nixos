@@ -10,7 +10,10 @@
   options.features.core = {
     enable = lib.mkEnableOption "core";
     kernel = lib.mkOption {
-      type = lib.types.str;
+      type = lib.types.enum [
+        "testing"
+        "latest"
+      ];
       default = "latest";
       description = "Kernel version to use";
     };
@@ -38,6 +41,7 @@
     in
     lib.mkIf cfg.enable {
       system.stateVersion = cfg.state-version;
+
       nix.settings = {
         experimental-features = [
           "nix-command"
@@ -46,6 +50,7 @@
         cores = 0;
         max-jobs = "auto";
       };
+
       boot.kernelPackages = pkgs."linuxPackages_${cfg.kernel}";
 
       environment.systemPackages =
@@ -82,6 +87,8 @@
           pkg-config
           nixd
           nixfmt
+          file
+          ripgrep
         ];
 
       programs = {
