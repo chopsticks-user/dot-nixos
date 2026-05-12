@@ -4,32 +4,33 @@
   pkgs,
   ...
 }:
-let
-  cfg = config.features.docs;
-in
 {
   options.features.docs = {
     enable = lib.mkEnableOption "docs";
   };
 
-  config = lib.mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
-      wikiman
-      tldr
-    ];
+  config =
+    let
+      cfg = config.features.docs;
+    in
+    lib.mkIf cfg.enable {
+      environment.systemPackages = with pkgs; [
+        wikiman
+        tldr
+      ];
 
-    documentation = {
-      enable = true;
-      man = {
+      documentation = {
         enable = true;
-        cache = {
+        man = {
           enable = true;
-          generateAtRuntime = true;
+          cache = {
+            enable = true;
+            generateAtRuntime = true;
+          };
         };
+        dev.enable = true;
+        doc.enable = true;
+        info.enable = true;
       };
-      dev.enable = true;
-      doc.enable = true;
-      info.enable = true;
     };
-  };
 }

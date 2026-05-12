@@ -12,6 +12,7 @@
     docs.enable = true;
     fcitx.enable = true;
     ssh.enable = true;
+    qemu.enable = true;
   };
 
   networking = {

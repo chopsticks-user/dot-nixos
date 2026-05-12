@@ -9,5 +9,7 @@
     ./grub.nix
     ./docs.nix
     ./distrobox.nix
+    ./gaming.nix
+    ./qemu.nix
   ];
 }

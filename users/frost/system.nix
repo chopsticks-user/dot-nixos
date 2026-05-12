@@ -24,5 +24,6 @@
   features = {
     hyprland.enable = true;
     distrobox.enable = true;
+    gaming.enable = true;
   };
 }
