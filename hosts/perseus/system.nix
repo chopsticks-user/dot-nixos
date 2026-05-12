@@ -2,12 +2,11 @@
   pkgs,
   constants,
   ...
-}:
-{
+}: {
   features = {
     core = {
       enable = true;
-      kernel = "testing";
+      kernel = "latest";
       state-version = "26.05";
       gpu = "nvidia";
     };
@@ -21,8 +20,7 @@
   };
 
   environment.systemPackages = with pkgs; [
-    wl-clipboard
-    wev
+    libgpiod
   ];
 
   networking = {
@@ -31,4 +29,11 @@
   };
 
   time.timeZone = "America/New_York";
+
+  security.wrappers.btop = {
+    owner = "root";
+    group = "root";
+    capabilities = "cap_perfmon+ep";
+    source = "${pkgs.btop}/bin/btop";
+  };
 }

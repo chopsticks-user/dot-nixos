@@ -2,8 +2,7 @@
   config,
   inputs,
   ...
-}:
-{
+}: {
   imports = with inputs.nixos-hardware.nixosModules; [
     asus-fx504gd
     common-cpu-intel
@@ -15,6 +14,7 @@
   nixpkgs.config.allowUnfreePackages = [
     "nvidia-x11"
     "nvidia-settings"
+    "nvidia-kernel-modules"
   ];
 
   hardware = {
