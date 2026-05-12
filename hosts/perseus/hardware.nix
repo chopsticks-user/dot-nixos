@@ -4,11 +4,11 @@
   ...
 }:
 {
-  imports = [
-    inputs.nixos-hardware.nixosModules.asus-fx504gd
-    inputs.nixos-hardware.nixosModules.common-cpu-intel
-    inputs.nixos-hardware.nixosModules.common-gpu-nvidia
-    inputs.nixos-hardware.nixosModules.common-pc-ssd
+  imports = with inputs.nixos-hardware.nixosModules; [
+    asus-fx504gd
+    common-cpu-intel
+    common-gpu-nvidia
+    common-pc-ssd
     ./generated.nix
   ];
 

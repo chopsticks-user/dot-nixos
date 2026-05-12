@@ -7,7 +7,7 @@
   features = {
     core = {
       enable = true;
-      kernel = "latest";
+      kernel = "testing";
       state-version = "26.05";
       gpu = "nvidia";
     };
@@ -17,6 +17,7 @@
     hyprland.enable = true;
     fcitx.enable = true;
     ssh.enable = true;
+    qemu.enable = true;
   };
 
   environment.systemPackages = with pkgs; [
