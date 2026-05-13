@@ -1,19 +1,13 @@
 {
-  config,
   lib,
   ...
-}:
+}@args:
+(lib.utils.mkFeature "grub" {
+  options = { };
 
-{
-  options.features.grub = {
-    enable = lib.mkEnableOption "grub";
-  };
-
-  config =
-    let
-      cfg = config.features.grub;
-    in
-    lib.mkIf cfg.enable {
+  configs =
+    { ... }:
+    {
       boot.loader = {
         systemd-boot.enable = false;
         efi.canTouchEfiVariables = false;
@@ -37,4 +31,5 @@
         };
       };
     };
-}
+})
+  args

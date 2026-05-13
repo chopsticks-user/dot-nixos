@@ -1,19 +1,13 @@
 {
-  config,
   lib,
   ...
-}:
+}@args:
+(lib.utils.mkFeature "gaming" {
+  options = { };
 
-{
-  options.features.gaming = {
-    enable = lib.mkEnableOption "gaming";
-  };
-
-  config =
-    let
-      cfg = config.features.gaming;
-    in
-    lib.mkIf cfg.enable {
+  configs =
+    { ... }:
+    {
       nixpkgs.config.allowUnfreePackages = [
         "steam"
         "steam-unwrapped"
@@ -35,4 +29,5 @@
         };
       };
     };
-}
+})
+  args

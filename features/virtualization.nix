@@ -1,20 +1,14 @@
 {
-  config,
   lib,
   pkgs,
   ...
-}:
+}@args:
+(lib.utils.mkFeature "virtualization" {
+  options = { };
 
-{
-  options.features.virtualization = {
-    enable = lib.mkEnableOption "virtualization";
-  };
-
-  config =
-    let
-      cfg = config.features.virtualization;
-    in
-    lib.mkIf cfg.enable {
+  configs =
+    { ... }:
+    {
       hardware.nvidia-container-toolkit.enable = true;
 
       virtualisation.podman = {
@@ -29,4 +23,5 @@
         "riscv64-linux"
       ];
     };
-}
+})
+  args
