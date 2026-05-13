@@ -1,22 +1,19 @@
 {
-  lib,
-  config,
+  utils,
   pkgs,
   ...
-}:
-let
-  cfg = config.profiles.obs;
-in
-{
-  options.profiles.obs = {
-    enable = lib.mkEnableOption "obs";
-  };
+}@args:
+(utils.mkProfile "obs" {
+  options = { };
 
-  config = lib.mkIf cfg.enable {
-    programs.obs-studio = {
-      enable = true;
-      plugins = with pkgs; [
-      ];
+  configs =
+    { ... }:
+    {
+      programs.obs-studio = {
+        enable = true;
+        plugins = with pkgs; [
+        ];
+      };
     };
-  };
-}
+})
+  args

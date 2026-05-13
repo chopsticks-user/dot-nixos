@@ -1,14 +1,10 @@
 {
   lib,
-  config,
+  utils,
   ...
-}:
-let
-  cfg = config.profiles.git;
-in
-{
-  options.profiles.git = {
-    enable = lib.mkEnableOption "git";
+}@args:
+(utils.mkProfile "git" {
+  options = {
     user = {
       name = lib.mkOption {
         type = lib.types.str;
@@ -19,21 +15,24 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    programs = {
-      git = {
-        enable = true;
-        settings = {
-          inherit (cfg) user;
-          init.defaultBranch = "main";
-          pull.rebase = false;
+  configs =
+    { fields, ... }:
+    {
+      programs = {
+        git = {
+          enable = true;
+          settings = {
+            inherit (fields) user;
+            init.defaultBranch = "main";
+            pull.rebase = false;
+          };
+        };
+
+        gh = {
+          enable = true;
+          settings = { };
         };
       };
-
-      gh = {
-        enable = true;
-        settings = { };
-      };
     };
-  };
-}
+})
+  args

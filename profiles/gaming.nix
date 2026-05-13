@@ -1,74 +1,71 @@
 {
-  lib,
-  config,
+  utils,
   pkgs,
   inputs,
   ...
-}:
-let
-  cfg = config.profiles.gaming;
-in
-{
+}@args:
+(utils.mkProfile "gaming" {
   imports = [
     inputs.steam-config-nix.homeModules.default
   ];
 
-  options.profiles.gaming = {
-    enable = lib.mkEnableOption "gaming";
-  };
+  options = { };
 
-  config = lib.mkIf cfg.enable {
-    home.packages = with pkgs; [
-      gamemode
-      gamescope
-      steam
-      steam-run
-      protonup-qt
-      protontricks
-    ];
+  configs =
+    { ... }:
+    {
+      home.packages = with pkgs; [
+        gamemode
+        gamescope
+        steam
+        steam-run
+        protonup-qt
+        protontricks
+      ];
 
-    systemd.user.services.gamemoded = {
-      Unit.Description = "Game mode daemon";
-      Service = {
-        ExecStart = "${pkgs.gamemode}/bin/gamemoded -r";
-        Restart = "always";
+      systemd.user.services.gamemoded = {
+        Unit.Description = "Game mode daemon";
+        Service = {
+          ExecStart = "${pkgs.gamemode}/bin/gamemoded -r";
+          Restart = "always";
+        };
+        Install.WantedBy = [ "default.target" ];
       };
-      Install.WantedBy = [ "default.target" ];
-    };
 
-    # todo: enable at system level to provide cpu-governed optimizations
-    # services.gamemode.enable = true;
+      # todo: enable at system level to provide cpu-governed optimizations
+      # services.gamemode.enable = true;
 
-    nixpkgs.config.allowUnfreePackages = [
-      "steam"
-      "steam-unwrapped"
-    ];
+      nixpkgs.config.allowUnfreePackages = [
+        "steam"
+        "steam-unwrapped"
+      ];
 
-    # steam launch options: gamemoderun gamescope -f -e -- mangohud %command%
-    programs.steam.config = {
-      enable = true;
-      closeSteam = true;
-      defaultCompatTool = "proton_experimental";
-
-      apps = { };
-    };
-
-    home.sessionVariables = {
-      STEAM_EXTRA_COMPAT_TOOLS_PATHS = "$HOME/.steam/root/compatibilitytools.d";
-    };
-
-    programs = {
-      mangohud = {
+      # steam launch options: gamemoderun gamescope -f -e -- mangohud %command%
+      programs.steam.config = {
         enable = true;
-        settings = {
-          fps = true;
-          cpu_temp = true;
-          gpu_temp = true;
-          ram = true;
-          vram = true;
-          frame_timing = true;
+        closeSteam = true;
+        defaultCompatTool = "proton_experimental";
+
+        apps = { };
+      };
+
+      home.sessionVariables = {
+        STEAM_EXTRA_COMPAT_TOOLS_PATHS = "$HOME/.steam/root/compatibilitytools.d";
+      };
+
+      programs = {
+        mangohud = {
+          enable = true;
+          settings = {
+            fps = true;
+            cpu_temp = true;
+            gpu_temp = true;
+            ram = true;
+            vram = true;
+            frame_timing = true;
+          };
         };
       };
     };
-  };
-}
+})
+  args

@@ -1,20 +1,15 @@
 {
-  lib,
-  config,
+  utils,
   constants,
   pkgs,
   ...
-}:
-{
-  options.profiles.virtualization = {
-    enable = lib.mkEnableOption "virtualization";
-  };
+}@args:
+(utils.mkProfile "virtualization" {
+  options = { };
 
-  config =
-    let
-      cfg = config.profiles.virtualization;
-    in
-    lib.mkIf cfg.enable {
+  configs =
+    { ... }:
+    {
       home.packages = with pkgs; [
         qemu
         quickemu
@@ -59,4 +54,5 @@
         rootless_storage_path = "${constants.homeDirectory}/boxes/.podman-storage"
       '';
     };
-}
+})
+  args
