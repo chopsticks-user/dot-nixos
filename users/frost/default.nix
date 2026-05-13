@@ -7,8 +7,6 @@
   ];
 
   home.packages = with pkgs; [
-    cloc
-    tree
     jetbrains.rider
     jetbrains.clion
     godot

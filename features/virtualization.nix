@@ -19,11 +19,6 @@
         qemu
         quickemu
         virt-manager
-
-        wine
-        winetricks
-        bottles
-
         distrobox
       ];
 

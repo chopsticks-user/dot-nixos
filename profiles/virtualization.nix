@@ -2,6 +2,7 @@
   lib,
   config,
   constants,
+  pkgs,
   ...
 }:
 {
@@ -14,6 +15,12 @@
       cfg = config.profiles.virtualization;
     in
     lib.mkIf cfg.enable {
+      home.packages = with pkgs; [
+        qemu
+        quickemu
+        virt-manager
+      ];
+
       programs.distrobox = {
         enable = true;
         enableSystemdUnit = true;
@@ -45,7 +52,7 @@
         };
       };
 
-      home.file.".config/containers/storage.conf".text = ''
+      xdg.configFile."containers/storage.conf".text = ''
         [storage]
         driver = "overlay"
         rootless_storage_path = "${constants.home-dir}/boxes/.podman-storage"

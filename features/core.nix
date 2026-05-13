@@ -66,29 +66,48 @@
         in
         with pkgs;
         [
+          # core & nix tooling
           home-manager
-          efibootmgr
-          git
-          psmisc
-          lshw
-          fastfetch
-          btop
-          lazyjournal
-          ncdu
-          wl-clipboard
-          jq
-          wget
-          wev
-          zip
-          unzip
           nix-alien
-          inotify-tools
-          patchelf
-          pkg-config
           nixd
           nixfmt
-          file
+          coreutils
+
+          # system administration & monitoring
+          efibootmgr
+          psmisc
+          lshw
+          inotify-tools
+          lazyjournal
+          fastfetch
+          ncdu
+          btop
+
+          # CLI wizardy kit, coreutils already includes sort, uniq, cut
           ripgrep
+          sd
+          fd
+          jq
+          yq
+          gawk
+          findutils # xargs
+          gnused
+
+          # files & directories
+          git
+          tree
+          cloc
+          curl
+          wget
+          zip
+          unzip
+          pkg-config
+          patchelf
+          file
+
+          # miscellaneous
+          wl-clipboard
+          wev
         ];
 
       programs = {

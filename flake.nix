@@ -33,6 +33,13 @@
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    impermanence = {
+      url = "github:nix-community/impermanence";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        home-manager.follows = "nixpkgs";
+      };
+    };
   };
 
   outputs =
@@ -64,14 +71,6 @@
       overlays = [
         (final: _: {
           unreal-engine = final.callPackage ./overlays/unreal-engine/package.nix { };
-        })
-        (final: prev: {
-          openldap = prev.openldap.overrideAttrs (old: {
-            preCheck = (old.preCheck or "") + ''
-              rm -f tests/scripts/test017-syncreplication-refresh
-              rm -f tests/scripts/test019-syncreplication-cascade
-            '';
-          });
         })
       ];
 
