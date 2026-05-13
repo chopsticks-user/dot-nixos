@@ -157,7 +157,6 @@
             inherit inputs;
             pkgs-stable = mkPkgsStable system;
             constants =
-
               global-constants
               // {
                 inherit username;

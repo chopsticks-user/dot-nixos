@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, constants, ... }:
 {
   home.packages = with pkgs; [
   ];
@@ -12,10 +12,7 @@
 
     git = {
       enable = true;
-      user = {
-        name = "chopsticks-user";
-        email = "frostyfrost273@gmail.com";
-      };
+      inherit (constants.profiles.git) user;
     };
 
     hyprland.enable = true;

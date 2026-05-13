@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, constants, ... }:
 {
   nixpkgs.config.allowUnfreePackages = [
     "rider"
@@ -24,10 +24,7 @@
     ssh.enable = true;
     git = {
       enable = true;
-      user = {
-        name = "chopsticks-user";
-        email = "frostyfrost273@gmail.com";
-      };
+      inherit (constants.profiles.git) user;
     };
     hyprland.enable = true;
     neovim.enable = true;
