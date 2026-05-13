@@ -19,5 +19,5 @@ for user in "${users[@]}"; do
     ' | jq -s add > ./variables/"$user".json
 done
 
-nix hash path ./variables > ./variables/hash
+nix hash path ./variables > ./data/variables.hash
 nix store add ./variables

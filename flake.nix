@@ -105,11 +105,7 @@
       mkHost =
         hostname:
         let
-          system =
-            if builtins.pathExists ./hosts/${hostname}/arch then
-              lib.fileContents ./hosts/${hostname}/arch
-            else
-              "x86_64-linux";
+          system = lib.fileContents ./data/${hostname}.arch;
         in
         lib.nixosSystem {
           inherit system;
@@ -141,10 +137,9 @@
           };
           vars = pkgs.requireFile {
             name = "variables";
-            sha256 = "sha256-3pVHFibDkhzNQubo1EnyZJ4iEbGbIrLL4w2H9Jxznzo=";
+            sha256 = lib.fileContents ./data/variables.hash;
             message = ''
-              Run ./scripts/gen_vars.sh to generate <username>.json files
-              and write the sha256 value to ./variables/hash
+              Run ./scripts/gen_vars.sh
             '';
             hashMode = "recursive";
           };
