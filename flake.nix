@@ -134,18 +134,39 @@
         };
 
       mkUser =
-        system: username:
-        home-manager.lib.homeManagerConfiguration {
+        system:
+        let
           pkgs = import nixpkgs {
             inherit system overlays;
           };
+          vars = pkgs.requireFile {
+            name = "variables";
+            sha256 = "sha256-3pVHFibDkhzNQubo1EnyZJ4iEbGbIrLL4w2H9Jxznzo=";
+            message = ''
+              Run ./scripts/gen_vars.sh to generate <username>.json files
+              and write the sha256 value to ./variables/hash
+            '';
+            hashMode = "recursive";
+          };
+        in
+        username:
+        home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
+
           extraSpecialArgs = {
             inherit inputs;
             pkgs-stable = mkPkgsStable system;
-            constants = global-constants // {
-              inherit username;
-              homeDirectory = "/home/${username}";
-            };
+            constants =
+
+              global-constants
+              // {
+                inherit username;
+                homeDirectory = "/home/${username}";
+              }
+              // (builtins.fromJSON (
+                # have a doppler account setup correctly and run "./scripts/gen-vars.sh"
+                builtins.readFile "${vars}/${username}.json"
+              ));
             utils = import ./utilities { inherit (nixpkgs) lib; };
           };
           modules = [

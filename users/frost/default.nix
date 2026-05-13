@@ -11,6 +11,7 @@
     jetbrains.clion
     godot
     blender
+    doppler
   ];
 
   profiles = {
