@@ -4,7 +4,7 @@
     core = {
       enable = true;
       kernel = "testing";
-      state-version = "26.05";
+      stateVersion = "26.05";
       gpu = "nvidia";
     };
     grub.enable = true;

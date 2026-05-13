@@ -51,7 +51,11 @@
       ...
     }@inputs:
     let
-      inherit (nixpkgs) lib;
+      lib = nixpkgs.lib.extend (
+        final: prev: {
+          utils = import ./utilities { lib = final; };
+        }
+      );
 
       global-constants = {
         config-path = "$HOME/.nixos";
@@ -69,8 +73,19 @@
 
       # todo: bulk import and accept arguments from system or user callsite
       overlays = [
-        (final: _: {
-          unreal-engine = final.callPackage ./overlays/unreal-engine/package.nix { };
+        (final: prev: {
+          unreal-engine = final.callPackage ./overlays/unreal-engine/package.nix {
+          };
+        })
+        (final: prev: {
+          bottles = final.callPackage ./overlays/bottles/package.nix {
+            inherit prev;
+          };
+        })
+        (final: prev: {
+          openldap = final.callPackage ./overlays/openldap/package.nix {
+            inherit prev;
+          };
         })
       ];
 
@@ -129,8 +144,9 @@
             pkgs-stable = mkPkgsStable system;
             constants = global-constants // {
               inherit username;
-              home-dir = "/home/${username}";
+              homeDirectory = "/home/${username}";
             };
+            utils = import ./utilities { inherit (nixpkgs) lib; };
           };
           modules = [
             ./profiles

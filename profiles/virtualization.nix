@@ -19,6 +19,7 @@
         qemu
         quickemu
         virt-manager
+        bottles
       ];
 
       programs.distrobox = {
@@ -28,7 +29,7 @@
           container_manager = "podman";
           container_always_pull = "1";
           container_additional_volumes = "/nix/store:/nix/store:ro";
-          container_home_prefix = "${constants.home-dir}/boxes";
+          container_home_prefix = "${constants.homeDirectory}/boxes";
           skip_workdir = "1";
         };
         # run distrobox assemble create --file ~/.config/distrobox/containers.ini --verbose 2>&1
@@ -37,7 +38,7 @@
           arch = {
             image = "archlinux:latest";
             init = false;
-            volume = "${constants.home-dir}/projects:${constants.home-dir}/projects";
+            volume = "${constants.homeDirectory}/projects:${constants.homeDirectory}/projects";
             additional_packages = "base-devel git clang cmake ninja rust";
             pre_init_hooks = [
               "export SHELL=/bin/bash"
@@ -55,7 +56,7 @@
       xdg.configFile."containers/storage.conf".text = ''
         [storage]
         driver = "overlay"
-        rootless_storage_path = "${constants.home-dir}/boxes/.podman-storage"
+        rootless_storage_path = "${constants.homeDirectory}/boxes/.podman-storage"
       '';
     };
 }

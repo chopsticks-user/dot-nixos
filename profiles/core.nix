@@ -1,25 +1,20 @@
 {
   config,
-  lib,
   constants,
   pkgs,
+  utils,
   ...
-}:
+}@args:
+(utils.mkProfile "core" {
+  options = { };
 
-{
-  options.profiles.core = {
-    enable = lib.mkEnableOption "core";
-  };
-
-  config =
-    let
-      cfg = config.profiles.core;
-    in
-    lib.mkIf cfg.enable {
+  configs =
+    { ... }:
+    {
       home = {
         stateVersion = "26.05";
         inherit (constants) username;
-        homeDirectory = constants.home-dir;
+        homeDirectory = constants.homeDirectory;
         packages = with pkgs; [
           nerd-fonts.fira-code
           fira
@@ -85,4 +80,5 @@
         };
       };
     };
-}
+})
+  args

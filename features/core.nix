@@ -1,14 +1,13 @@
 {
-  config,
   lib,
+  config,
   pkgs,
   inputs,
   constants,
   ...
-}:
-{
-  options.features.core = {
-    enable = lib.mkEnableOption "core";
+}@args:
+(lib.utils.mkFeature "core" {
+  options = {
     kernel = lib.mkOption {
       type = lib.types.enum [
         "testing"
@@ -17,7 +16,7 @@
       default = "latest";
       description = "Kernel version to use";
     };
-    state-version = lib.mkOption {
+    stateVersion = lib.mkOption {
       type = lib.types.str;
       default = config.system.nixos.release;
       description = "State version";
@@ -35,12 +34,10 @@
     };
   };
 
-  config =
-    let
-      cfg = config.features.core;
-    in
-    lib.mkIf cfg.enable {
-      system.stateVersion = cfg.state-version;
+  configs =
+    { fields, ... }:
+    {
+      system.stateVersion = fields.stateVersion;
 
       nix.settings = {
         experimental-features = [
@@ -51,15 +48,15 @@
         max-jobs = "auto";
       };
 
-      boot.kernelPackages = pkgs."linuxPackages_${cfg.kernel}";
+      boot.kernelPackages = pkgs."linuxPackages_${fields.kernel}";
 
       environment.systemPackages =
         let
           inherit (inputs.nix-alien.packages.${constants.system.current}) nix-alien;
           btop =
-            if cfg.gpu == "nvidia" then
+            if fields.gpu == "nvidia" then
               pkgs.btop-cuda
-            else if cfg.gpu == "amd" then
+            else if fields.gpu == "amd" then
               pkgs.btop-rocm
             else
               pkgs.btop;
@@ -116,4 +113,5 @@
         command-not-found.enable = false;
       };
     };
-}
+})
+  args

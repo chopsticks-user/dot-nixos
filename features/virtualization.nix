@@ -15,13 +15,6 @@
       cfg = config.features.virtualization;
     in
     lib.mkIf cfg.enable {
-      environment.systemPackages = with pkgs; [
-        qemu
-        quickemu
-        virt-manager
-        distrobox
-      ];
-
       hardware.nvidia-container-toolkit.enable = true;
 
       virtualisation.podman = {
