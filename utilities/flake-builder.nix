@@ -95,6 +95,7 @@ in
               modules = [
                 ../profiles
                 ../users/${username}
+                inputs.sops-nix.homeManagerModules.sops
               ];
             }
           )

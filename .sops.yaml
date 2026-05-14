@@ -1,0 +1,13 @@
+keys:
+  - &admin_frost age16q07n7z7x9w8aqq4wyw92hmku8wy95atdwah5wt0nsm6y3f47fhs0da5e5
+  #  - &admin_tester
+
+  - &host_andromeda age1a2jks6zj56nfmgx0055kfdqnwuaawuzl69lkm5elv8s0cetacgxs5hfsx9
+#  - &host_perseus
+creation_rules:
+  - path_regex: secrets/hosts/andromeda.yaml
+    key_groups:
+      - age: [ *admin_frost, *host_andromeda ]
+  - path_regex: secrets/users/frost.yaml
+    key_groups:
+      - age: [ *admin_frost, *host_andromeda ]

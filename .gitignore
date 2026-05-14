@@ -6,5 +6,8 @@ result*
 .idea
 .vscode
 
-variables/**
-!variables/example.json
+secrets/**
+!secrets/hosts/
+!secrets/hosts/**
+!secrets/users/
+!secrets/users/**
