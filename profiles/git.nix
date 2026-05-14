@@ -1,9 +1,8 @@
 {
   lib,
-  utils,
   ...
 }@args:
-(utils.mkProfile "git" {
+(lib.utils.mkProfile "git" {
   options = {
     user = {
       name = lib.mkOption {

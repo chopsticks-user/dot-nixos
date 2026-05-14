@@ -1,9 +1,9 @@
 {
-  utils,
+  lib,
   inputs,
   ...
 }@args:
-(utils.mkProfile "neovim" {
+(lib.utils.mkProfile "neovim" {
   imports = [ inputs.nvf.homeManagerModules.default ];
 
   options = { };

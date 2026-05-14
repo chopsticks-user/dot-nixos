@@ -1,10 +1,10 @@
 {
-  utils,
+  lib,
   constants,
   pkgs,
   ...
 }@args:
-(utils.mkProfile "virtualization" {
+(lib.utils.mkProfile "virtualization" {
   options = { };
 
   configs =

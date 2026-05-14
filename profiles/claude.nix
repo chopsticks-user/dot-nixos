@@ -1,8 +1,8 @@
 {
-  utils,
+  lib,
   ...
 }@args:
-(utils.mkProfile "claude" {
+(lib.utils.mkProfile "claude" {
   options = { };
 
   configs =

@@ -1,11 +1,11 @@
 {
+  lib,
   config,
   constants,
   pkgs,
-  utils,
   ...
 }@args:
-(utils.mkProfile "core" {
+(lib.utils.mkProfile "core" {
   options = { };
 
   configs =

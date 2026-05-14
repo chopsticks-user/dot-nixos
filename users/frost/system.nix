@@ -9,7 +9,7 @@
   users.users.frost = {
     isNormalUser = true;
     description = "Frost";
-    initialPassword = constants.default-password;
+    initialPassword = constants.defaultPassword;
     extraGroups = [
       "wheel"
       "networkmanager"

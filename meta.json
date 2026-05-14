@@ -1,0 +1,16 @@
+{
+  "configPath": "$HOME/.config/nixos",
+  "system": {
+    "supported": [
+      "x86_64-linux",
+      "x86_64-darwin",
+      "aarch64-linux",
+      "aarch64-darwin"
+    ],
+    "hosts": {
+      "andromeda": "x86_64-linux",
+      "perseus": "x86_64-linux"
+    }
+  },
+  "defaultPassword": "password"
+}

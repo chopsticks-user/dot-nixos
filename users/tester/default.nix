@@ -12,7 +12,10 @@
 
     git = {
       enable = true;
-      inherit (constants.profiles.git) user;
+      user = {
+        name = "chopsticks-user";
+        email = "frostyfrost273@gmail.com";
+      };
     };
 
     hyprland.enable = true;

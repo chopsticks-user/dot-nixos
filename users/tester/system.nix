@@ -11,7 +11,7 @@
   users.users.tester = {
     isNormalUser = true;
     description = "Tester";
-    initialPassword = constants.default-password;
+    initialPassword = constants.defaultPassword;
     extraGroups = [
       "wheel"
       "networkmanager"

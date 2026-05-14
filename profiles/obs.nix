@@ -1,9 +1,9 @@
 {
-  utils,
+  lib,
   pkgs,
   ...
 }@args:
-(utils.mkProfile "obs" {
+(lib.utils.mkProfile "obs" {
   options = { };
 
   configs =

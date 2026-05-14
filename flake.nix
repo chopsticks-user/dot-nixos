@@ -57,21 +57,8 @@
         }
       );
 
-      global-constants = {
-        config-path = "$HOME/.nixos";
-        system = {
-          supported = [
-            "x86_64-linux"
-            "x86_64-darwin"
-            "aarch64-linux"
-            "aarch64-darwin"
-          ];
-          default = "x86_64-linux";
-        };
-        default-password = "password";
-      };
+      meta = builtins.fromJSON (builtins.readFile ./meta.json);
 
-      # todo: bulk import and accept arguments from system or user callsite
       overlays = [
         (final: prev: {
           unreal-engine = final.callPackage ./overlays/unreal-engine/package.nix {
@@ -105,14 +92,14 @@
       mkHost =
         hostname:
         let
-          system = lib.fileContents ./data/${hostname}.arch;
+          system = meta.system.hosts.${hostname};
         in
         lib.nixosSystem {
           inherit system;
           specialArgs = {
             inherit inputs;
             pkgs-stable = mkPkgsStable system;
-            constants = global-constants // {
+            constants = meta // {
               inherit hostname;
               system = {
                 current = system;
@@ -130,37 +117,23 @@
         };
 
       mkUser =
-        system:
-        let
-          pkgs = import nixpkgs {
-            inherit system overlays;
-          };
-          vars = pkgs.requireFile {
-            name = "variables";
-            sha256 = lib.fileContents ./data/variables.hash;
-            message = ''
-              Run ./scripts/gen_vars.sh
-            '';
-            hashMode = "recursive";
-          };
-        in
-        username:
+        system: username:
         home-manager.lib.homeManagerConfiguration {
-          inherit pkgs;
+          pkgs =
+            import nixpkgs {
+              inherit system overlays;
+            }
+            // {
+              inherit lib;
+            };
 
           extraSpecialArgs = {
             inherit inputs;
             pkgs-stable = mkPkgsStable system;
-            constants =
-              global-constants
-              // {
-                inherit username;
-                homeDirectory = "/home/${username}";
-              }
-              // (builtins.fromJSON (
-                # have a doppler account setup correctly and run "./scripts/gen-vars.sh"
-                builtins.readFile "${vars}/${username}.json"
-              ));
+            constants = meta // {
+              inherit username;
+              homeDirectory = "/home/${username}";
+            };
             utils = import ./utilities { inherit (nixpkgs) lib; };
           };
           modules = [
@@ -173,14 +146,14 @@
       usernames = builtins.attrNames (builtins.readDir ./users);
     in
     {
-      formatter = lib.genAttrs global-constants.system.supported (
+      formatter = lib.genAttrs meta.system.supported (
         system: nixpkgs.legacyPackages.${system}.nixfmt-tree
       );
 
       nixosConfigurations =
         (lib.genAttrs hostnames mkHost)
         // lib.listToAttrs (
-          map (system: lib.nameValuePair "iso-${system}" (mkIso system)) global-constants.system.supported
+          map (system: lib.nameValuePair "iso-${system}" (mkIso system)) meta.system.supported
         );
 
       homeConfigurations = lib.mergeAttrsList (
@@ -189,7 +162,7 @@
           lib.listToAttrs (
             map (username: lib.nameValuePair "${username}@${system}" (mkUser system username)) usernames
           )
-        ) global-constants.system.supported
+        ) meta.system.supported
       );
 
       templates = {

@@ -1,9 +1,8 @@
 {
   lib,
-  utils,
   ...
 }@args:
-(utils.mkProfile "discord" {
+(lib.utils.mkProfile "discord" {
   options = { };
 
   configs =

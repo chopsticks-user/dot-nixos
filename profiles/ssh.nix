@@ -1,8 +1,8 @@
 {
-  utils,
+  lib,
   ...
 }@args:
-(utils.mkProfile "ssh" {
+(lib.utils.mkProfile "ssh" {
   options = { };
 
   configs =

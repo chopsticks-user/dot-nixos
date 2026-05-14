@@ -1,10 +1,9 @@
 {
   lib,
-  utils,
   pkgs,
   ...
 }@args:
-(utils.mkProfile "zed" {
+(lib.utils.mkProfile "zed" {
   options = { };
 
   configs =

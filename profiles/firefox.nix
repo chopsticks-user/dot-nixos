@@ -1,9 +1,9 @@
 {
-  utils,
+  lib,
   constants,
   ...
 }@args:
-(utils.mkProfile "firefox" {
+(lib.utils.mkProfile "firefox" {
   options = { };
 
   configs =

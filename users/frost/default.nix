@@ -1,4 +1,4 @@
-{ pkgs, constants, ... }:
+{ pkgs, ... }:
 {
   nixpkgs.config.allowUnfreePackages = [
     "rider"
@@ -11,7 +11,6 @@
     jetbrains.clion
     godot
     blender
-    doppler
   ];
 
   profiles = {
@@ -24,7 +23,10 @@
     ssh.enable = true;
     git = {
       enable = true;
-      inherit (constants.profiles.git) user;
+      user = {
+        name = "chopsticks-user";
+        email = "frostyfrost273@gmail.com";
+      };
     };
     hyprland.enable = true;
     neovim.enable = true;

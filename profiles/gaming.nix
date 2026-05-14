@@ -1,10 +1,10 @@
 {
-  utils,
+  lib,
   pkgs,
   inputs,
   ...
 }@args:
-(utils.mkProfile "gaming" {
+(lib.utils.mkProfile "gaming" {
   imports = [
     inputs.steam-config-nix.homeModules.default
   ];
