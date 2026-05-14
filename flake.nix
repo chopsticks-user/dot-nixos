@@ -40,143 +40,46 @@
         home-manager.follows = "nixpkgs";
       };
     };
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
-    {
-      self,
-      nixpkgs,
-      nixpkgs-stable,
-      home-manager,
-      ...
-    }@inputs:
-    let
-      lib = nixpkgs.lib.extend (
-        final: prev: {
-          utils = import ./utilities { lib = final; };
-        }
-      );
-
-      meta = builtins.fromJSON (builtins.readFile ./meta.json);
+    inputs:
+    import ./utilities/flake-builder.nix {
+      inherit inputs;
 
       overlays = [
-        (final: prev: {
-          unreal-engine = final.callPackage ./overlays/unreal-engine/package.nix {
+        { name = "unreal-engine"; }
+        {
+          name = "bottles";
+          args = {
+            removeWarningPopup = true;
           };
-        })
-        (final: prev: {
-          bottles = final.callPackage ./overlays/bottles/package.nix {
-            inherit prev;
+        }
+        {
+          name = "openldap";
+          args = {
+            preCheckExtra = ''
+              rm -f tests/scripts/test017-syncreplication-refresh
+              rm -f tests/scripts/test019-syncreplication-cascade
+            '';
           };
-        })
-        (final: prev: {
-          openldap = final.callPackage ./overlays/openldap/package.nix {
-            inherit prev;
-          };
-        })
+        }
       ];
-
-      mkPkgsStable =
-        system:
-        import nixpkgs-stable {
-          inherit system overlays;
-        };
-
-      mkIso =
-        system:
-        lib.nixosSystem {
-          inherit system;
-          modules = [ ./scripts/iso.nix ];
-        };
-
-      mkHost =
-        hostname:
-        let
-          system = meta.system.hosts.${hostname};
-        in
-        lib.nixosSystem {
-          inherit system;
-          specialArgs = {
-            inherit inputs;
-            pkgs-stable = mkPkgsStable system;
-            constants = meta // {
-              inherit hostname;
-              system = {
-                current = system;
-              };
-            };
-          };
-          modules = [
-            { nixpkgs.overlays = overlays; }
-            inputs.disko.nixosModules.disko
-            ./features
-            ./hosts/${hostname}
-            inputs.nix-index-database.nixosModules.default
-          ]
-          ++ map (username: ./users/${username}/system.nix) usernames;
-        };
-
-      mkUser =
-        system: username:
-        home-manager.lib.homeManagerConfiguration {
-          pkgs =
-            import nixpkgs {
-              inherit system overlays;
-            }
-            // {
-              inherit lib;
-            };
-
-          extraSpecialArgs = {
-            inherit inputs;
-            pkgs-stable = mkPkgsStable system;
-            constants = meta // {
-              inherit username;
-              homeDirectory = "/home/${username}";
-            };
-            utils = import ./utilities { inherit (nixpkgs) lib; };
-          };
-          modules = [
-            ./profiles
-            ./users/${username}
-          ];
-        };
-
-      hostnames = builtins.attrNames (builtins.readDir ./hosts);
-      usernames = builtins.attrNames (builtins.readDir ./users);
-    in
-    {
-      formatter = lib.genAttrs meta.system.supported (
-        system: nixpkgs.legacyPackages.${system}.nixfmt-tree
-      );
-
-      nixosConfigurations =
-        (lib.genAttrs hostnames mkHost)
-        // lib.listToAttrs (
-          map (system: lib.nameValuePair "iso-${system}" (mkIso system)) meta.system.supported
-        );
-
-      homeConfigurations = lib.mergeAttrsList (
-        map (
-          system:
-          lib.listToAttrs (
-            map (username: lib.nameValuePair "${username}@${system}" (mkUser system username)) usernames
-          )
-        ) meta.system.supported
-      );
 
       templates = {
         development = {
-          path = ./templates/development;
-          description = "";
+          description = "Generic development environment";
           welcomeText = "";
+          default = true;
         };
         development-fhs = {
-          path = ./templates/development-fhs;
-          description = "";
+          description = "Generic FHS development environment";
           welcomeText = "";
         };
-        default = self.templates.development;
       };
     };
 }

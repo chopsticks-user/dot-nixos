@@ -1,14 +1,17 @@
-{ prev, ... }:
+{
+  prev,
+  removeWarningPopup ? false,
+  ...
+}:
 (prev.bottles.override {
-  removeWarningPopup = true;
+  inherit removeWarningPopup;
 }).overrideAttrs
   (old: {
     passthru = (old.passthru or { }) // {
-      removeWarningPopup = true;
-      isWarningPopupRemoved = true;
+      inherit removeWarningPopup;
     };
 
     meta = (old.meta or { }) // {
-      description = "${old.meta.description or "Bottles"} (warning popup disabled)";
+      description = "${old.meta.description or ""} (overlay)";
     };
   })
