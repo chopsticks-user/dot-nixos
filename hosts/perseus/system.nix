@@ -1,8 +1,5 @@
+{ constants, ... }:
 {
-  pkgs,
-  constants,
-  ...
-}: {
   features = {
     core = {
       enable = true;
@@ -16,12 +13,7 @@
     hyprland.enable = true;
     fcitx.enable = true;
     ssh.enable = true;
-    qemu.enable = true;
   };
-
-  environment.systemPackages = with pkgs; [
-    libgpiod
-  ];
 
   networking = {
     hostName = constants.hostname;
@@ -29,11 +21,4 @@
   };
 
   time.timeZone = "America/New_York";
-
-  security.wrappers.btop = {
-    owner = "root";
-    group = "root";
-    capabilities = "cap_perfmon+ep";
-    source = "${pkgs.btop}/bin/btop";
-  };
 }

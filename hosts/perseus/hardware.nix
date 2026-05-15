@@ -2,7 +2,8 @@
   config,
   inputs,
   ...
-}: {
+}:
+{
   imports = with inputs.nixos-hardware.nixosModules; [
     asus-fx504gd
     common-cpu-intel

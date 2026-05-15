@@ -2,7 +2,8 @@
   config,
   inputs,
   ...
-}: {
+}:
+{
   imports = with inputs.nixos-hardware.nixosModules; [
     common-cpu-intel
     common-gpu-nvidia-nonprime
