@@ -1,27 +1,26 @@
 {
   lib,
-  config,
   constants,
   ...
-}:
-let
-  cfg = config.features.nh;
-in
-{
-  options.features.nh.enable = lib.mkEnableOption "nh";
+}@args:
+(lib.utils.mkFeature "nh" {
+  options = { };
 
-  config = lib.mkIf cfg.enable {
-    programs.nh = {
-      enable = true;
-      clean.enable = lib.mkDefault true;
-      clean.extraArgs = lib.mkDefault "--keep-since 7d --keep 8";
-    };
+  configs =
+    { ... }:
+    {
+      programs.nh = {
+        enable = true;
+        clean.enable = lib.mkDefault true;
+        clean.extraArgs = lib.mkDefault "--keep-since 7d --keep 8";
+      };
 
-    environment.sessionVariables = {
-      NH_FLAKE = constants.config-path;
-      NH_OS_FLAKE = constants.config-path;
-      NH_HOME_FLAKE = constants.config-path;
-      NH_SHOW_ACTIVATION_LOGS = "true";
+      environment.sessionVariables = {
+        NH_FLAKE = constants.configPath;
+        NH_OS_FLAKE = constants.configPath;
+        NH_HOME_FLAKE = constants.configPath;
+        NH_SHOW_ACTIVATION_LOGS = "true";
+      };
     };
-  };
-}
+})
+  args

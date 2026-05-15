@@ -1,20 +1,17 @@
 {
   lib,
-  config,
   ...
-}:
-let
-  cfg = config.profiles.claude;
-in
-{
-  options.profiles.claude = {
-    enable = lib.mkEnableOption "claude";
-  };
+}@args:
+(lib.utils.mkProfile "claude" {
+  options = { };
 
-  config = lib.mkIf cfg.enable {
-    programs.claude-code = {
-      enable = true;
-      enableMcpIntegration = true;
+  configs =
+    { ... }:
+    {
+      programs.claude-code = {
+        enable = true;
+        enableMcpIntegration = true;
+      };
     };
-  };
-}
+})
+  args

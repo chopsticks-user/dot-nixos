@@ -1,15 +1,14 @@
 # this file belongs to nixosConfigurations
 {
+  config,
   pkgs,
-  constants,
   ...
 }:
 {
-  # constants doesn't have .username here; username must be hardcoded
   users.users.frost = {
     isNormalUser = true;
     description = "Frost";
-    initialPassword = constants.default-password;
+    hashedPasswordFile = config.sops.secrets."users/frost/password".path;
     extraGroups = [
       "wheel"
       "networkmanager"
@@ -23,7 +22,7 @@
 
   features = {
     hyprland.enable = true;
-    distrobox.enable = true;
+    virtualization.enable = true;
     gaming.enable = true;
   };
 }

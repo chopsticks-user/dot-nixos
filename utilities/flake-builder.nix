@@ -1,0 +1,132 @@
+# standalone, not imported by the utilities module
+{
+  inputs,
+  overlays ? { },
+  templates ? { },
+  apps ? { },
+  ...
+}:
+let
+  meta = builtins.fromJSON (builtins.readFile ../meta.json);
+
+  lib = inputs.nixpkgs.lib.extend (
+    final: prev: {
+      utils = import ../utilities { lib = final; };
+    }
+  );
+
+  resolvedOverlays = map (
+    {
+      name,
+      args ? { },
+    }:
+    lib.utils.mkOverlay name args
+  ) overlays;
+
+  mkSpecializedPackage =
+    upstream: system: lib.utils.mkSpecializedPackage upstream system resolvedOverlays;
+
+  usernames = builtins.attrNames (builtins.readDir ../users);
+in
+{
+  formatter = lib.genAttrs meta.system.supported (
+    system: inputs.nixpkgs.legacyPackages.${system}.nixfmt-tree
+  );
+
+  nixosConfigurations =
+    (lib.genAttrs (builtins.attrNames (builtins.readDir ../hosts)) (
+      hostname:
+      let
+        system = meta.system.hosts.${hostname};
+      in
+      lib.nixosSystem {
+        inherit system;
+        specialArgs = {
+          inherit inputs;
+          pkgs-stable = mkSpecializedPackage inputs.nixpkgs-stable system;
+          constants = lib.recursiveUpdate meta {
+            inherit hostname;
+            system.current = system;
+          };
+        };
+        modules = [
+          { nixpkgs.overlays = resolvedOverlays; }
+          ../features
+          ../hosts/${hostname}
+          inputs.disko.nixosModules.disko
+          inputs.sops-nix.nixosModules.sops
+          inputs.nix-index-database.nixosModules.default
+        ]
+        ++ map (username: ../users/${username}/system.nix) usernames;
+      }
+    ))
+    // lib.listToAttrs (
+      map (
+        system:
+        lib.nameValuePair "iso-${system}" (
+          lib.nixosSystem {
+            inherit system;
+            modules = [ ../scripts/iso.nix ];
+          }
+        )
+      ) meta.system.supported
+    );
+
+  homeConfigurations = lib.mergeAttrsList (
+    map (
+      system:
+      lib.listToAttrs (
+        map (
+          username:
+          lib.nameValuePair "${username}@${system}" (
+            inputs.home-manager.lib.homeManagerConfiguration {
+              pkgs = (mkSpecializedPackage inputs.nixpkgs system) // {
+                inherit lib;
+              };
+
+              extraSpecialArgs = {
+                inherit inputs;
+                pkgs-stable = mkSpecializedPackage inputs.nixpkgs-stable system;
+                constants = lib.recursiveUpdate meta {
+                  inherit username;
+                  homeDirectory = "/home/${username}";
+                };
+              };
+              modules = [
+                ../profiles
+                ../users/${username}
+                inputs.sops-nix.homeManagerModules.sops
+              ];
+            }
+          )
+        ) usernames
+      )
+    ) meta.system.supported
+  );
+
+  templates =
+    let
+      actualTemplates = lib.mapAttrs (
+        name: tmpl: { path = ../templates/${name}; } // (removeAttrs tmpl [ "default" ])
+      ) templates;
+      templateList = builtins.attrNames templates;
+      default =
+        let
+          defaultList = builtins.filter (name: templates.${name}.default or false) templateList;
+        in
+        if builtins.length defaultList > 1 then
+          throw "Only 1 template can be marked as default: ${builtins.toJSON defaultList}"
+        else if defaultList != [ ] then
+          builtins.head defaultList
+        else if builtins.length templateList == 1 then
+          builtins.head templateList
+        else
+          null;
+    in
+    actualTemplates
+    // lib.optionalAttrs (default != null) {
+      default = actualTemplates.${default};
+    };
+
+  inherit apps;
+}

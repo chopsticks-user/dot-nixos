@@ -1,14 +1,13 @@
 {
-  config,
   lib,
+  config,
   pkgs,
   inputs,
   constants,
   ...
-}:
-{
-  options.features.core = {
-    enable = lib.mkEnableOption "core";
+}@args:
+(lib.utils.mkFeature "core" {
+  options = {
     kernel = lib.mkOption {
       type = lib.types.enum [
         "testing"
@@ -17,7 +16,7 @@
       default = "latest";
       description = "Kernel version to use";
     };
-    state-version = lib.mkOption {
+    stateVersion = lib.mkOption {
       type = lib.types.str;
       default = config.system.nixos.release;
       description = "State version";
@@ -35,12 +34,10 @@
     };
   };
 
-  config =
-    let
-      cfg = config.features.core;
-    in
-    lib.mkIf cfg.enable {
-      system.stateVersion = cfg.state-version;
+  configs =
+    { fields, ... }:
+    {
+      system.stateVersion = fields.stateVersion;
 
       nix.settings = {
         experimental-features = [
@@ -51,44 +48,68 @@
         max-jobs = "auto";
       };
 
-      boot.kernelPackages = pkgs."linuxPackages_${cfg.kernel}";
+      boot.kernelPackages = pkgs."linuxPackages_${fields.kernel}";
 
       environment.systemPackages =
         let
           inherit (inputs.nix-alien.packages.${constants.system.current}) nix-alien;
           btop =
-            if cfg.gpu == "nvidia" then
+            if fields.gpu == "nvidia" then
               pkgs.btop-cuda
-            else if cfg.gpu == "amd" then
+            else if fields.gpu == "amd" then
               pkgs.btop-rocm
             else
               pkgs.btop;
         in
         with pkgs;
         [
+          # core & nix tooling
           home-manager
-          efibootmgr
-          git
-          psmisc
-          lshw
-          fastfetch
-          btop
-          lazyjournal
-          ncdu
-          wl-clipboard
-          jq
-          wget
-          wev
-          zip
-          unzip
           nix-alien
-          inotify-tools
-          patchelf
-          pkg-config
           nixd
           nixfmt
-          file
+          coreutils
+
+          # system administration & monitoring
+          efibootmgr
+          psmisc
+          lshw
+          inotify-tools
+          lazyjournal
+          fastfetch
+          ncdu
+          btop
+
+          # CLI wizardy kit, coreutils already includes sort, uniq, cut
           ripgrep
+          sd
+          fd
+          jq
+          yq
+          gawk
+          findutils # xargs
+          gnused
+
+          # files & directories
+          git
+          tree
+          cloc
+          curl
+          wget
+          zip
+          unzip
+          pkg-config
+          patchelf
+          file
+
+          # secret management
+          age
+          ssh-to-age
+          sops
+
+          # miscellaneous
+          wl-clipboard
+          wev
         ];
 
       programs = {
@@ -96,5 +117,32 @@
         nix-index.enable = true;
         command-not-found.enable = false;
       };
+
+      sops = {
+        defaultSopsFile = ../secrets/hosts/${constants.hostname}.yaml;
+        age = {
+          sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+        };
+        secrets = {
+#          "users/root/password" = {
+#            neededForUsers = true;
+#            sopsFile = ../secrets/hosts/${constants.hostname}.yaml;
+#            key = "root-password";
+#          };
+
+          "users/frost/password" = {
+            neededForUsers = true;
+            sopsFile = ../secrets/users/frost.yaml;
+            key = "password";
+          };
+
+          #          "users/tester/password" = {
+          #            neededForUsers = true;
+          #            sopsFile = ../secrets/users/tester.yaml;
+          #            key = "password";
+          #          };
+        };
+      };
     };
-}
+})
+  args

@@ -5,3 +5,9 @@ result*
 # IDEs
 .idea
 .vscode
+
+secrets/**
+!secrets/hosts/
+!secrets/hosts/**
+!secrets/users/
+!secrets/users/**

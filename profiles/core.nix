@@ -1,25 +1,20 @@
 {
-  config,
   lib,
+  config,
   constants,
   pkgs,
   ...
-}:
+}@args:
+(lib.utils.mkProfile "core" {
+  options = { };
 
-{
-  options.profiles.core = {
-    enable = lib.mkEnableOption "core";
-  };
-
-  config =
-    let
-      cfg = config.profiles.core;
-    in
-    lib.mkIf cfg.enable {
+  configs =
+    { ... }:
+    {
       home = {
         stateVersion = "26.05";
         inherit (constants) username;
-        homeDirectory = constants.home-dir;
+        homeDirectory = constants.homeDirectory;
         packages = with pkgs; [
           nerd-fonts.fira-code
           fira
@@ -47,9 +42,8 @@
           dataHome = dataHomeDir;
           userDirs =
             let
-
               mediaHomeDir = "${homeDir}/media";
-              ignoreHomeDir = "${dataHomeDir}/.local/share/.xdg-ignore";
+              ignoreHomeDir = "${dataHomeDir}/.xdg-ignore";
             in
             {
               enable = true;
@@ -86,4 +80,5 @@
         };
       };
     };
-}
+})
+  args

@@ -13,6 +13,6 @@
     ./gaming.nix
     ./claude.nix
     ./zed.nix
-    ./distrobox.nix
+    ./virtualization.nix
   ];
 }

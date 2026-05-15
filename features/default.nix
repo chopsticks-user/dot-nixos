@@ -8,8 +8,7 @@
     ./ssh.nix
     ./grub.nix
     ./docs.nix
-    ./distrobox.nix
     ./gaming.nix
-    ./qemu.nix
+    ./virtualization.nix
   ];
 }

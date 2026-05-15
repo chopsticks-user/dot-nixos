@@ -1,8 +1,6 @@
-{ pkgs, ... }:
+{ pkgs, constants, ... }:
 {
   home.packages = with pkgs; [
-    cloc
-    tree
   ];
 
   profiles = {

@@ -33,139 +33,53 @@
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    impermanence = {
+      url = "github:nix-community/impermanence";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        home-manager.follows = "nixpkgs";
+      };
+    };
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
-    {
-      self,
-      nixpkgs,
-      nixpkgs-stable,
-      home-manager,
-      ...
-    }@inputs:
-    let
-      inherit (nixpkgs) lib;
+    inputs:
+    import ./utilities/flake-builder.nix {
+      inherit inputs;
 
-      global-constants = {
-        config-path = "$HOME/.nixos";
-        system = {
-          supported = [
-            "x86_64-linux"
-            "x86_64-darwin"
-            "aarch64-linux"
-            "aarch64-darwin"
-          ];
-          default = "x86_64-linux";
-        };
-        default-password = "password";
-      };
-
-      # todo: bulk import and accept arguments from system or user callsite
       overlays = [
-        (final: _: {
-          unreal-engine = final.callPackage ./overlays/unreal-engine/package.nix { };
-        })
+        { name = "unreal-engine"; }
+        {
+          name = "bottles";
+          args = {
+            removeWarningPopup = true;
+          };
+        }
+        {
+          name = "openldap";
+          args = {
+            preCheckExtra = ''
+              rm -f tests/scripts/test017-syncreplication-refresh
+              rm -f tests/scripts/test019-syncreplication-cascade
+            '';
+          };
+        }
       ];
-
-      mkPkgsStable =
-        system:
-        import nixpkgs-stable {
-          inherit system overlays;
-        };
-
-      mkIso =
-        system:
-        lib.nixosSystem {
-          inherit system;
-          modules = [ ./scripts/iso.nix ];
-        };
-
-      mkHost =
-        hostname:
-        let
-          system =
-            if builtins.pathExists ./hosts/${hostname}/arch then
-              lib.fileContents ./hosts/${hostname}/arch
-            else
-              "x86_64-linux";
-        in
-        lib.nixosSystem {
-          inherit system;
-          specialArgs = {
-            inherit inputs;
-            pkgs-stable = mkPkgsStable system;
-            constants = global-constants // {
-              inherit hostname;
-              system = {
-                current = system;
-              };
-            };
-          };
-          modules = [
-            { nixpkgs.overlays = overlays; }
-            inputs.disko.nixosModules.disko
-            ./features
-            ./hosts/${hostname}
-            inputs.nix-index-database.nixosModules.default
-          ]
-          ++ map (username: ./users/${username}/system.nix) usernames;
-        };
-
-      mkUser =
-        system: username:
-        home-manager.lib.homeManagerConfiguration {
-          pkgs = import nixpkgs {
-            inherit system overlays;
-          };
-          extraSpecialArgs = {
-            inherit inputs;
-            pkgs-stable = mkPkgsStable system;
-            constants = global-constants // {
-              inherit username;
-              home-dir = "/home/${username}";
-            };
-          };
-          modules = [
-            ./profiles
-            ./users/${username}
-          ];
-        };
-
-      hostnames = builtins.attrNames (builtins.readDir ./hosts);
-      usernames = builtins.attrNames (builtins.readDir ./users);
-    in
-    {
-      formatter = lib.genAttrs global-constants.system.supported (
-        system: nixpkgs.legacyPackages.${system}.nixfmt-tree
-      );
-
-      nixosConfigurations =
-        (lib.genAttrs hostnames mkHost)
-        // lib.listToAttrs (
-          map (system: lib.nameValuePair "iso-${system}" (mkIso system)) global-constants.system.supported
-        );
-
-      homeConfigurations = lib.mergeAttrsList (
-        map (
-          system:
-          lib.listToAttrs (
-            map (username: lib.nameValuePair "${username}@${system}" (mkUser system username)) usernames
-          )
-        ) global-constants.system.supported
-      );
 
       templates = {
         development = {
-          path = ./templates/development;
-          description = "";
+          description = "Generic development environment";
           welcomeText = "";
+          default = true;
         };
         development-fhs = {
-          path = ./templates/development-fhs;
-          description = "";
+          description = "Generic FHS development environment";
           welcomeText = "";
         };
-        default = self.templates.development;
       };
     };
 }

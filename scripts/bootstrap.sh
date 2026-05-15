@@ -4,10 +4,10 @@ trap 'echo "error on line $LINENO, exiting..."; exit 1' ERR
 
 host=$1
 
-cd ~
-rm -rf .nixos
-git clone https://github.com/chopsticks-user/dot-nixos .nixos
-cd .nixos
+cd ~ || exit
+rm -rf ~/.config/nixos
+git clone https://github.com/chopsticks-user/dot-nixos ~/.config/nixos
+cd ~/.config/nixos || exit
 
 sudo nix --experimental-features "nix-command flakes" \
   run github:nix-community/disko/latest -- --flake \
