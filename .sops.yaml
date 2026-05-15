@@ -1,19 +1,22 @@
 keys:
-  - &admin_frost age16q07n7z7x9w8aqq4wyw92hmku8wy95atdwah5wt0nsm6y3f47fhs0da5e5
-  - &admin_tester age18h0lpn6afkggjsk499dusdmxjfw46echt97zch3khfee92kdc3xqvcjrcp
+  - &user_frost age16q07n7z7x9w8aqq4wyw92hmku8wy95atdwah5wt0nsm6y3f47fhs0da5e5
+  - &user_tester age18h0lpn6afkggjsk499dusdmxjfw46echt97zch3khfee92kdc3xqvcjrcp
 
   - &host_andromeda age1a2jks6zj56nfmgx0055kfdqnwuaawuzl69lkm5elv8s0cetacgxs5hfsx9
   - &host_perseus age1feu9azfclkgw86qgx5yr2taxlntga8qyyqz37kc4zpdfnhw2mvkshgpvr8
 creation_rules:
-  - path_regex: secrets/hosts/andromeda.yaml
-    key_groups:
-      - age: [ *admin_frost, *host_andromeda ]
+  # self + enrolled hosts
   - path_regex: secrets/users/frost.yaml
     key_groups:
-      - age: [ *admin_frost, *host_andromeda ]
-  - path_regex: secrets/hosts/perseus.yaml
-    key_groups:
-      - age: [ *admin_tester, *host_perseus ]
+      - age: [ *user_frost, *host_andromeda ]
   - path_regex: secrets/users/tester.yaml
     key_groups:
-      - age: [ *admin_tester, *host_perseus ]
+      - age: [ *user_tester, *host_perseus ]
+
+  # self + administrators
+  - path_regex: secrets/hosts/andromeda.yaml
+    key_groups:
+      - age: [ *host_andromeda, *user_frost ]
+  - path_regex: secrets/hosts/perseus.yaml
+    key_groups:
+      - age: [ *host_perseus, *user_tester ]

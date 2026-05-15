@@ -110,6 +110,7 @@
           # miscellaneous
           wl-clipboard
           wev
+          just
         ];
 
       programs = {

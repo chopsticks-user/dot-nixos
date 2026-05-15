@@ -1,1 +1,3 @@
 - Set default shell at user level
+- Reuse paths in scripts as variables for consistency
+- "frost" as lead admin

@@ -3,7 +3,6 @@
   nixpkgs.config.allowUnfreePackages = [
     "rider"
     "clion"
-    "claude-code"
   ];
 
   home.packages = with pkgs; [
@@ -20,8 +19,8 @@
     templates."gitconfig" = {
       content = ''
         [user]
-            name = ${config.sops.placeholder."git/name"}
-            email = ${config.sops.placeholder."git/email"}
+          name = ${config.sops.placeholder."git/name"}
+          email = ${config.sops.placeholder."git/email"}
       '';
     };
   };
@@ -48,12 +47,5 @@
     obs.enable = true;
     virtualization.enable = true;
     zed.enable = true;
-  };
-
-  programs.git = {
-    enable = true;
-    includes = [
-      { path = config.sops.templates."gitconfig".path; }
-    ];
   };
 }

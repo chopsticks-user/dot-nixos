@@ -7,8 +7,8 @@
     templates."gitconfig" = {
       content = ''
         [user]
-            name = ${config.sops.placeholder."git/name"}
-            email = ${config.sops.placeholder."git/email"}
+          name = ${config.sops.placeholder."git/name"}
+          email = ${config.sops.placeholder."git/email"}
       '';
     };
   };
