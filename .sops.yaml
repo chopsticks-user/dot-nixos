@@ -11,3 +11,9 @@ creation_rules:
   - path_regex: secrets/users/frost.yaml
     key_groups:
       - age: [ *admin_frost, *host_andromeda ]
+#  - path_regex: secrets/hosts/perseus.yaml
+#    key_groups:
+#      - age: [ *admin_tester, *host_perseus ]
+#  - path_regex: secrets/users/tester.yaml
+#    key_groups:
+#      - age: [ *admin_tester, *host_perseus ]

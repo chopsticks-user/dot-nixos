@@ -116,31 +116,13 @@
         nix-index-database.comma.enable = true;
         nix-index.enable = true;
         command-not-found.enable = false;
+        zsh.enable = true;
       };
 
       sops = {
         defaultSopsFile = ../secrets/hosts/${constants.hostname}.yaml;
         age = {
           sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
-        };
-        secrets = {
-#          "users/root/password" = {
-#            neededForUsers = true;
-#            sopsFile = ../secrets/hosts/${constants.hostname}.yaml;
-#            key = "root-password";
-#          };
-
-          "users/frost/password" = {
-            neededForUsers = true;
-            sopsFile = ../secrets/users/frost.yaml;
-            key = "password";
-          };
-
-          #          "users/tester/password" = {
-          #            neededForUsers = true;
-          #            sopsFile = ../secrets/users/tester.yaml;
-          #            key = "password";
-          #          };
         };
       };
     };

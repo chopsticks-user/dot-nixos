@@ -25,8 +25,6 @@ let
 
   mkSpecializedPackage =
     upstream: system: lib.utils.mkSpecializedPackage upstream system resolvedOverlays;
-
-  usernames = builtins.attrNames (builtins.readDir ../users);
 in
 {
   formatter = lib.genAttrs meta.system.supported (
@@ -37,7 +35,8 @@ in
     (lib.genAttrs (builtins.attrNames (builtins.readDir ../hosts)) (
       hostname:
       let
-        system = meta.system.hosts.${hostname};
+        system = meta.hosts.${hostname}.system;
+        users = meta.hosts.${hostname}.users;
       in
       lib.nixosSystem {
         inherit system;
@@ -57,7 +56,7 @@ in
           inputs.sops-nix.nixosModules.sops
           inputs.nix-index-database.nixosModules.default
         ]
-        ++ map (username: ../users/${username}/system.nix) usernames;
+        ++ map (username: ../users/${username}/system.nix) users;
       }
     ))
     // lib.listToAttrs (
@@ -99,7 +98,7 @@ in
               ];
             }
           )
-        ) usernames
+        ) (builtins.attrNames (builtins.readDir ../users))
       )
     ) meta.system.supported
   );

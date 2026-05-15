@@ -5,6 +5,14 @@
   ...
 }:
 {
+  sops.secrets = {
+    "users/frost/password" = {
+      neededForUsers = true;
+      sopsFile = ../../secrets/users/frost.yaml;
+      key = "password";
+    };
+  };
+
   users.users.frost = {
     isNormalUser = true;
     description = "Frost";
@@ -14,10 +22,6 @@
       "networkmanager"
     ];
     shell = pkgs.zsh;
-  };
-
-  programs = {
-    zsh.enable = true;
   };
 
   features = {

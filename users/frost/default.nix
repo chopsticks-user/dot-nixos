@@ -14,9 +14,6 @@
   ];
 
   sops = {
-    age.keyFile = "${config.xdg.configHome}/sops/age/keys.txt";
-    defaultSopsFile = ../../secrets/users/frost.yaml;
-
     secrets."git/name" = { };
     secrets."git/email" = { };
 
