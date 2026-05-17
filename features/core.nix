@@ -52,7 +52,7 @@
 
       environment.systemPackages =
         let
-          inherit (inputs.nix-alien.packages.${constants.system.current}) nix-alien;
+          inherit (inputs.nix-alien.packages.${constants.system}) nix-alien;
           btop =
             if fields.gpu == "nvidia" then
               pkgs.btop-cuda

@@ -45,7 +45,7 @@ in
           pkgs-stable = mkSpecializedPackage inputs.nixpkgs-stable system;
           constants = lib.recursiveUpdate meta {
             inherit hostname;
-            system.current = system;
+            inherit (meta.hosts.${hostname}) system;
           };
         };
         modules = [
@@ -68,7 +68,7 @@ in
             modules = [ ../scripts/iso.nix ];
           }
         )
-      ) meta.system.supported
+      ) meta.supported
     );
 
   homeConfigurations = lib.mergeAttrsList (
@@ -100,7 +100,7 @@ in
           )
         ) (builtins.attrNames (builtins.readDir ../users))
       )
-    ) meta.system.supported
+    ) meta.supported
   );
 
   templates =

@@ -32,9 +32,6 @@
         Install.WantedBy = [ "default.target" ];
       };
 
-      # todo: enable at system level to provide cpu-governed optimizations
-      # services.gamemode.enable = true;
-
       nixpkgs.config.allowUnfreePackages = [
         "steam"
         "steam-unwrapped"
@@ -45,7 +42,6 @@
         enable = true;
         closeSteam = true;
         defaultCompatTool = "proton_experimental";
-
         apps = { };
       };
 

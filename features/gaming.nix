@@ -28,6 +28,9 @@
           enable = true;
         };
       };
+
+      # todo: enable cpu-governed optimizations
+      # services.gamemode.enable = true;
     };
 })
   args
