@@ -13,9 +13,7 @@
       "config": ".config",
       "data": ".local/share",
       "state": ".local/state",
-      "bin": ".local/bin"
-    },
-    "user": {
+      "bin": ".local/bin",
       "documents": "documents",
       "downloads": "downloads",
       "projects": "projects",
@@ -45,7 +43,7 @@
     "perseus": {
       "system": "x86_64-linux",
       "version": "26.05",
-      "kernel": "latest",
+      "kernel": "testing",
       "gpu": "nvidia",
       "users": [
         "tester"

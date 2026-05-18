@@ -33,9 +33,7 @@
 
       xdg =
         let
-          mkPathBuilder = kind: name: "${config.home.homeDirectory}/${constants.directories.${kind}.${name}}";
-          mkUserPath = name: (mkPathBuilder "user") name;
-          mkHomePath = name: (mkPathBuilder "home") name;
+          mkHomePath = name: "${config.home.homeDirectory}/${constants.directories.home.${name}}";
         in
         {
           enable = true;
@@ -48,21 +46,21 @@
             enable = true;
             createDirectories = true;
             setSessionVariables = true;
-            desktop = mkUserPath "desktop";
-            templates = mkUserPath "templates";
-            publicShare = mkUserPath "publicShare";
-            documents = mkUserPath "documents";
-            download = mkUserPath "downloads";
-            projects = mkUserPath "projects";
-            pictures = mkUserPath "pictures";
-            music = mkUserPath "music";
-            videos = mkUserPath "videos";
+            desktop = mkHomePath "desktop";
+            templates = mkHomePath "templates";
+            publicShare = mkHomePath "publicShare";
+            documents = mkHomePath "documents";
+            download = mkHomePath "downloads";
+            projects = mkHomePath "projects";
+            pictures = mkHomePath "pictures";
+            music = mkHomePath "music";
+            videos = mkHomePath "videos";
             extraConfig = {
-              BOXES = mkUserPath "boxes";
-              MEDIA = mkUserPath "media";
-              WALLPAPERS = mkUserPath "wallpapers";
-              SCREENSHOTS = mkUserPath "screenshots";
-              SCREENCASTS = mkUserPath "screencasts";
+              BOXES = mkHomePath "boxes";
+              MEDIA = mkHomePath "media";
+              WALLPAPERS = mkHomePath "wallpapers";
+              SCREENSHOTS = mkHomePath "screenshots";
+              SCREENCASTS = mkHomePath "screencasts";
             };
           };
         };
