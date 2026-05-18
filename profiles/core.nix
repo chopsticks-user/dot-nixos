@@ -33,35 +33,36 @@
 
       xdg =
         let
-          mkHomePath = path: "${config.home.homeDirectory}/${path}";
-          ignoreHomePath = "${mkHomePath constants.directories.home.data}/.xdg-ignore";
+          mkPathBuilder = kind: name: "${config.home.homeDirectory}/${constants.directories.${kind}.${name}}";
+          mkUserPath = name: (mkPathBuilder "user") name;
+          mkHomePath = name: (mkPathBuilder "home") name;
         in
         {
           enable = true;
-          cacheHome = mkHomePath constants.directories.home.cache;
-          configHome = mkHomePath constants.directories.home.config;
-          dataHome = mkHomePath constants.directories.home.data;
-          stateHome = mkHomePath constants.directories.home.state;
-          binHome = mkHomePath constants.directories.home.bin;
+          cacheHome = mkHomePath "cache";
+          configHome = mkHomePath "config";
+          dataHome = mkHomePath "data";
+          stateHome = mkHomePath "state";
+          binHome = mkHomePath "bin";
           userDirs = {
             enable = true;
             createDirectories = true;
             setSessionVariables = true;
-            desktop = ignoreHomePath;
-            templates = ignoreHomePath;
-            publicShare = ignoreHomePath;
-            documents = mkHomePath "documents";
-            download = mkHomePath "downloads";
-            projects = mkHomePath "projects";
-            pictures = mkHomePath "media/images";
-            music = mkHomePath "media/audio";
-            videos = mkHomePath "media/videos";
+            desktop = mkUserPath "desktop";
+            templates = mkUserPath "templates";
+            publicShare = mkUserPath "publicShare";
+            documents = mkUserPath "documents";
+            download = mkUserPath "downloads";
+            projects = mkUserPath "projects";
+            pictures = mkUserPath "pictures";
+            music = mkUserPath "music";
+            videos = mkUserPath "videos";
             extraConfig = {
-              BOXES = mkHomePath "boxes";
-              MEDIA = mkHomePath "media";
-              WALLPAPERS = mkHomePath "media/images/wallpapers";
-              SCREENSHOTS = mkHomePath "media/images/screenshots";
-              SCREENCASTS = mkHomePath "media/videos/screencasts";
+              BOXES = mkUserPath "boxes";
+              MEDIA = mkUserPath "media";
+              WALLPAPERS = mkUserPath "wallpapers";
+              SCREENSHOTS = mkUserPath "screenshots";
+              SCREENCASTS = mkUserPath "screencasts";
             };
           };
         };

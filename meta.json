@@ -16,6 +16,20 @@
       "bin": ".local/bin"
     },
     "user": {
+      "documents": "documents",
+      "downloads": "downloads",
+      "projects": "projects",
+      "boxes": "boxes",
+      "media": "media",
+      "pictures": "media/images",
+      "music": "media/audio",
+      "videos": "media/videos",
+      "wallpapers": "media/images/wallpapers",
+      "screenshots": "media/images/screenshots",
+      "screencasts": "media/videos/screencasts",
+      "desktop": ".local/share/.xdg-ignore",
+      "templates": ".local/share/.xdg-ignore",
+      "publicShare": ".local/share/.xdg-ignore"
     }
   },
   "hosts": {
