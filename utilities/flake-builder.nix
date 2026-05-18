@@ -88,9 +88,12 @@ in
                 inherit inputs;
                 pkgs-stable = mkSpecializedPackage inputs.nixpkgs-stable system;
                 constants =
-                  lib.recursiveUpdate meta {
-                    inherit username;
+                  let
                     homeDirectory = "/home/${username}";
+                  in
+                  lib.recursiveUpdate meta {
+                    inherit username homeDirectory;
+                    directories.home = lib.mapAttrs (_: path: "${homeDirectory}/${path}") meta.directories.home;
                   }
                   // meta.users.${username};
               };

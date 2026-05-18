@@ -32,36 +32,41 @@
       };
 
       xdg =
-        let
-          mkHomePath = name: "${config.home.homeDirectory}/${constants.directories.home.${name}}";
-        in
-        {
+        (lib.utils.mapAttrNames (name: name + "Home") (
+          lib.getAttrs [
+            "cache"
+            "config"
+            "data"
+            "state"
+            "bin"
+          ] constants.directories.home
+        ))
+        // {
           enable = true;
-          cacheHome = mkHomePath "cache";
-          configHome = mkHomePath "config";
-          dataHome = mkHomePath "data";
-          stateHome = mkHomePath "state";
-          binHome = mkHomePath "bin";
           userDirs = {
             enable = true;
             createDirectories = true;
             setSessionVariables = true;
-            desktop = mkHomePath "desktop";
-            templates = mkHomePath "templates";
-            publicShare = mkHomePath "publicShare";
-            documents = mkHomePath "documents";
-            download = mkHomePath "downloads";
-            projects = mkHomePath "projects";
-            pictures = mkHomePath "pictures";
-            music = mkHomePath "music";
-            videos = mkHomePath "videos";
-            extraConfig = {
-              BOXES = mkHomePath "boxes";
-              MEDIA = mkHomePath "media";
-              WALLPAPERS = mkHomePath "wallpapers";
-              SCREENSHOTS = mkHomePath "screenshots";
-              SCREENCASTS = mkHomePath "screencasts";
-            };
+            inherit (constants.directories.home)
+              desktop
+              templates
+              publicShare
+              documents
+              download
+              projects
+              pictures
+              music
+              videos
+              ;
+            extraConfig = lib.utils.mapAttrNames lib.toUpper (
+              lib.getAttrs [
+                "boxes"
+                "media"
+                "wallpapers"
+                "screenshots"
+                "screencasts"
+              ] constants.directories.home
+            );
           };
         };
 

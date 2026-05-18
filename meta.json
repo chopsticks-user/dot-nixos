@@ -15,7 +15,7 @@
       "state": ".local/state",
       "bin": ".local/bin",
       "documents": "documents",
-      "downloads": "downloads",
+      "download": "downloads",
       "projects": "projects",
       "boxes": "boxes",
       "media": "media",
