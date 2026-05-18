@@ -1,12 +1,7 @@
 { constants, ... }:
 {
   features = {
-    core = {
-      enable = true;
-      kernel = "testing";
-      stateVersion = "26.05";
-      gpu = "nvidia";
-    };
+    core.enable = true;
     grub.enable = true;
     nh.enable = true;
     docs.enable = true;

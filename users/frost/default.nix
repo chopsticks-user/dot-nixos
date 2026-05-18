@@ -13,15 +13,19 @@
   ];
 
   sops = {
-    secrets."git/name" = { };
-    secrets."git/email" = { };
+    secrets = {
+      "git/name" = { };
+      "git/email" = { };
+    };
 
-    templates."gitconfig" = {
-      content = ''
-        [user]
-          name = ${config.sops.placeholder."git/name"}
-          email = ${config.sops.placeholder."git/email"}
-      '';
+    templates = {
+      "gitconfig" = {
+        content = ''
+          [user]
+            name = ${config.sops.placeholder."git/name"}
+            email = ${config.sops.placeholder."git/email"}
+        '';
+      };
     };
   };
 

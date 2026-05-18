@@ -16,9 +16,9 @@
       };
 
       environment.sessionVariables = {
-        NH_FLAKE = constants.configPath;
-        NH_OS_FLAKE = constants.configPath;
-        NH_HOME_FLAKE = constants.configPath;
+        NH_FLAKE = constants.directories.nixos;
+        NH_OS_FLAKE = constants.directories.nixos;
+        NH_HOME_FLAKE = constants.directories.nixos;
         NH_SHOW_ACTIVATION_LOGS = "true";
       };
     };

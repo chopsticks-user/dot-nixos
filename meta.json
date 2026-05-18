@@ -1,23 +1,49 @@
 {
-  "configPath": "$HOME/.config/nixos",
   "supported": [
     "x86_64-linux",
     "x86_64-darwin",
     "aarch64-linux",
     "aarch64-darwin"
   ],
+  "directories": {
+    "nixos": "$HOME/.config/nixos",
+    "system": {},
+    "home": {
+      "cache": ".cache",
+      "config": ".config",
+      "data": ".local/share",
+      "state": ".local/state",
+      "bin": ".local/bin"
+    },
+    "user": {
+    }
+  },
   "hosts": {
     "andromeda": {
       "system": "x86_64-linux",
+      "version": "26.05",
+      "kernel": "testing",
+      "gpu": "nvidia",
       "users": [
         "frost"
       ]
     },
     "perseus": {
       "system": "x86_64-linux",
+      "version": "26.05",
+      "kernel": "latest",
+      "gpu": "nvidia",
       "users": [
         "tester"
       ]
+    }
+  },
+  "users": {
+    "frost": {
+      "version": "26.05"
+    },
+    "tester": {
+      "version": "26.05"
     }
   }
 }

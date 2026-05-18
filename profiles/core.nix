@@ -12,9 +12,8 @@
     { ... }:
     {
       home = {
-        stateVersion = "26.05";
-        inherit (constants) username;
-        homeDirectory = constants.homeDirectory;
+        stateVersion = constants.version;
+        inherit (constants) username homeDirectory;
         packages = with pkgs; [
           nerd-fonts.fira-code
           fira
@@ -34,38 +33,37 @@
 
       xdg =
         let
-          homeDir = config.home.homeDirectory;
-          dataHomeDir = "${homeDir}/.local/share";
+          mkHomePath = path: "${config.home.homeDirectory}/${path}";
+          ignoreHomePath = "${mkHomePath constants.directories.home.data}/.xdg-ignore";
         in
         {
           enable = true;
-          dataHome = dataHomeDir;
-          userDirs =
-            let
-              mediaHomeDir = "${homeDir}/media";
-              ignoreHomeDir = "${dataHomeDir}/.xdg-ignore";
-            in
-            {
-              enable = true;
-              createDirectories = true;
-              setSessionVariables = true;
-              desktop = "${ignoreHomeDir}";
-              templates = "${ignoreHomeDir}";
-              publicShare = "${ignoreHomeDir}";
-              documents = "${homeDir}/documents";
-              download = "${homeDir}/downloads";
-              projects = "${homeDir}/projects";
-              pictures = "${mediaHomeDir}/images";
-              music = "${mediaHomeDir}/audio";
-              videos = "${mediaHomeDir}/videos";
-              extraConfig = {
-                BOXES = "${homeDir}/boxes";
-                MEDIA = "${mediaHomeDir}";
-                WALLPAPERS = "${mediaHomeDir}/images/wallpapers";
-                SCREENSHOTS = "${mediaHomeDir}/images/screenshots";
-                SCREENCASTS = "${mediaHomeDir}/videos/screencasts";
-              };
+          cacheHome = mkHomePath constants.directories.home.cache;
+          configHome = mkHomePath constants.directories.home.config;
+          dataHome = mkHomePath constants.directories.home.data;
+          stateHome = mkHomePath constants.directories.home.state;
+          binHome = mkHomePath constants.directories.home.bin;
+          userDirs = {
+            enable = true;
+            createDirectories = true;
+            setSessionVariables = true;
+            desktop = ignoreHomePath;
+            templates = ignoreHomePath;
+            publicShare = ignoreHomePath;
+            documents = mkHomePath "documents";
+            download = mkHomePath "downloads";
+            projects = mkHomePath "projects";
+            pictures = mkHomePath "media/images";
+            music = mkHomePath "media/audio";
+            videos = mkHomePath "media/videos";
+            extraConfig = {
+              BOXES = mkHomePath "boxes";
+              MEDIA = mkHomePath "media";
+              WALLPAPERS = mkHomePath "media/images/wallpapers";
+              SCREENSHOTS = mkHomePath "media/images/screenshots";
+              SCREENCASTS = mkHomePath "media/videos/screencasts";
             };
+          };
         };
 
       programs = {

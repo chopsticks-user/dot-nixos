@@ -43,15 +43,16 @@ in
         specialArgs = {
           inherit inputs;
           pkgs-stable = mkSpecializedPackage inputs.nixpkgs-stable system;
-          constants = lib.recursiveUpdate meta {
-            inherit hostname;
-            inherit (meta.hosts.${hostname}) system;
-          };
+          constants =
+            lib.recursiveUpdate meta {
+              inherit hostname;
+            }
+            // meta.hosts.${hostname};
         };
         modules = [
-          { nixpkgs.overlays = resolvedOverlays; }
           ../features
           ../hosts/${hostname}
+          { nixpkgs.overlays = resolvedOverlays; }
           inputs.disko.nixosModules.disko
           inputs.sops-nix.nixosModules.sops
           inputs.nix-index-database.nixosModules.default
@@ -86,15 +87,18 @@ in
               extraSpecialArgs = {
                 inherit inputs;
                 pkgs-stable = mkSpecializedPackage inputs.nixpkgs-stable system;
-                constants = lib.recursiveUpdate meta {
-                  inherit username;
-                  homeDirectory = "/home/${username}";
-                };
+                constants =
+                  lib.recursiveUpdate meta {
+                    inherit username;
+                    homeDirectory = "/home/${username}";
+                  }
+                  // meta.users.${username};
               };
               modules = [
                 ../profiles
                 ../users/${username}
                 inputs.sops-nix.homeManagerModules.sops
+                #                inputs.impermanence.nixosModules.impermanence
               ];
             }
           )
