@@ -83,7 +83,7 @@
       };
 
       sops = {
-        age.keyFile = "${config.xdg.configHome}/sops/age/keys.txt";
+        age.sshKeyPaths = [ constants.directories.home.identity ];
         defaultSopsFile = ../secrets/users/${constants.username}.yaml;
       };
     };

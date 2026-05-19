@@ -7,8 +7,11 @@
   ],
   "directories": {
     "nixos": "$HOME/.config/nixos",
-    "system": {},
+    "system": {
+      "identity": "/etc/ssh/ssh_host_ed25519_key"
+    },
     "home": {
+      "identity": ".ssh/id_ed25519",
       "cache": ".cache",
       "config": ".config",
       "data": ".local/share",

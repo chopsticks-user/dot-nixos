@@ -97,7 +97,7 @@
       sops = {
         defaultSopsFile = ../secrets/hosts/${constants.hostname}.yaml;
         age = {
-          sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+          sshKeyPaths = [ constants.directories.system.identity ];
         };
       };
     };

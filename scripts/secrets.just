@@ -2,19 +2,11 @@
 user:
   #!/usr/bin/env bash
   set -euo pipefail
-  age_path="$HOME/.config/sops/age"
   key_path="$HOME/.ssh/id_ed25519"
   if [ ! -f "$key_path" ]; then
     ssh-keygen -t ed25519 -N "" -f "$key_path" -C "$USER@$(hostname)"
   fi
-  mkdir -p "$age_path"
-  pubkey="$(ssh-to-age < "$key_path.pub")"
-  {
-    echo "# created: $(date -Iseconds)"
-    echo "# public key: $pubkey"
-    ssh-to-age -private-key -i "$key_path"
-  } > "$age_path/keys.txt"
-  echo "$pubkey"
+  echo "$(ssh-to-age < "$key_path.pub")"
 
 # print public key for the current host
 host:
