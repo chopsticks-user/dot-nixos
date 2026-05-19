@@ -3,12 +3,18 @@ user:
   #!/usr/bin/env bash
   set -euo pipefail
   age_path="$HOME/.config/sops/age"
-  mkdir -p "$age_path"
-  if [ -f "$age_path" ]; then
-    age-keygen -o "$age_path/keys.txt"
-  else
-    age-keygen -y "$age_path/keys.txt"
+  key_path="$HOME/.ssh/id_ed25519"
+  if [ ! -f "$key_path" ]; then
+    ssh-keygen -t ed25519 -N "" -f "$key_path" -C "$USER@$(hostname)"
   fi
+  mkdir -p "$age_path"
+  pubkey="$(ssh-to-age < "$key_path.pub")"
+  {
+    echo "# created: $(date -Iseconds)"
+    echo "# public key: $pubkey"
+    ssh-to-age -private-key -i "$key_path"
+  } > "$age_path/keys.txt"
+  echo "$pubkey"
 
 # print public key for the current host
 host:
