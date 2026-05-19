@@ -3,7 +3,7 @@
   pkgs,
   ...
 }@args:
-(lib.utils.mkFeature "virtualization" {
+(lib.mkFeature "virtualization" {
   options = { };
 
   configs =

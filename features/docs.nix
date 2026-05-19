@@ -3,7 +3,7 @@
   pkgs,
   ...
 }@args:
-(lib.utils.mkFeature "docs" {
+(lib.mkFeature "docs" {
   options = { };
 
   configs =

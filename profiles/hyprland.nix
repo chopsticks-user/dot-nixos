@@ -5,7 +5,7 @@
   inputs,
   ...
 }@args:
-(lib.utils.mkProfile "hyprland" {
+(lib.mkProfile "hyprland" {
   imports = [
     inputs.noctalia.homeModules.default
   ];

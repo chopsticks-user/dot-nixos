@@ -3,7 +3,7 @@
   pkgs,
   ...
 }@args:
-(lib.utils.mkProfile "zed" {
+(lib.mkProfile "zed" {
   options = { };
 
   configs =

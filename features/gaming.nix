@@ -2,7 +2,7 @@
   lib,
   ...
 }@args:
-(lib.utils.mkFeature "gaming" {
+(lib.mkFeature "gaming" {
   options = { };
 
   configs =

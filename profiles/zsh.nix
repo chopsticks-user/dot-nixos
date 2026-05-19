@@ -3,7 +3,7 @@
   pkgs,
   ...
 }@args:
-(lib.utils.mkProfile "zsh" {
+(lib.mkProfile "zsh" {
   options = {
     shellAliases = lib.mkOption {
       type = lib.types.attrsOf lib.types.str;

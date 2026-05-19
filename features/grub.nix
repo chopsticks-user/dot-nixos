@@ -2,7 +2,7 @@
   lib,
   ...
 }@args:
-(lib.utils.mkFeature "grub" {
+(lib.mkFeature "grub" {
   options = { };
 
   configs =

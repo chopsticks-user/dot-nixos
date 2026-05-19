@@ -2,7 +2,7 @@
   lib,
   ...
 }@args:
-(lib.utils.mkProfile "ssh" {
+(lib.mkProfile "ssh" {
   options = { };
 
   configs =

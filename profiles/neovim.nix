@@ -3,7 +3,7 @@
   inputs,
   ...
 }@args:
-(lib.utils.mkProfile "neovim" {
+(lib.mkProfile "neovim" {
   imports = [ inputs.nvf.homeManagerModules.default ];
 
   options = { };

@@ -3,7 +3,7 @@
   constants,
   ...
 }@args:
-(lib.utils.mkProfile "firefox" {
+(lib.mkProfile "firefox" {
   options = { };
 
   configs =

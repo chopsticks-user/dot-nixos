@@ -3,7 +3,7 @@
   pkgs,
   ...
 }@args:
-(lib.utils.mkFeature "fcitx" {
+(lib.mkFeature "fcitx" {
   options = { };
 
   configs =

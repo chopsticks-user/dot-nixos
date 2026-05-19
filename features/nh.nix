@@ -3,7 +3,7 @@
   constants,
   ...
 }@args:
-(lib.utils.mkFeature "nh" {
+(lib.mkFeature "nh" {
   options = { };
 
   configs =

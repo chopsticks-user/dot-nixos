@@ -4,7 +4,7 @@
   inputs,
   ...
 }@args:
-(lib.utils.mkProfile "gaming" {
+(lib.mkProfile "gaming" {
   imports = [
     inputs.steam-config-nix.homeModules.default
   ];

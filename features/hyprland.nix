@@ -3,7 +3,7 @@
   pkgs,
   ...
 }@args:
-(lib.utils.mkFeature "hyprland" {
+(lib.mkFeature "hyprland" {
   options = { };
 
   configs =

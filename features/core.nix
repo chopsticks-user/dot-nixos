@@ -5,7 +5,7 @@
   constants,
   ...
 }@args:
-(lib.utils.mkFeature "core" {
+(lib.mkFeature "core" {
   options = { };
 
   configs =

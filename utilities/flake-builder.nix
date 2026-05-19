@@ -10,9 +10,15 @@ let
   meta = builtins.fromJSON (builtins.readFile ../meta.json);
 
   lib = inputs.nixpkgs.lib.extend (
-    final: prev: {
+    final: prev:
+    let
       utils = import ../utilities { lib = final; };
-    }
+      collisions = builtins.attrNames (builtins.intersectAttrs prev utils);
+    in
+    if collisions == [ ] then
+      utils
+    else
+      throw "utilities collide with lib: ${prev.concatStringsSep ", " collisions}"
   );
 
   resolvedOverlays = map (
@@ -20,11 +26,11 @@ let
       name,
       args ? { },
     }:
-    lib.utils.mkOverlay name args
+    lib.mkOverlay name args
   ) overlays;
 
   mkSpecializedPackage =
-    upstream: system: lib.utils.mkSpecializedPackage upstream system resolvedOverlays;
+    upstream: system: lib.mkSpecializedPackage upstream system resolvedOverlays;
 in
 {
   formatter = lib.genAttrs meta.system.supported (

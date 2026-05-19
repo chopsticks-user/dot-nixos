@@ -5,7 +5,7 @@
   pkgs,
   ...
 }@args:
-(lib.utils.mkProfile "core" {
+(lib.mkProfile "core" {
   options = { };
 
   configs =
@@ -32,7 +32,7 @@
       };
 
       xdg =
-        (lib.utils.mapAttrNames (name: name + "Home") (
+        (lib.mapAttrNames (name: name + "Home") (
           lib.getAttrs [
             "cache"
             "config"
@@ -58,7 +58,7 @@
               music
               videos
               ;
-            extraConfig = lib.utils.mapAttrNames lib.toUpper (
+            extraConfig = lib.mapAttrNames lib.toUpper (
               lib.getAttrs [
                 "boxes"
                 "media"

@@ -2,7 +2,7 @@
   lib,
   ...
 }@args:
-(lib.utils.mkProfile "git" {
+(lib.mkProfile "git" {
   options = {
     user = lib.mkOption {
       type = lib.types.nullOr (

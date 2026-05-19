@@ -4,7 +4,7 @@
   pkgs,
   ...
 }@args:
-(lib.utils.mkProfile "virtualization" {
+(lib.mkProfile "virtualization" {
   options = { };
 
   configs =

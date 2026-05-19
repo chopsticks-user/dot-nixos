@@ -3,7 +3,7 @@
   pkgs,
   ...
 }@args:
-(lib.utils.mkProfile "obs" {
+(lib.mkProfile "obs" {
   options = { };
 
   configs =
