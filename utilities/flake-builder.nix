@@ -29,8 +29,7 @@ let
     lib.mkOverlay name args
   ) overlays;
 
-  mkSpecializedPackage =
-    upstream: system: lib.mkSpecializedPackage upstream system resolvedOverlays;
+  mkSpecializedPackage = upstream: system: lib.mkSpecializedPackage upstream system resolvedOverlays;
 in
 {
   formatter = lib.genAttrs meta.system.supported (
@@ -72,7 +71,8 @@ in
         lib.nameValuePair "iso-${system}" (
           lib.nixosSystem {
             inherit system;
-            modules = [ ../scripts/iso.nix ];
+            specialArgs = { };
+            modules = [ ./iso.nix ];
           }
         )
       ) meta.supported

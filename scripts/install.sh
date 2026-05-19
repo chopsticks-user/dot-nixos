@@ -1,24 +1,15 @@
 #!/usr/bin/env bash
 
-trap 'echo "error on line $LINENO, exiting..."; exit 1' ERR
+set -euo pipefail
 
-arch=$1
-host=$2
-username=$3
+username=$(whoami)
+arch=$(nix eval --impure --raw --expr 'builtins.currentSystem')
+config_path=$(jq -r ".directories.nixos" meta.json | sed "s|\$HOME|$HOME|")
 
-# refer to flake.nix for the default password for all users
-
-rm -rf ~/.config/nixos
-git clone https://github.com/chopsticks-user/dot-nixos ~/.config/nixos
-cd ~/.config/nixos || exit
-
-cp /etc/nixos/hardware-configuration.nix \
-  "./hosts/$host/generated.nix"
-git add .
+rm -rf "$config_path"
+git clone https://github.com/chopsticks-user/dot-nixos "$config_path"
+cd "$config_path" || exit
 
 nh home switch -c "$username@$arch"
-
-nh clean all
-
+nh clean all --optimise
 reboot
-
