@@ -85,6 +85,7 @@
           wl-clipboard
           wev
           just
+          (writeShellScriptBin "nixos-homestrap" (builtins.readFile ../scripts/install.sh))
         ];
 
       programs = {

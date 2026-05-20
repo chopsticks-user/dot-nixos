@@ -12,16 +12,12 @@
 
   environment = {
     systemPackages = with pkgs; [
-      just
-      openssh
-      jq
       git
       vim
 
       (pkgs.writeShellApplication {
         name = "nixos-bootstrap";
         runtimeInputs = [
-          git
           just
           openssh
           jq

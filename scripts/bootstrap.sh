@@ -3,12 +3,21 @@
 set -euo pipefail
 
 host=$1
+identity_path=$2
 
-config_path=/home/nixos/.config/nixos
-cd ~ || exit
+tmp_clone=$(mktemp -d)
+trap 'rm -rf "$tmp_clone"' EXIT
+git clone https://github.com/chopsticks-user/dot-nixos "$tmp_clone"
+config_path_rel=$(jq -r ".directories.nixos" "$tmp_clone/meta.json")
+config_path=${config_path_rel/#\$HOME/$HOME}
+if [ -z "$config_path_rel" ] || [ "$config_path_rel" = "null" ]; then
+  echo "Could not read directories.nixos from meta.json" >&2
+  exit 1
+fi
 rm -rf "$config_path"
 mkdir -p "$(dirname "$config_path")"
-git clone https://github.com/chopsticks-user/dot-nixos "$config_path"
+mv "$tmp_clone" "$config_path"
+trap - EXIT
 cd "$config_path" || exit
 
 if ! jq -e ".hosts.\"$host\"" meta.json > /dev/null; then
@@ -20,22 +29,10 @@ sudo nix --experimental-features "nix-command flakes" \
   run github:nix-community/disko/latest -- --flake \
   ".#$host" --mode destroy,format,mount
 
-echo "Private key of host $host: "
-iso_key=$(mktemp)
-trap 'rm -f "$iso_key"' EXIT
-while IFS= read -r line; do
-  [ "$line" = "EOF" ] && break
-  echo "$line" >> "$iso_key"
-done
-if ! ssh-keygen -y -f "$iso_key" > /dev/null 2>&1; then
-  echo "Error: provided input is not a valid ssh private key" >&2
-  exit 1
-fi
-
 system_identity=$(jq -r ".directories.system.identity" meta.json)
 mnt_system_identity="/mnt$system_identity"
 sudo mkdir -p "$(dirname "$mnt_system_identity")"
-sudo cp "$iso_key" "$mnt_system_identity"
+sudo cp "$identity_path" "$mnt_system_identity"
 sudo chmod 600 "$mnt_system_identity"
 sudo chown root:root "$mnt_system_identity"
 sudo ssh-keygen -y -f "$mnt_system_identity" \

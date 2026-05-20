@@ -2,14 +2,39 @@
 
 set -euo pipefail
 
+identity_path=$1
+
+tmp_clone=$(mktemp -d)
+trap 'rm -rf "$tmp_clone"' EXIT
+git clone https://github.com/chopsticks-user/dot-nixos "$tmp_clone"
+config_path_rel=$(jq -r ".directories.nixos" "$tmp_clone/meta.json")
+if [ -z "$config_path_rel" ] || [ "$config_path_rel" = "null" ]; then
+  echo "Could not read directories.nixos from meta.json" >&2
+  exit 1
+fi
+config_path=${config_path_rel/#\$HOME/$HOME}
+if [ -e "$config_path" ]; then
+  echo "$config_path already exists. Aborting." >&2
+  exit 1
+fi
+mkdir -p "$(dirname "$config_path")"
+mv "$tmp_clone" "$config_path"
+trap - EXIT
+cd "$config_path"
+
+home_identity="$HOME/$(jq -r ".directories.home.identity" meta.json)"
+if [ ! -f "$home_identity" ]; then
+  mkdir -p "$(dirname "$home_identity")"
+  cp "$identity_path" "$home_identity"
+  chmod 600 "$home_identity"
+  ssh-keygen -y -f "$home_identity" > "$home_identity.pub"
+  chmod 644 "$home_identity.pub"
+fi
+
 username=$(whoami)
 arch=$(nix eval --impure --raw --expr 'builtins.currentSystem')
-config_path=$(jq -r ".directories.nixos" meta.json | sed "s|\$HOME|$HOME|")
-
-rm -rf "$config_path"
-git clone https://github.com/chopsticks-user/dot-nixos "$config_path"
-cd "$config_path" || exit
-
-nh home switch -c "$username@$arch"
-nh clean all --optimise
+home-manager switch --flake ".#$username@$arch"
+nix-collect-garbage -d
+sudo nix-collect-garbage -d
+sudo nix store optimise
 reboot
