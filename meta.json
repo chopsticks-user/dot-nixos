@@ -46,7 +46,7 @@
     "perseus": {
       "system": "x86_64-linux",
       "version": "26.05",
-      "kernel": "testing",
+      "kernel": "latest",
       "gpu": "nvidia",
       "users": [
         "tester"
