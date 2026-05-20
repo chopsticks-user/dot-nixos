@@ -21,7 +21,7 @@ sudo nix --experimental-features "nix-command flakes" \
   run github:nix-community/disko/latest -- --flake \
   ".#$host" --mode destroy,format,mount
 
-echo "ssh_host_ed25519_key private key: "
+echo "Private key of host $host: "
 iso_key=$(mktemp)
 trap 'rm -f "$iso_key"' EXIT
 while IFS= read -r line; do

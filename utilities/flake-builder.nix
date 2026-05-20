@@ -71,7 +71,7 @@ in
         lib.nameValuePair "iso-${system}" (
           lib.nixosSystem {
             inherit system;
-            specialArgs = { };
+            specialArgs = { inherit inputs; };
             modules = [ ./iso.nix ];
           }
         )
