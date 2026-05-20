@@ -4,18 +4,17 @@ set -euo pipefail
 
 host=$1
 
-config_path=$(jq -r ".directories.nixos" meta.json | sed "s|\$HOME|$HOME|")
-system_identity=$(jq -r ".directories.system.identity" meta.json)
+config_path=/home/nixos/.config/nixos
+cd ~ || exit
+rm -rf "$config_path"
+mkdir -p "$(dirname "$config_path")"
+git clone https://github.com/chopsticks-user/dot-nixos "$config_path"
+cd "$config_path" || exit
 
 if ! jq -e ".hosts.\"$host\"" meta.json > /dev/null; then
   echo "Error: host '$host' not found in meta.json" >&2
   exit 1
 fi
-
-cd ~ || exit
-rm -rf "$config_path"
-git clone https://github.com/chopsticks-user/dot-nixos "$config_path"
-cd "$config_path" || exit
 
 sudo nix --experimental-features "nix-command flakes" \
   run github:nix-community/disko/latest -- --flake \
@@ -33,6 +32,7 @@ if ! ssh-keygen -y -f "$iso_key" > /dev/null 2>&1; then
   exit 1
 fi
 
+system_identity=$(jq -r ".directories.system.identity" meta.json)
 mnt_system_identity="/mnt$system_identity"
 sudo mkdir -p "$(dirname "$mnt_system_identity")"
 sudo cp "$iso_key" "$mnt_system_identity"
