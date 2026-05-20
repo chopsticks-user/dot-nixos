@@ -32,7 +32,7 @@ let
   mkSpecializedPackage = upstream: system: lib.mkSpecializedPackage upstream system resolvedOverlays;
 in
 {
-  formatter = lib.genAttrs meta.system.supported (
+  formatter = lib.genAttrs meta.supported (
     system: inputs.nixpkgs.legacyPackages.${system}.nixfmt-tree
   );
 
@@ -71,7 +71,7 @@ in
         lib.nameValuePair "iso-${system}" (
           lib.nixosSystem {
             inherit system;
-            specialArgs = { inherit inputs; };
+            specialArgs = { };
             modules = [ ./iso.nix ];
           }
         )

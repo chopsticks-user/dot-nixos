@@ -1,6 +1,5 @@
 {
   modulesPath,
-  inputs,
   pkgs,
   ...
 }:
@@ -18,10 +17,17 @@
       jq
       git
       vim
-    ];
 
-    etc = {
-      "nixos".source = inputs.self;
-    };
+      (pkgs.writeShellApplication {
+        name = "nixos-bootstrap";
+        runtimeInputs = [
+          git
+          just
+          openssh
+          jq
+        ];
+        text = builtins.readFile ../scripts/bootstrap.sh;
+      })
+    ];
   };
 }

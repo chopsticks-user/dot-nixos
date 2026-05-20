@@ -33,21 +33,16 @@ if ! ssh-keygen -y -f "$iso_key" > /dev/null 2>&1; then
   exit 1
 fi
 
-sudo mkdir -p "/mnt$(dirname "$system_identity")"
-sudo cp "$iso_key" "/mnt$system_identity"
-sudo chmod 600 "/mnt$system_identity"
-sudo chown root:root "/mnt$system_identity"
-sudo ssh-keygen -y -f "/mnt$system_identity" \
-  | sudo tee "/mnt${system_identity}.pub" > /dev/null
-sudo chmod 644 "/mnt${system_identity}.pub"
+mnt_system_identity="/mnt$system_identity"
+sudo mkdir -p "$(dirname "$mnt_system_identity")"
+sudo cp "$iso_key" "$mnt_system_identity"
+sudo chmod 600 "$mnt_system_identity"
+sudo chown root:root "$mnt_system_identity"
+sudo ssh-keygen -y -f "$mnt_system_identity" \
+  | sudo tee "$mnt_system_identity.pub" > /dev/null
+sudo chmod 644 "$mnt_system_identity.pub"
 
 sudo nixos-generate-config --no-filesystems --root /mnt
-cp /mnt/etc/nixos/hardware-configuration.nix \
-  "./hosts/$host/generated.nix"
-sudo cp /etc/nixos/install.sh /mnt/etc/nixos/
-git add "./hosts/$host/generated.nix"
-
-# todo: obtain root password via sops
-sudo nixos-install --flake ".#$host" --no-root-password
+sudo nixos-install --flake ".#$host"
 reboot
 
