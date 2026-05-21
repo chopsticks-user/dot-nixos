@@ -20,13 +20,21 @@ update:
   set -euo pipefail
   find ../secrets -name '*.yaml' -exec sops updatekeys -y {} \;
 
-new:
+new host user:
   #!/usr/bin/env bash
   set -euo pipefail
+  if ! jq -e --arg host "{{host}}" '.hosts[$host]' ../meta.json >/dev/null; then
+    echo "error: host '{{host}}' not found" >&2
+    exit 1
+  fi
+  if ! jq -e --arg host "{{host}}" --arg user "{{user}}" '.hosts[$host].users | index($user)' ../meta.json >/dev/null; then
+    echo "error: user '{{user}}' not found in hosts.{{host}}.users" >&2
+    exit 1
+  fi
   keydir=$(mktemp -d)
   chmod 700 "$keydir"
-  ssh-keygen -t ed25519 -N "" -f "$keydir/host_key" -C "host@env" >/dev/null
-  ssh-keygen -t ed25519 -N "" -f "$keydir/user_key" -C "user@env" >/dev/null
+  ssh-keygen -t ed25519 -N "" -f "$keydir/host_key" -C "root@{{host}}" >/dev/null
+  ssh-keygen -t ed25519 -N "" -f "$keydir/user_key" -C "{{user}}@{{host}}" >/dev/null
   { ssh-to-age -private-key -i "$keydir/host_key"
     ssh-to-age -private-key -i "$keydir/user_key"; } > "$keydir/age_identities.txt"
   chmod 600 "$keydir/age_identities.txt"
