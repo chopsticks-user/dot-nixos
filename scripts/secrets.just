@@ -1,24 +1,39 @@
-# generate and print public key, and private key if needed, for the current user
-user:
+user arg="edit":
   #!/usr/bin/env bash
   set -euo pipefail
-  key_path="$HOME/.ssh/id_ed25519"
-  if [ ! -f "$key_path" ]; then
-    ssh-keygen -t ed25519 -N "" -f "$key_path" -C "$USER@$(hostname)"
-  fi
-  echo "$(ssh-to-age < "$key_path.pub")"
+  key_path="$HOME/$(jq -r ".directories.home.identity" ../meta.json)"
+  case "{{arg}}" in
+    "public")
+      ssh-to-age < "$key_path.pub";;
+    "private")
+      ssh-to-age -private-key -i $key_path;;
+    "edit")
+      sops ../secrets/users/$(whoami).yaml;;
+    *)
+      echo "error: unknown argument '{{arg}}'" >&2 && exit 1;;
+  esac
 
-# print public key for the current host
-host:
+host arg="edit":
   #!/usr/bin/env bash
   set -euo pipefail
-  cat /etc/ssh/ssh_host_ed25519_key.pub | ssh-to-age
+  key_path="$(jq -r ".directories.system.identity" ../meta.json)"
+  private_key_cmd="sudo ssh-to-age -private-key -i $key_path"
+  case "{{arg}}" in
+    "public")
+      ssh-to-age < "$key_path.pub";;
+    "private")
+      $private_key_cmd;;
+    "edit")
+      SOPS_AGE_KEY_CMD=$private_key_cmd sops ../secrets/hosts/$(hostname).yaml;;
+    *)
+      echo "error: unknown argument '{{arg}}'" >&2 && exit 1;;
+  esac
 
-# sync hosts and users secrets with the config in .sop.yaml
 update:
   #!/usr/bin/env bash
   set -euo pipefail
-  find ../secrets -name '*.yaml' -exec sops updatekeys -y {} \;
+  # todo: update host then update each user managed by host
+#  find ../secrets -name '*.yaml' -exec sops updatekeys -y {} \;
 
 new host user:
   #!/usr/bin/env bash
@@ -27,8 +42,8 @@ new host user:
     echo "error: host '{{host}}' not found" >&2
     exit 1
   fi
-  if ! jq -e --arg host "{{host}}" --arg user "{{user}}" '.hosts[$host].users | index($user)' ../meta.json >/dev/null; then
-    echo "error: user '{{user}}' not found in hosts.{{host}}.users" >&2
+  if ! jq -e --arg host "{{host}}" --arg username "{{user}}" '.hosts[$host].usernames | index($username)' ../meta.json >/dev/null; then
+    echo "error: '{{user}}' not found in hosts.{{host}}.usernames" >&2
     exit 1
   fi
   keydir=$(mktemp -d)
