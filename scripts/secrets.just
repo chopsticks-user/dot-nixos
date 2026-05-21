@@ -35,10 +35,19 @@ update:
   # todo: update host then update each user managed by host
 #  find ../secrets -name '*.yaml' -exec sops updatekeys -y {} \;
 
-backup:
+backup out_path="../secrets/$(hostname).tar.gz":
   #!/usr/bin/env bash
   set -euo pipefail
-  # todo: collect host's and users' ssh keys then create an archive
+  user_key_path_rel="$(jq -r ".directories.home.identity" ../meta.json)"
+  user_args=()
+  while read -r username; do
+    user_args+=( --transform="s|^home/$username/$user_key_path_rel|$username.key|" "/home/$username/$user_key_path_rel" )
+  done < <(jq -r ".hosts.$(hostname).usernames[]" ../meta.json)
+  host_key_path="$(jq -r ".directories.system.identity" ../meta.json)"
+  sudo tar -czvf "{{out_path}}" \
+    --transform="s|^etc/ssh/ssh_host_ed25519_key$|root.key|" \
+    $host_key_path "${user_args[@]}"
+  sudo chmod 644 "{{out_path}}"
 
 new host user:
   #!/usr/bin/env bash

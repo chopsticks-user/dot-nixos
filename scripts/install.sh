@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-key_cmd=$1
+key_content=$(eval "$1")
 
 tmp_clone=$(mktemp -d)
 trap 'rm -rf "$tmp_clone"' EXIT
@@ -25,7 +25,7 @@ cd "$config_path"
 home_identity="$HOME/$(jq -r ".directories.home.identity" meta.json)"
 if [ ! -f "$home_identity" ]; then
   mkdir -p "$(dirname "$home_identity")"
-  "$key_cmd" | tee "$home_identity"
+  echo "$key_content" | tee "$home_identity"
   chmod 600 "$home_identity"
   ssh-keygen -y -f "$home_identity" > "$home_identity.pub"
   chmod 644 "$home_identity.pub"

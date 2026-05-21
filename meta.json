@@ -1,4 +1,5 @@
 {
+  "upstream": "https://github.com/chopsticks-user/dot-nixos",
   "supported": [
     "x86_64-linux",
     "x86_64-darwin",
