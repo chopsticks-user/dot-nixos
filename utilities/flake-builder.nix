@@ -73,12 +73,9 @@ in
               }:
               {
                 sops = {
-                  age.sshKeyPaths = [ "/home/${username}/${constants.directories.home.identity}" ];
                   secrets = {
-                    "users/${username}/password" = {
+                    "password/${username}" = {
                       neededForUsers = true;
-                      sopsFile = ../secrets/users/${username}.yaml;
-                      key = "password";
                     };
                   };
                 };
@@ -90,7 +87,7 @@ in
                   {
                     inherit (userMeta) description;
                     isNormalUser = true;
-                    hashedPasswordFile = config.sops.secrets."users/${username}/password".path;
+                    hashedPasswordFile = config.sops.secrets."password/${username}".path;
                     extraGroups = userMeta.groups;
                     shell = pkgs.${userMeta.shell};
                   };

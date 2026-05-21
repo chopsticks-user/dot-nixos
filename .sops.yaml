@@ -1,9 +1,9 @@
 keys:
   - &user_frost age18nxy7sktfka6u0qtyeej7dqz95zqqyfyc7yg34r56h933zu9x49q6j3v3k
-  - &user_tester age1hafw0mwst50w5vtcyh42fkddpf72c0napy5t6fpu0elq668dkavqgsvlxg
+  - &user_tester age1ak7kqu9gn7c37xf0mw85m7sdylnsntcwzkfvs24p22zydpwnrq0qv3czy9
 
   - &host_andromeda age1a2jks6zj56nfmgx0055kfdqnwuaawuzl69lkm5elv8s0cetacgxs5hfsx9
-  - &host_perseus age1juadxu27dfnyygzzltl3g727txkgh8pjyuf5y27fwah9df7g7ghqasat8q
+  - &host_perseus age1xeqspuvenjahkmf99y560r5yfcvtymzv5pg7vyje7lgwyw9qeuesssmgkm
 creation_rules:
   - path_regex: secrets/users/frost.yaml
     key_groups:

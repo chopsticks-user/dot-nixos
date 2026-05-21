@@ -41,5 +41,4 @@ sudo chmod 644 "$mnt_system_identity.pub"
 
 sudo nixos-generate-config --no-filesystems --root /mnt
 sudo nixos-install --flake ".#$host"
-reboot
-
+echo "Please reboot to apply changes"

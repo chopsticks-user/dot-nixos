@@ -39,4 +39,4 @@ sudo nix-collect-garbage -d
 sudo nix store optimise
 sudo rm -rf /tmp/*
 sudo rm -rf /var/tmp/*
-reboot
+echo "Please reboot to apply changes"
