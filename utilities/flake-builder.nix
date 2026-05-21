@@ -41,7 +41,6 @@ in
       hostname:
       let
         system = meta.hosts.${hostname}.system;
-        users = meta.hosts.${hostname}.users;
       in
       lib.nixosSystem {
         inherit system;
@@ -62,7 +61,52 @@ in
           inputs.sops-nix.nixosModules.sops
           inputs.nix-index-database.nixosModules.default
         ]
-        ++ map (username: ../users/${username}/system.nix) users;
+        ++ map (
+          username:
+          let
+            coreModule =
+              {
+                config,
+                pkgs,
+                constants,
+                ...
+              }:
+              {
+                sops = {
+                  age.sshKeyPaths = [ "/home/${username}/${constants.directories.home.identity}" ];
+                  secrets = {
+                    "users/${username}/password" = {
+                      neededForUsers = true;
+                      sopsFile = ../secrets/users/${username}.yaml;
+                      key = "password";
+                    };
+                  };
+                };
+
+                users.users.${username} =
+                  let
+                    userMeta = constants.users."${username}";
+                  in
+                  {
+                    inherit (userMeta) description;
+                    isNormalUser = true;
+                    hashedPasswordFile = config.sops.secrets."users/${username}/password".path;
+                    extraGroups = userMeta.groups;
+                    shell = pkgs.${userMeta.shell};
+                  };
+              };
+          in
+          {
+            imports = [
+              coreModule
+              ../users/${username}/system.nix
+            ];
+            # todo: append username to constants
+            _module.args = {
+              inherit username;
+            };
+          }
+        ) meta.hosts.${hostname}.usernames;
       }
     ))
     // lib.listToAttrs (

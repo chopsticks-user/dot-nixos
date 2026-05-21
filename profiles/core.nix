@@ -86,6 +86,10 @@
         age.sshKeyPaths = [ constants.directories.home.identity ];
         defaultSopsFile = ../secrets/users/${constants.username}.yaml;
       };
+
+      home.sessionVariables = {
+        SOPS_AGE_KEY_CMD = "ssh-to-age -private-key -i ${constants.directories.home.identity}";
+      };
     };
 })
   args

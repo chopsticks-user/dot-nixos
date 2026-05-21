@@ -96,10 +96,12 @@
       };
 
       sops = {
+        age.sshKeyPaths = [ constants.directories.system.identity ];
         defaultSopsFile = ../secrets/hosts/${constants.hostname}.yaml;
-        age = {
-          sshKeyPaths = [ constants.directories.system.identity ];
-        };
+      };
+
+      environment.sessionVariables = {
+        SOPS_AGE_SSH_PRIVATE_KEY_CMD = "sudo cat ${constants.directories.system.identity}";
       };
     };
 })

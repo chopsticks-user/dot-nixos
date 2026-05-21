@@ -39,7 +39,7 @@
       "version": "26.05",
       "kernel": "testing",
       "gpu": "nvidia",
-      "users": [
+      "usernames": [
         "frost"
       ]
     },
@@ -48,17 +48,29 @@
       "version": "26.05",
       "kernel": "latest",
       "gpu": "nvidia",
-      "users": [
+      "usernames": [
         "tester"
       ]
     }
   },
   "users": {
     "frost": {
-      "version": "26.05"
+      "version": "26.05",
+      "description": "",
+      "groups": [
+        "wheel",
+        "networkmanager"
+      ],
+      "shell": "zsh"
     },
     "tester": {
-      "version": "26.05"
+      "version": "26.05",
+      "description": "",
+      "groups": [
+        "wheel",
+        "networkmanager"
+      ],
+      "shell": "zsh"
     }
   }
 }
