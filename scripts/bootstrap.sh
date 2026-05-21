@@ -3,7 +3,7 @@
 set -euo pipefail
 
 host=$1
-identity_path=$2
+key_cmd=$2
 
 tmp_clone=$(mktemp -d)
 trap 'rm -rf "$tmp_clone"' EXIT
@@ -32,7 +32,7 @@ sudo nix --experimental-features "nix-command flakes" \
 system_identity=$(jq -r ".directories.system.identity" meta.json)
 mnt_system_identity="/mnt$system_identity"
 sudo mkdir -p "$(dirname "$mnt_system_identity")"
-sudo cp "$identity_path" "$mnt_system_identity"
+"$key_cmd" | sudo tee "$mnt_system_identity" > /dev/null
 sudo chmod 600 "$mnt_system_identity"
 sudo chown root:root "$mnt_system_identity"
 sudo ssh-keygen -y -f "$mnt_system_identity" \

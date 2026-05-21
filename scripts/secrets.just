@@ -35,6 +35,11 @@ update:
   # todo: update host then update each user managed by host
 #  find ../secrets -name '*.yaml' -exec sops updatekeys -y {} \;
 
+backup:
+  #!/usr/bin/env bash
+  set -euo pipefail
+  # todo: collect host's and users' ssh keys then create an archive
+
 new host user:
   #!/usr/bin/env bash
   set -euo pipefail
