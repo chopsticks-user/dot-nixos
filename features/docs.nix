@@ -1,32 +1,28 @@
 {
-  lib,
   pkgs,
   ...
-}@args:
-(lib.mkFeature "docs" {
+}:
+{
   options = { };
 
-  configs =
-    { ... }:
-    {
-      environment.systemPackages = with pkgs; [
-        wikiman
-        tldr
-      ];
+  configs = {
+    environment.systemPackages = with pkgs; [
+      wikiman
+      tldr
+    ];
 
-      documentation = {
+    documentation = {
+      enable = true;
+      man = {
         enable = true;
-        man = {
+        cache = {
           enable = true;
-          cache = {
-            enable = true;
-            generateAtRuntime = true;
-          };
+          generateAtRuntime = true;
         };
-        dev.enable = true;
-        doc.enable = true;
-        info.enable = true;
       };
+      dev.enable = true;
+      doc.enable = true;
+      info.enable = true;
     };
-})
-  args
+  };
+}

@@ -53,73 +53,74 @@ in
             }
             // meta.hosts.${hostname};
         };
-        modules = [
-          ../features
-          ../hosts/${hostname}/generated.nix
-          ../hosts/${hostname}/hardware.nix
-          ../hosts/${hostname}/system.nix
-          ../hosts/${hostname}/disko.nix
-          # todo: remove mkIf once andromeda has persist.nix
-          (lib.mkIf (builtins.pathExists ../hosts/${hostname}/persist.nix) {
-            fileSystems."/persist".neededForBoot = true;
-            environment.persistence."/persist" = (import ../hosts/${hostname}/persist.nix) // {
-              enable = true;
-              hideMounts = true;
-            };
-          })
-          { nixpkgs.overlays = resolvedOverlays; }
-          inputs.disko.nixosModules.disko
-          inputs.sops-nix.nixosModules.sops
-          inputs.nix-index-database.nixosModules.default
-          inputs.impermanence.nixosModules.impermanence
-        ]
-        ++ map (
-          username:
-          let
-            coreModule =
-              {
-                config,
-                pkgs,
-                constants,
-                ...
-              }:
-              {
-                sops = {
-                  secrets = {
-                    "password/${username}" = {
-                      neededForUsers = true;
+        modules =
+          (lib.importConfigModules "features")
+          ++ [
+            ../hosts/${hostname}/generated.nix
+            ../hosts/${hostname}/hardware.nix
+            ../hosts/${hostname}/system.nix
+            ../hosts/${hostname}/disko.nix
+            # todo: remove mkIf once andromeda has persist.nix
+            (lib.mkIf (builtins.pathExists ../hosts/${hostname}/persist.nix) {
+              fileSystems."/persist".neededForBoot = true;
+              environment.persistence."/persist" = (import ../hosts/${hostname}/persist.nix) // {
+                enable = true;
+                hideMounts = true;
+              };
+            })
+            { nixpkgs.overlays = resolvedOverlays; }
+            inputs.disko.nixosModules.disko
+            inputs.sops-nix.nixosModules.sops
+            inputs.nix-index-database.nixosModules.default
+            inputs.impermanence.nixosModules.impermanence
+          ]
+          ++ map (
+            username:
+            let
+              coreModule =
+                {
+                  config,
+                  pkgs,
+                  constants,
+                  ...
+                }:
+                {
+                  sops = {
+                    secrets = {
+                      "password/${username}" = {
+                        neededForUsers = true;
+                      };
                     };
                   };
-                };
 
-                users.users.${username} =
-                  let
-                    userMeta = constants.users."${username}";
-                  in
-                  {
-                    inherit (userMeta) description;
-                    isNormalUser = true;
-                    hashedPasswordFile = config.sops.secrets."password/${username}".path;
-                    extraGroups = userMeta.groups;
-                    shell = pkgs.${userMeta.shell};
-                  };
-              };
-          in
-          {
-            imports = [
-              coreModule
-              ../users/${username}/system.nix
-              # todo: remove mkIf once andromeda has persist.nix
-              (lib.mkIf (builtins.pathExists ../users/${username}/persist.nix) {
-                environment.persistence."/persist".users.${username} = (import ../users/${username}/persist.nix);
-              })
-            ];
-            #            # todo: append username to constants
-            #            _module.args = {
-            #              inherit username;
-            #            };
-          }
-        ) meta.hosts.${hostname}.usernames;
+                  users.users.${username} =
+                    let
+                      userMeta = constants.users."${username}";
+                    in
+                    {
+                      inherit (userMeta) description;
+                      isNormalUser = true;
+                      hashedPasswordFile = config.sops.secrets."password/${username}".path;
+                      extraGroups = userMeta.groups;
+                      shell = pkgs.${userMeta.shell};
+                    };
+                };
+            in
+            {
+              imports = [
+                coreModule
+                ../users/${username}/system.nix
+                # todo: remove mkIf once andromeda has persist.nix
+                (lib.mkIf (builtins.pathExists ../users/${username}/persist.nix) {
+                  environment.persistence."/persist".users.${username} = (import ../users/${username}/persist.nix);
+                })
+              ];
+              #            # todo: append username to constants
+              #            _module.args = {
+              #              inherit username;
+              #            };
+            }
+          ) meta.hosts.${hostname}.usernames;
       }
     ))
     // lib.listToAttrs (
@@ -160,8 +161,7 @@ in
                   }
                   // meta.users.${username};
               };
-              modules = [
-                ../profiles
+              modules = (lib.importConfigModules "profiles") ++ [
                 ../users/${username}/home.nix
                 inputs.sops-nix.homeManagerModules.sops
               ];

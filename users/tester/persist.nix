@@ -7,7 +7,6 @@
     "projects"
     ".mozilla"
     ".doppler"
-    ".claude"
     ".xdg-ignore"
     {
       directory = ".gnupg";
@@ -60,6 +59,5 @@
   files = [
     ".zsh_history"
     ".bash_history"
-    ".claude.json"
   ];
 }

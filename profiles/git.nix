@@ -1,8 +1,9 @@
 {
   lib,
+  fields,
   ...
-}@args:
-(lib.mkProfile "git" {
+}:
+{
   options = {
     user = lib.mkOption {
       type = lib.types.nullOr (
@@ -42,29 +43,26 @@
     };
   };
 
-  configs =
-    { fields, ... }:
-    {
-      programs = {
-        git = {
-          enable = true;
-          settings = lib.mkMerge [
-            {
-              init.defaultBranch = "main";
-              pull.rebase = false;
-            }
-            (lib.mkIf (fields.user != null) {
-              inherit (fields) user;
-            })
-          ];
-          includes = fields.include;
-        };
+  configs = {
+    programs = {
+      git = {
+        enable = true;
+        settings = lib.mkMerge [
+          {
+            init.defaultBranch = "main";
+            pull.rebase = false;
+          }
+          (lib.mkIf (fields.user != null) {
+            inherit (fields) user;
+          })
+        ];
+        includes = fields.include;
+      };
 
-        gh = {
-          enable = true;
-          settings = { };
-        };
+      gh = {
+        enable = true;
+        settings = { };
       };
     };
-})
-  args
+  };
+}
