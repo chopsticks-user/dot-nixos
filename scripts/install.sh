@@ -18,7 +18,8 @@ if [ -n "$(ls -A "$config_path")" ]; then
   exit 1
 fi
 mkdir -p "$(dirname "$config_path")"
-mv "$tmp_clone" "$(dirname "$config_path")/"
+rm -rf "$config_path"
+mv "$tmp_clone" "$config_path"
 trap - EXIT
 cd "$config_path"
 
