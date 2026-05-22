@@ -114,7 +114,7 @@ in
           lib.nixosSystem {
             inherit system;
             specialArgs = { };
-            modules = [ ./iso.nix ];
+            modules = [ ./iso-builder.nix ];
           }
         )
       ) meta.supported
