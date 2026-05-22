@@ -97,7 +97,10 @@
       };
 
       sops = {
-        age.sshKeyPaths = [ constants.directories.system.identity ];
+        age.sshKeyPaths = [
+          constants.directories.system.identity
+          "/persist/${constants.directories.system.identity}"
+        ];
         defaultSopsFile = ../secrets/hosts/${constants.hostname}.yaml;
 
         secrets = {
