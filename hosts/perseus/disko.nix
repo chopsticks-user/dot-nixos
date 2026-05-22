@@ -39,6 +39,7 @@
               extraArgs = [ "-f" ];
               subvolumes = {
                 "/persist" = {
+                  neededForBoot = true;
                   mountOptions = [
                     "subvol=persist"
                     "noatime"
@@ -46,6 +47,7 @@
                   mountpoint = "/persist";
                 };
                 "/nix" = {
+                  neededForBoot = true;
                   mountOptions = [
                     "subvol=nix"
                     "noatime"
