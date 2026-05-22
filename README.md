@@ -43,10 +43,10 @@ or system configuration required by some packages, e.g., `steam` and `hyprland`
 is renamed to `generated.nix` and imported by `hardware.nix`. `disko.nix` and `persist.nix` 
 must always be present for partitioning and persistence, respectively 
 - `users/`: likewise, has an opinionated structure and consumer of `profiles/`. 
-Worth noting that `system.nix` lives in system space rather than user space. Think of 
+Worth noting that `system.nix` and `persist.nix` lives in system space rather than user space. Think of 
 `system.nix` like a bridge between the two spaces. `system.nix` exists because 
-users cannot be fully independent of the hosts they live in. For instance, user passwords 
-and parts of some packages' configuration must live at system-level. That said, the 
+users cannot be fully independent of the hosts they live in. For instance, user passwords, 
+impermanence and parts of some packages' configuration must live at system-level. That said, the 
 inconsistency space is quite small and has mostly been abstracted away
 
 ## Philosophy

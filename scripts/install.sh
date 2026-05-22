@@ -4,23 +4,14 @@ set -euo pipefail
 
 key_content=$(eval "$1")
 
-tmp_clone=$(mktemp -d)
-trap 'rm -rf "$tmp_clone"' EXIT
-git clone https://github.com/chopsticks-user/dot-nixos "$tmp_clone"
-config_path_rel=$(jq -r ".directories.nixos" "$tmp_clone/meta.json")
+config_path_rel=$(jq -r ".directories.nixos" <(curl -s https://raw.githubusercontent.com/chopsticks-user/dot-nixos/main/meta.json))
 if [ -z "$config_path_rel" ] || [ "$config_path_rel" = "null" ]; then
   echo "Could not read directories.nixos from meta.json" >&2
   exit 1
 fi
 config_path=${config_path_rel/#\$HOME/$HOME}
-if [ -n "$(ls -A "$config_path")" ]; then
-  echo "$config_path already exists. Aborting." >&2
-  exit 1
-fi
 mkdir -p "$(dirname "$config_path")"
-rm -rf "$config_path"
-mv "$tmp_clone" "$config_path"
-trap - EXIT
+git clone https://github.com/chopsticks-user/dot-nixos "$config_path"
 cd "$config_path"
 
 home_identity="$HOME/$(jq -r ".directories.home.identity" meta.json)"
