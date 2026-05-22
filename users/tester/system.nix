@@ -26,12 +26,12 @@
       }
 
       # .config
-      "nixos"
-      "JetBrains"
-      "discord"
-      "gh"
-      "dconf"
-      "sops-nix"
+      ".config/nixos"
+      ".config/JetBrains"
+      ".config/discord"
+      ".config/gh"
+      ".config/dconf"
+      ".config/sops-nix"
 
       # .local/share
       ".local/share/JetBrains"
@@ -54,10 +54,10 @@
       ".local/state/gh"
 
       # .cache
-      "JetBrains"
-      "nix"
-      "mozilla"
-      "zed"
+      ".cache/JetBrains"
+      ".cache/nix"
+      ".cache/mozilla"
+      ".cache/zed"
     ];
     files = [
       ".zsh_history"
