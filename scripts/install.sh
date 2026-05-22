@@ -13,7 +13,7 @@ if [ -z "$config_path_rel" ] || [ "$config_path_rel" = "null" ]; then
   exit 1
 fi
 config_path=${config_path_rel/#\$HOME/$HOME}
-if [ -e "$config_path" ]; then
+if [ -n "$(ls -A "$config_path")" ]; then
   echo "$config_path already exists. Aborting." >&2
   exit 1
 fi
