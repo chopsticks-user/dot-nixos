@@ -56,13 +56,6 @@ in
         modules = [
           ../features
           ../hosts/${hostname}
-          # todo: remove the check once andromeda has disko setup for impermanence
-          (lib.mkIf (builtins.pathExists ../hosts/${hostname}/persist.nix) {
-            environment.persistence."/persist" = (import ../hosts/${hostname}/persist.nix) // {
-              enable = true;
-              hideMounts = true;
-            };
-          })
           { nixpkgs.overlays = resolvedOverlays; }
           inputs.disko.nixosModules.disko
           inputs.sops-nix.nixosModules.sops
@@ -105,15 +98,11 @@ in
             imports = [
               coreModule
               ../users/${username}/system.nix
-              # todo: remove the check once andromeda has disko setup for impermanence
-              (lib.mkIf (builtins.pathExists ../users/${username}/persist.nix) {
-                environment.persistence."/persist".users.${username} = (import ../users/${username}/persist.nix);
-              })
             ];
             # todo: append username to constants
-            #            _module.args = {
-            #              inherit username;
-            #            };
+            _module.args = {
+              inherit username;
+            };
           }
         ) meta.hosts.${hostname}.usernames;
       }
