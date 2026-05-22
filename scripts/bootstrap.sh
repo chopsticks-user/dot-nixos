@@ -30,7 +30,7 @@ sudo nix --experimental-features "nix-command flakes" \
   ".#$host" --mode destroy,format,mount
 
 system_identity=$(jq -r ".directories.system.identity" meta.json)
-mnt_system_identity="/mnt$system_identity"
+mnt_system_identity="/mnt/persist$system_identity"
 sudo mkdir -p "$(dirname "$mnt_system_identity")"
 echo "$key_content" | sudo tee "$mnt_system_identity" > /dev/null
 sudo chmod 600 "$mnt_system_identity"
