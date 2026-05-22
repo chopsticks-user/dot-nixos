@@ -25,7 +25,7 @@ cd "$config_path"
 home_identity="$HOME/$(jq -r ".directories.home.identity" meta.json)"
 if [ ! -f "$home_identity" ]; then
   mkdir -p "$(dirname "$home_identity")"
-  echo "$key_content" | tee "$home_identity"
+  echo "$key_content" | tee "$home_identity" > /dev/null
   chmod 600 "$home_identity"
   ssh-keygen -y -f "$home_identity" > "$home_identity.pub"
   chmod 644 "$home_identity.pub"
@@ -39,4 +39,4 @@ sudo nix-collect-garbage -d
 sudo nix store optimise
 sudo rm -rf /tmp/*
 sudo rm -rf /var/tmp/*
-echo "Please reboot to apply changes"
+reboot

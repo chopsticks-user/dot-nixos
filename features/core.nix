@@ -1,4 +1,5 @@
 {
+  config,
   lib,
   pkgs,
   inputs,
@@ -98,10 +99,16 @@
       sops = {
         age.sshKeyPaths = [ constants.directories.system.identity ];
         defaultSopsFile = ../secrets/hosts/${constants.hostname}.yaml;
+
+        secrets = {
+          "password/root" = {
+            neededForUsers = true;
+          };
+        };
       };
 
-      environment.sessionVariables = {
-        SOPS_AGE_SSH_PRIVATE_KEY_CMD = "sudo cat ${constants.directories.system.identity}";
+      users.users.root = {
+        hashedPasswordFile = config.sops.secrets."password/root".path;
       };
     };
 })
