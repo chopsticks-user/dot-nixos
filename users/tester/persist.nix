@@ -23,6 +23,7 @@
 
     # .config
     ".config/nixos"
+    ".config/hypr"
     ".config/JetBrains"
     ".config/discord"
     ".config/gh"
