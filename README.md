@@ -36,7 +36,18 @@ common patterns
 - `templates/`: nix templates, try to be as generic as possible
 - `overlays/`: customization on top of existing packages or derivations of packages 
 not in nixpkgs
-- 
+- `features/`: contains system-level modules that can be imported to `nixosConfigurations` 
+or system configuration required by some packages, e.g., `steam` and `hyprland`
+- `profiles/`: contains user-level modules that can be imported to `homeConfigurations`
+- `hosts/`: consumer of `features/`, has an opinionated structure. `hardware-configuration` 
+is renamed to `generated.nix` and imported by `hardware.nix`. `disko.nix` and `persist.nix` 
+must always be present for partitioning and persistence, respectively 
+- `users/`: likewise, has an opinionated structure and consumer of `profiles/`. 
+Worth noting that `system.nix` lives in system space rather than user space. Think of 
+`system.nix` like a bridge between the two spaces. `system.nix` exists because 
+users cannot be fully independent of the hosts they live in. For instance, user passwords 
+and parts of some packages' configuration must live at system-level. That said, the 
+inconsistency space is quite small and has mostly been abstracted away
 
 ## Philosophy
 
@@ -54,9 +65,9 @@ For consistency, many instances of IoC exist throughout the codebase. A conseque
 of this is that files are expected to be named in a certain way, below is a list of 
 examples:
 
-- aa
+- 
 
-`features` and `profiles` are good examples 
+`features` and `profiles` are good examples of IoC
 
 ## Installation guide
 
