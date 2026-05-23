@@ -30,7 +30,6 @@
   };
 
   profiles = {
-    core.enable = true;
     zsh = {
       enable = true;
       shellAliases = {

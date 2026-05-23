@@ -1,7 +1,6 @@
 { constants, ... }:
 {
   features = {
-    core.enable = true;
     grub.enable = true;
     nh.enable = true;
     docs.enable = true;

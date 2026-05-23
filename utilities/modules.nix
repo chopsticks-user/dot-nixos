@@ -14,11 +14,10 @@ let
     in
     {
       imports = module.imports or [ ];
-      options.${namespace}.${name} = {
-        enable = lib.mkEnableOption name;
-      }
-      // (module.options or { });
-      config = lib.mkIf fields.enable (
+      options.${namespace}.${name} =
+        (module.options or { })
+        // (lib.optionalAttrs (name != "core") { enable = lib.mkEnableOption name; });
+      config = lib.mkIf (name == "core" || (fields.enable or false)) (
         lib.mkMerge [
           (module.configs or { })
           (module.extraConfig or { })

@@ -1,3 +1,3 @@
-- Set default shell at user level
-- Reuse paths in scripts as variables for consistency
-- "frost" as lead admin
+-[x] Set default shell at user level
+-[x] Reuse paths in scripts as variables for consistency
+-[ ] Add a common persist config in meta.json to avoid duplications
