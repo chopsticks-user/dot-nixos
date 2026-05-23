@@ -67,6 +67,5 @@
     ".bash_history"
     ".zshenv"
     ".gtkrc-2.0"
-    ".nix-profile"
   ];
 }
