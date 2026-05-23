@@ -24,6 +24,7 @@
     # .config
     ".config/nixos"
     ".config/hypr"
+    ".config/zsh"
     ".config/JetBrains"
     ".config/discord"
     ".config/gh"
@@ -49,6 +50,8 @@
     # .local/state
     ".local/state/wireplumber"
     ".local/state/gh"
+    ".local/state/nix"
+    ".local/state/home-manager"
 
     # .cache
     ".cache/JetBrains"
