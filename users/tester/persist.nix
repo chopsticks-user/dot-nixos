@@ -24,6 +24,7 @@
     # .config
     ".config/nixos"
     ".config/hypr"
+    ".config/noctalia"
     ".config/zsh"
     ".config/JetBrains"
     ".config/discord"
@@ -58,6 +59,7 @@
     ".cache/nix"
     ".cache/mozilla"
     ".cache/zed"
+    ".cache/noctalia"
   ];
 
   files = [
