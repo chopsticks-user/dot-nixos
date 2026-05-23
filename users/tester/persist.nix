@@ -5,9 +5,9 @@
     "downloads"
     "media"
     "projects"
+    ".xdg-ignore"
     ".mozilla"
     ".doppler"
-    ".xdg-ignore"
     {
       directory = ".gnupg";
       mode = "0700";

@@ -11,6 +11,6 @@ let
 in
 builtins.foldl' (acc: path: acc // import (./. + "/${path}") { inherit lib; }) { } (
   builtins.filter (
-    name: hasSuffix ".nix" name && !hasSuffix "-builder.nix" name && name != "default.nix"
+    name: hasSuffix ".nix" name && name != "default.nix"
   ) (builtins.attrNames (builtins.readDir ./.))
 )

@@ -28,6 +28,7 @@ nix library overlays for common tasks, and sensible defaults for customization
 - `meta.json`: hosts various public-facing host, user and general configuration
 - `justfile`: where all convenient scripts are included, run `just` for details
 - `.sop.yaml`: contains public keys and sops-nix rules
+- `modules/`: contains standalone flakes
 - `secrets/`: sops-age encrypted secrets live here
 - `scripts/`: where "just" modules, iso-embedded scripts and internal scripts live
 - `utilities/`: extended functionalities, or overlays if you will, on top of nix `lib`

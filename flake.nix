@@ -48,7 +48,7 @@
 
   outputs =
     inputs:
-    import ./utilities/flake-builder.nix {
+    import ./modules/flake-builder.nix {
       inherit inputs;
 
       overlays = [

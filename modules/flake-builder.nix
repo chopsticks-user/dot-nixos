@@ -150,7 +150,7 @@ in
           lib.nixosSystem {
             inherit system;
             specialArgs = { };
-            modules = [ ./iso-builder.nix ];
+            modules = [ ./iso.nix ];
           }
         )
       ) meta.supported
