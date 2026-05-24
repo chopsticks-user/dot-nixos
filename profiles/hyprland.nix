@@ -2,6 +2,7 @@
   config,
   pkgs,
   inputs,
+  constants,
   ...
 }:
 {
@@ -413,7 +414,7 @@
           animationDisabled = false;
           animationSpeed = 1;
           autoStartAuth = false;
-          avatarImage = "/home/frost/.face";
+          avatarImage = "${constants.homeDirectory}/.face";
           boxRadiusRatio = 1;
           clockFormat = "hh\\nmm";
           clockStyle = "custom";
@@ -683,7 +684,7 @@
         };
         wallpaper = {
           automationEnabled = false;
-          directory = "/home/frost/media/images/wallpapers";
+          directory = "${constants.homeDirectory}/media/images/wallpapers";
           enableMultiMonitorDirectories = false;
           enabled = true;
           favorites = [ ];
@@ -693,7 +694,7 @@
           linkLightAndDarkWallpapers = true;
           monitorDirectories = [
             {
-              directory = "/home/frost/media/images/wallpapers";
+              directory = "${constants.homeDirectory}/media/images/wallpapers";
               name = "eDP-1";
               wallpaper = "";
             }
@@ -767,7 +768,7 @@
 
     services.mpd = {
       enable = true;
-      musicDirectory = "/home/frost";
+      musicDirectory = "${constants.homeDirectory}";
       network = {
         listenAddress = "any";
         startWhenNeeded = true;
