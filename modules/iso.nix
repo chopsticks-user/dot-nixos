@@ -10,6 +10,15 @@
 
   boot.zfs.forceImportRoot = false;
 
+  networking.wireless = {
+    enable = true;
+    networks =
+      let
+        ssid = builtins.getEnv "NIXOS_ISO_WIFI_SSID";
+      in
+      if ssid != "" then { ${ssid}.psk = builtins.getEnv "NIXOS_ISO_WIFI_PSK"; } else { };
+  };
+
   environment = {
     systemPackages = with pkgs; [
       git
