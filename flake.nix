@@ -59,15 +59,6 @@
             removeWarningPopup = true;
           };
         }
-        {
-          name = "openldap";
-          args = {
-            preCheckExtra = ''
-              rm -f tests/scripts/test017-syncreplication-refresh
-              rm -f tests/scripts/test019-syncreplication-cascade
-            '';
-          };
-        }
       ];
 
       templates = {

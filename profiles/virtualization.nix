@@ -11,7 +11,7 @@
       qemu
       quickemu
       virt-manager
-      bottles
+      #      bottles
     ];
 
     programs.distrobox = {

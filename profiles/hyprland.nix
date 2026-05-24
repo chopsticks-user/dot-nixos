@@ -15,7 +15,7 @@
     xdg.portal.config.common.default = "*";
     wayland.windowManager.hyprland = {
       enable = true;
-      package = null;
+      configType = "hyprlang"; # todo: migrate to lua
       settings = {
         "$mod" = "SUPER";
         general = {
