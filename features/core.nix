@@ -106,7 +106,7 @@
           // (lib.listToAttrs (
             map (
               w:
-              lib.nameValuePair w.ssid {
+              lib.nameValuePair w.name {
                 connection = {
                   id = w.name;
                   type = "wifi";

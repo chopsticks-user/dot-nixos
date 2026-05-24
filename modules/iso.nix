@@ -58,15 +58,14 @@
           openssh
           jq
         ];
-        text =
-          let
-            hostname = builtins.getEnv "NIXOS_ISO_HOSTNAME";
-          in
-          ''
-            ${builtins.readFile ../scripts/bootstrap.sh} ${
-              if hostname != "" then "${hostname} ${builtins.getEnv "NIXOS_ISO_HOST_KEY_CMD"}" else ""
-            }
-          '';
+        text = builtins.readFile ../scripts/bootstrap.sh;
+      })
+      (pkgs.writeShellApplication {
+        name = "bootstrap";
+        runtimeInputs = [ ];
+        text = ''
+          nixos-bootstrap "${builtins.getEnv "NIXOS_ISO_HOSTNAME"}" "${builtins.getEnv "NIXOS_ISO_HOST_KEY_CMD"}"
+        '';
       })
     ];
   };
