@@ -10,7 +10,7 @@ let
     n >= m && builtins.substring (n - m) m str == suffix;
 in
 builtins.foldl' (acc: path: acc // import (./. + "/${path}") { inherit lib; }) { } (
-  builtins.filter (
-    name: hasSuffix ".nix" name && name != "default.nix"
-  ) (builtins.attrNames (builtins.readDir ./.))
+  builtins.filter (name: hasSuffix ".nix" name && name != "default.nix") (
+    builtins.attrNames (builtins.readDir ./.)
+  )
 )

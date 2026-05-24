@@ -1,5 +1,4 @@
 {
-  lib,
   config,
   pkgs,
   inputs,
@@ -101,7 +100,6 @@
         "/persist/${constants.directories.system.identity}"
       ];
       defaultSopsFile = ../secrets/hosts/${constants.hostname}.yaml;
-
       secrets = {
         "password/root" = {
           neededForUsers = true;
