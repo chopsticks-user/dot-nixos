@@ -56,36 +56,51 @@ in
         modules =
           (lib.importConfigModules "features")
           ++ [
+            ../modules/persist-home.nix
+
             ../hosts/${hostname}/generated.nix
             ../hosts/${hostname}/hardware.nix
             ../hosts/${hostname}/system.nix
             ../hosts/${hostname}/disko.nix
-            # todo: remove mkIf once andromeda has persist.nix
-            (lib.mkIf (builtins.pathExists ../hosts/${hostname}/persist.nix) {
+
+            { nixpkgs.overlays = resolvedOverlays; }
+            inputs.disko.nixosModules.disko
+            inputs.sops-nix.nixosModules.sops
+            inputs.nix-index-database.nixosModules.default
+          ]
+          # todo: remove the check once andromeda has persist.nix
+          ++ lib.optionals (builtins.pathExists ../hosts/${hostname}/persist.nix) [
+            inputs.impermanence.nixosModules.impermanence
+            {
               fileSystems."/persist".neededForBoot = true;
               environment.persistence."/persist" = (import ../hosts/${hostname}/persist.nix) // {
                 enable = true;
                 hideMounts = true;
               };
-            })
-            { nixpkgs.overlays = resolvedOverlays; }
-            inputs.disko.nixosModules.disko
-            inputs.sops-nix.nixosModules.sops
-            inputs.nix-index-database.nixosModules.default
-            inputs.impermanence.nixosModules.impermanence
+            }
           ]
           ++ map (username: {
             imports = [
               ../modules/peruser.nix
               ../users/${username}/system.nix
-              # todo: remove mkIf once andromeda has persist.nix
-              (lib.mkIf (builtins.pathExists ../users/${username}/persist.nix) {
-                environment.persistence."/persist".users.${username} = (import ../users/${username}/persist.nix);
-              })
-            ];
+            ]
+            # todo: remove the check once andromeda has persist.nix
+            ++
+              lib.optionals
+                (
+                  builtins.pathExists ../users/${username}/persist.nix
+                  && builtins.pathExists ../hosts/${hostname}/persist.nix
+                )
+                [
+                  {
+                    environment.persistence."/persist".users.${username} = import ../users/${username}/persist.nix;
+                  }
+                ];
             # todo: append username to constants
             _module.args = {
               inherit username;
+              # todo: to be removed once andromeda has persist.nix
+              hasPersist = lib.pathExists ../hosts/${hostname}/persist.nix;
             };
           }) meta.hosts.${hostname}.usernames;
       }

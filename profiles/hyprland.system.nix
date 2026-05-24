@@ -18,4 +18,15 @@
       config.common.default = "*";
     };
   };
+
+  persist.home = username: {
+    directories = [
+      ".config/hypr"
+      ".config/noctalia"
+      ".local/share/hyprland"
+      ".local/share/mpd"
+      ".cache/noctalia"
+    ];
+    files = [ ];
+  };
 }

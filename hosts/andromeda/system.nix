@@ -5,8 +5,6 @@
     nh.enable = true;
     docs.enable = true;
     fcitx.enable = true;
-    ssh.enable = true;
-    virtualization.enable = true;
   };
 
   networking = {

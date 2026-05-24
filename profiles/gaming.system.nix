@@ -23,8 +23,10 @@
         enable = true;
       };
     };
+  };
 
-    # todo: enable cpu-governed optimizations
-    # services.gamemode.enable = true;
+  persist.home = username: {
+    directories = [ ".local/share/Steam" ];
+    files = [ ];
   };
 }

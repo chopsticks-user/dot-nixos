@@ -1,8 +1,10 @@
 {
+  lib,
   config,
   pkgs,
   constants,
   username,
+  hasPersist,
   ...
 }:
 {
@@ -44,5 +46,17 @@
     };
     path = [ pkgs.nix ];
     wantedBy = [ "multi-user.target" ];
+  };
+
+  # todo: remove hasPersist once andromeda has persist.nix
+  environment = lib.optionalAttrs hasPersist {
+    persistence."/persist".users.${username} =
+      let
+        materialized = lib.mapAttrs (_: fn: fn username) config.persist.home;
+      in
+      {
+        directories = lib.concatMap (p: p.directories) (lib.attrValues materialized);
+        files = lib.concatMap (p: p.files) (lib.attrValues materialized);
+      };
   };
 }

@@ -1,4 +1,4 @@
 -[x] Set default shell at user level
 -[x] Reuse paths in scripts as variables for consistency
--[ ] Add a common persist module
 -[ ] User level persistence should not require system switch
+-[ ] User .directories in meta.json instead of hardcoding persistence directories

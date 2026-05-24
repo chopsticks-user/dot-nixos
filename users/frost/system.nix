@@ -1,7 +1,8 @@
 # this file belongs to nixosConfigurations
 { ... }:
 {
-  features = {
+  systemProfiles = {
+    ssh.enable = true;
     hyprland.enable = true;
     virtualization.enable = true;
     gaming.enable = true;
