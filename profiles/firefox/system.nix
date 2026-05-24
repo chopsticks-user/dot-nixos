@@ -1,6 +1,6 @@
 { constants, ... }:
 {
-  persist.home = username: {
+  persist.home = {
     directories = [
       ".mozilla"
       "${constants.directories.home.cache}/mozilla"

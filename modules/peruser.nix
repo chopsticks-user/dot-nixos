@@ -52,11 +52,11 @@
   environment = lib.optionalAttrs hasPersist {
     persistence."/persist".users.${username} =
       let
-        materialized = lib.mapAttrs (_: fn: fn username) config.persist.home;
+        materialized = lib.attrValues config.persist.home;
       in
       {
-        directories = lib.concatMap (p: p.directories) (lib.attrValues materialized);
-        files = lib.concatMap (p: p.files) (lib.attrValues materialized);
+        directories = lib.concatMap (p: p.directories) materialized;
+        files = lib.concatMap (p: p.files) materialized;
       };
   };
 }

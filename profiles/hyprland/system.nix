@@ -20,7 +20,7 @@
     };
   };
 
-  persist.home = username: {
+  persist.home = {
     directories = [
       "${constants.directories.home.config}/hypr"
       "${constants.directories.home.config}/noctalia"

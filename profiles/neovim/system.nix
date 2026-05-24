@@ -1,6 +1,6 @@
 { constants, ... }:
 {
-  persist.home = username: {
+  persist.home = {
     directories = [ "${constants.directories.home.data}/nvf" ];
     files = [ ];
   };

@@ -12,7 +12,7 @@
     };
   };
 
-  persist.home = username: {
+  persist.home = {
     directories = [
       {
         directory = ".ssh";

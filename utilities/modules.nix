@@ -11,40 +11,42 @@ let
     let
       fields = config.${namespace}.${name};
       module = moduleFn (moduleArgs // { inherit fields; });
-      persist = module.persist or { };
-      systemPersist = persist.system or { };
-      homePersistFn = persist.home or null; # username -> { directories, files }
-      sysDirs = systemPersist.directories or [ ];
-      sysFiles = systemPersist.files or [ ];
-      isEnabled = name == "core" || (fields.enable or false);
-      hasSystemPersist = sysDirs != [ ] || sysFiles != [ ];
-      key = "${namespace}.${name}";
     in
     {
       imports = module.imports or [ ];
       options.${namespace}.${name} =
         (module.options or { })
         // (lib.optionalAttrs (name != "core") { enable = lib.mkEnableOption name; });
-      config = lib.mkIf isEnabled (
+      config = lib.mkIf (name == "core" || (fields.enable or false)) (
         lib.mkMerge [
           (module.configs or { })
           (module.extraConfigs or { })
           (lib.optionalAttrs (namespace == "features" || namespace == "systemProfiles") {
             assertions = map (a: a // { assertion = fields.enable -> a.assertion; }) (module.assertions or [ ]);
           })
-          (lib.optionalAttrs (hasSystemPersist && (namespace == "features" || namespace == "systemProfiles"))
-            {
-              environment.persistence."/persist" = {
-                directories = sysDirs;
-                files = sysFiles;
-              };
-            }
+          (
+            let
+              sysDirs = module.persist.system.directories or [ ];
+              sysFiles = module.persist.system.files or [ ];
+            in
+            lib.optionalAttrs
+              ((sysDirs != [ ] || sysFiles != [ ]) && (namespace == "features" || namespace == "systemProfiles"))
+              {
+                environment.persistence."/persist" = {
+                  directories = sysDirs;
+                  files = sysFiles;
+                };
+              }
           )
-          (lib.optionalAttrs
-            (homePersistFn != null && (namespace == "features" || namespace == "systemProfiles"))
-            {
-              persist.home.${key} = homePersistFn;
-            }
+          (
+            let
+              homePersist = module.persist.home or null;
+            in
+            lib.optionalAttrs
+              (homePersist != null && (namespace == "features" || namespace == "systemProfiles"))
+              {
+                persist.home."${namespace}.${name}" = homePersist;
+              }
           )
         ]
       );

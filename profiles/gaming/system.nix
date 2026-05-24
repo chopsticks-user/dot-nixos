@@ -25,7 +25,7 @@
     };
   };
 
-  persist.home = username: {
+  persist.home = {
     directories = [ "${constants.directories.home.data}/Steam" ];
     files = [ ];
   };
