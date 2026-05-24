@@ -63,13 +63,24 @@ a few conventions:
 
 - Modules in `profiles/` and `features/` are config modules and expected to at least define the
   `options` and `configs` fields (see [defineConfigModule](./utilities/modules.nix))
-- A `utilities/` module are autoloaded
 - `persist.nix` (both user level and system level) is only an attribute set accepting
   2 fields: `directories` and `files`
 - Each host defined in `hosts/` must contain `disko.nix`, `persist.nix`,`hardware.nix`,
   `system.nix` and `generated.nix` (`hardware-configuration.nix`). Also, check
   [persist-common](./modules/persist-common.nix) to see if your persistence directories
   are already included by default
+
+You can extend `features`, `overlays`, `profiles` and `utitlities` by 
+simply adding new `.nix` files to any of the 4 directories and the files will be 
+wired to their corresponding module. For instance, adding `my-feature.nix` to `features/` 
+will automatically allow you to enable and configure `features.my-feature`, exporting 
+`myHelperFunction` in `utilities/my-helper.nix` will extend Nix builtin `lib` and 
+allow you to use your helper as `lib.myHelperFunction` (ensure, however, that you 
+don't accidentally override an existing library function), etc. In a similar manner, 
+adding a new directory under `hosts/` or `users/` will create a new host or user 
+configuration module, respectively. You can add new files to `modules/`, `scripts/` 
+and `templates/` but they need to be used or imported explicitly since they are 
+standalone modules.
 
 ## Installation guide
 
@@ -129,8 +140,8 @@ ssh frost@andromeda 'tar -xOzf /tmp/perseus.tar.gz tester.key'
 ```
 
 In short, you need a host SSH key + a user SSH key stored somewhere safe, 
-and it is possible to print their unencrypted values to the terminal in bootstrap 
-environment.
+and ensure there exists a command to print their unencrypted values to the terminal 
+in bootstrap environment.
 
 ### 2. Bootstrap & Install
 
@@ -143,11 +154,11 @@ nixos-bootstrap perseus <host_key_command>
 ```
 
 You will need to confirm at some steps during bootstrapping so be sure to check back 
-once in a while. Once done, your machine will reboot and you will be prompted to the 
-`tty` screen. Login to your primary user account then run
+once in a while. Once done, reboot your machine and you will be prompted to the 
+`tty` screen. Login to your primary user account, connect to the Wi-Fi network, then run
 
 ```bash
 nixos-homestrap <user_key_command>
 ```
 
-Your system will reboot one more time and that's it.
+Reboot your machine one more time and that's it.
