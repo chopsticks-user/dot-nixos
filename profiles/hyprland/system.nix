@@ -1,6 +1,7 @@
 {
   lib,
   pkgs,
+  constants,
   ...
 }:
 {
@@ -21,11 +22,11 @@
 
   persist.home = username: {
     directories = [
-      ".config/hypr"
-      ".config/noctalia"
-      ".local/share/hyprland"
-      ".local/share/mpd"
-      ".cache/noctalia"
+      "${constants.directories.home.config}/hypr"
+      "${constants.directories.home.config}/noctalia"
+      "${constants.directories.home.data}/hyprland"
+      "${constants.directories.home.data}/mpd"
+      "${constants.directories.home.cache}/noctalia"
     ];
     files = [ ];
   };

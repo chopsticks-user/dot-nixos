@@ -1,7 +1,7 @@
-{ ... }:
+{ constants, ... }:
 {
   persist.home = username: {
-    directories = [ ".config/zsh" ];
+    directories = [ "${constants.directories.home.config}/zsh" ];
     files = [ ".zsh_history" ];
   };
 }

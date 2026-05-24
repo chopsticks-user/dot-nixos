@@ -1,9 +1,9 @@
-{ ... }:
+{ constants, ... }:
 {
   persist.home = username: {
     directories = [
-      ".local/share/zed"
-      ".cache/zed"
+      "${constants.directories.home.data}/zed"
+      "${constants.directories.home.cache}/zed"
     ];
     files = [ ];
   };

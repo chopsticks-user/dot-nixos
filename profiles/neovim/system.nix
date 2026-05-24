@@ -1,7 +1,7 @@
-{ ... }:
+{ constants, ... }:
 {
   persist.home = username: {
-    directories = [ ".local/share/nvf" ];
+    directories = [ "${constants.directories.home.data}/nvf" ];
     files = [ ];
   };
 }

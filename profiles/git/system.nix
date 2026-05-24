@@ -1,7 +1,7 @@
-{ ... }:
+{ constants, ... }:
 {
   persist.home = username: {
-    directories = [ ".config/gh" ];
+    directories = [ "${constants.directories.home.config}/gh" ];
     files = [ ];
   };
 }

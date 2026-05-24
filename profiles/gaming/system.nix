@@ -1,4 +1,4 @@
-{ ... }:
+{ constants, ... }:
 {
   options = { };
 
@@ -26,7 +26,7 @@
   };
 
   persist.home = username: {
-    directories = [ ".local/share/Steam" ];
+    directories = [ "${constants.directories.home.data}/Steam" ];
     files = [ ];
   };
 }
