@@ -31,4 +31,8 @@ sudo nix-collect-garbage -d
 sudo nix store optimise
 sudo rm -rf /tmp/*
 sudo rm -rf /var/tmp/*
-reboot
+
+read -rp "Reboot now? (Y/n): " reboot_now
+if [[ "${reboot_now,,}" != "n" ]]; then
+  reboot
+fi

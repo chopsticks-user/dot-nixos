@@ -41,4 +41,8 @@ sudo chmod 644 "$mnt_system_identity.pub"
 
 sudo nixos-generate-config --no-filesystems --root /mnt
 sudo nixos-install --flake ".#$host" --no-root-password
-reboot
+
+read -rp "Reboot now? (Y/n): " reboot_now
+if [[ "${reboot_now,,}" != "n" ]]; then
+  reboot
+fi
