@@ -82,6 +82,8 @@
 
     boot.kernelPackages = pkgs."linuxPackages_${constants.kernel}";
 
+    time.timeZone = fields.timeZone;
+
     networking = {
       hostName = constants.hostname;
       networkmanager = {

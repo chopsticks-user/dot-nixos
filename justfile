@@ -21,7 +21,7 @@ flash device="/dev/sda" system=`nix eval --impure --raw --expr 'builtins.current
     read -rp "Host SSH key command: " NIXOS_ISO_HOST_KEY_CMD && export NIXOS_ISO_HOST_KEY_CMD
   fi
 
-  nix build .#nixosConfigurations.iso-"{{system}}".config.system.build.isoImage
+  nix build --impure .#nixosConfigurations.iso-"{{system}}".config.system.build.isoImage
   sudo dd if="$(ls result/iso/*.iso)" of="{{device}}" bs=4M status=progress oflag=sync
 
 test args:
