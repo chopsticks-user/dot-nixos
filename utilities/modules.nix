@@ -53,37 +53,31 @@ in
 {
   mkFeature = defineConfigModule "features";
   mkProfile = defineConfigModule "profiles";
-  importConfigModules =
-    namespace:
-    lib.pipe ../${namespace} [
+  importFeatures =
+    lib.pipe ../features [
       builtins.readDir
       (lib.filterAttrs (
-        name: type:
-        type == "regular"
-        && lib.hasSuffix ".nix" name
-        && name != "default.nix"
-        && !lib.hasSuffix ".system.nix" name
+        name: type: type == "regular" && lib.hasSuffix ".nix" name && name != "default.nix"
       ))
       (lib.mapAttrsToList (
         name: _:
-        defineConfigModule namespace (lib.removeSuffix ".nix" name) (import (../${namespace} + "/${name}"))
+        defineConfigModule "features" (lib.removeSuffix ".nix" name) (import (../features + "/${name}"))
       ))
-      (
-        modules:
-        if namespace == "features" then
-          modules
-          ++ lib.pipe ../profiles [
-            builtins.readDir
-            (lib.filterAttrs (name: type: type == "regular" && lib.hasSuffix ".system.nix" name))
-            (lib.mapAttrsToList (
-              name: _:
-              defineConfigModule "systemProfiles" (lib.removeSuffix ".system.nix" name) (
-                import (../profiles + "/${name}")
-              )
-            ))
-          ]
-        else
-          modules
-      )
+    ]
+    ++ lib.pipe ../profiles [
+      builtins.readDir
+      (lib.filterAttrs (
+        name: type: type == "directory" && builtins.pathExists (../profiles + "/${name}/system.nix")
+      ))
+      (lib.mapAttrsToList (
+        name: _: defineConfigModule "systemProfiles" name (import (../profiles + "/${name}/system.nix"))
+      ))
     ];
+  importProfiles = lib.pipe ../profiles [
+    builtins.readDir
+    (lib.filterAttrs (name: type: type == "directory"))
+    (lib.mapAttrsToList (
+      name: _: defineConfigModule "profiles" name (import (../profiles + "/${name}/default.nix"))
+    ))
+  ];
 }

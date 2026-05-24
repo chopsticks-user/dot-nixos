@@ -81,7 +81,7 @@
 
     sops = {
       age.sshKeyPaths = [ constants.directories.home.identity ];
-      defaultSopsFile = ../secrets/users/${constants.username}.yaml;
+      defaultSopsFile = ../../secrets/users/${constants.username}.yaml;
     };
 
     home.sessionVariables = {

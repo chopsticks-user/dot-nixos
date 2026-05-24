@@ -54,7 +54,7 @@ in
             // meta.hosts.${hostname};
         };
         modules =
-          (lib.importConfigModules "features")
+          lib.importFeatures
           ++ [
             ../modules/persist-home.nix
 
@@ -143,7 +143,7 @@ in
                   }
                   // meta.users.${username};
               };
-              modules = (lib.importConfigModules "profiles") ++ [
+              modules = lib.importProfiles ++ [
                 ../users/${username}/home.nix
                 inputs.sops-nix.homeManagerModules.sops
               ];
