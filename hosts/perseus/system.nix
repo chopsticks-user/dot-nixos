@@ -2,7 +2,8 @@
   config,
   constants,
   ...
-}: {
+}:
+{
   features = {
     grub.enable = true;
     nh.enable = true;
@@ -12,8 +13,8 @@
 
   sops = {
     secrets = {
-      "networking/wifi/home/ssid" = {};
-      "networking/wifi/home/password" = {};
+      "networking/wifi/home/ssid" = { };
+      "networking/wifi/home/password" = { };
     };
     templates."wifi.env" = {
       content = ''
@@ -28,7 +29,7 @@
     networkmanager = {
       enable = true;
       ensureProfiles = {
-        environmentFiles = [config.sops.templates."wifi.env".path];
+        environmentFiles = [ config.sops.templates."wifi.env".path ];
         profiles = {
           wifi-0 = {
             connection = {

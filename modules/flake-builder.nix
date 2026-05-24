@@ -100,7 +100,7 @@ in
             _module.args = {
               inherit username;
               # todo: to be removed once andromeda has persist.nix
-              hasPersist = lib.pathExists ../hosts/${hostname}/persist.nix;
+              hasPersist = builtins.pathExists ../hosts/${hostname}/persist.nix;
             };
           }) meta.hosts.${hostname}.usernames;
       }

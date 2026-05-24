@@ -29,5 +29,6 @@
     hyprland.enable = true;
     neovim.enable = true;
     firefox.enable = true;
+    zed.enable = true;
   };
 }

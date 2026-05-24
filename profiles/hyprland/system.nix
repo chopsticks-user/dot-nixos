@@ -26,6 +26,8 @@
       "${constants.directories.home.config}/noctalia"
       "${constants.directories.home.data}/hyprland"
       "${constants.directories.home.data}/mpd"
+      "${constants.directories.home.data}/superfile"
+      "${constants.directories.home.state}/wireplumber"
       "${constants.directories.home.cache}/noctalia"
     ];
     files = [ ];
