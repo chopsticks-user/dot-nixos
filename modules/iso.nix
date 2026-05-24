@@ -31,7 +31,9 @@
           openssh
           jq
         ];
-        text = builtins.readFile ../scripts/bootstrap.sh;
+        text = ''
+          ${builtins.readFile ../scripts/bootstrap.sh} ''${NIXOS_ISO_HOSTNAME:+$NIXOS_ISO_HOSTNAME ''${NIXOS_ISO_HOST_SSH_KEY:-}}
+        '';
       })
     ];
   };
