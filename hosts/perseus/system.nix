@@ -2,8 +2,7 @@
   config,
   constants,
   ...
-}:
-{
+}: {
   features = {
     grub.enable = true;
     nh.enable = true;
@@ -13,13 +12,13 @@
 
   sops = {
     secrets = {
-      "networking/wifi/home/ssid" = { };
-      "networking/wifi/home/password" = { };
+      "networking/wifi/home/ssid" = {};
+      "networking/wifi/home/password" = {};
     };
     templates."wifi.env" = {
       content = ''
-        WIFI_0_SSID=${config.sops.placeholder."networking/wifi/home/ssid"}
-        WIFI_0_PASSWORD=${config.sops.placeholder."networking/wifi/home/password"}
+        WIFI_HOME_SSID=${config.sops.placeholder."networking/wifi/home/ssid"}
+        WIFI_HOME_PASSWORD=${config.sops.placeholder."networking/wifi/home/password"}
       '';
     };
   };
@@ -29,21 +28,22 @@
     networkmanager = {
       enable = true;
       ensureProfiles = {
-        environmentFiles = [ config.sops.templates."wifi.env".path ];
+        environmentFiles = [config.sops.templates."wifi.env".path];
         profiles = {
-          wifi-0 = {
+          home = {
             connection = {
-              id = "wifi-0";
+              id = "home";
               type = "wifi";
+              autoconnect = "true";
             };
             wifi = {
               mode = "infrastructure";
-              ssid = "$WIFI_0_SSID";
+              ssid = "$WIFI_HOME_SSID";
             };
             wifi-security = {
               auth-alg = "open";
               key-mgmt = "wpa-psk";
-              psk = "$WIFI_0_PASSWORD";
+              psk = "$WIFI_HOME_PASSWORD";
             };
             ipv4 = {
               method = "auto";
