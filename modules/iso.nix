@@ -112,8 +112,14 @@ in
 
   systemd.services.iso-auto-bootstrap = lib.mkIf autoBootstrap {
     description = "Automated NixOS bootstrap";
-    after = [ "network-online.target" ];
-    wants = [ "network-online.target" ];
+    after = [
+      "network-online.target"
+      "NetworkManager-wait-online.service"
+    ];
+    wants = [
+      "network-online.target"
+      "NetworkManager-wait-online.service"
+    ];
     wantedBy = [ "multi-user.target" ];
     serviceConfig = {
       Type = "oneshot";
