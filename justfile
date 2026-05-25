@@ -17,7 +17,7 @@ flash device="/dev/sda" system=`nix eval --impure --raw --expr 'builtins.current
     if [[ "${NIXOS_ISO_SETUP_WIFI,,}" == "y" ]]; then
       read -rp "Wi-Fi SSID: " NIXOS_ISO_WIFI_SSID && export NIXOS_ISO_WIFI_SSID
       read -rsp "Wi-Fi password: " NIXOS_ISO_WIFI_PSK && export NIXOS_ISO_WIFI_PSK
-      echo
+      [[ -t 0 ]] && echo
     fi
     read -rp "Hostname: " NIXOS_ISO_HOSTNAME && export NIXOS_ISO_HOSTNAME
     read -rp "Username: " NIXOS_ISO_USERNAME && export NIXOS_ISO_USERNAME
@@ -27,6 +27,6 @@ flash device="/dev/sda" system=`nix eval --impure --raw --expr 'builtins.current
 
   nix build --impure .#nixosConfigurations.iso-"{{system}}".config.system.build.isoImage
   sudo dd if="$(ls result/iso/*.iso)" of="{{device}}" bs=4M status=progress oflag=sync
-
+  echo "Warning: sensitive values are stored in the Nix store. Run 'rm -f result && nix store gc' to remove them, or manually delete with 'nix store delete \$(readlink -f result)' before removing the symlink."
 test args:
   @echo "{{args}}"

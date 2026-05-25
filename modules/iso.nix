@@ -8,12 +8,22 @@ let
   autoBootstrap = builtins.getEnv "NIXOS_ISO_AUTO_BOOTSTRAP" == "y";
   nixosBootstrapPkg = pkgs.writeShellApplication {
     name = "nixos-bootstrap";
-    runtimeInputs = [ ];
+    runtimeInputs = with pkgs; [
+      openssh
+      jq
+      git
+    ];
     text = builtins.readFile ../scripts/bootstrap.sh;
   };
   nixosHomestrapPkg = pkgs.writeShellApplication {
     name = "nixos-homestrap";
-    runtimeInputs = [ pkgs.home-manager ];
+    runtimeInputs = with pkgs; [
+      home-manager
+      openssh
+      jq
+      git
+      curl
+    ];
     text = builtins.readFile ../scripts/install.sh;
   };
   bootstrapPkg = pkgs.writeShellApplication {
