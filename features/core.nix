@@ -51,14 +51,14 @@
       secrets = {
         "password/root" = {
           neededForUsers = true;
-        }
-        // (lib.listToAttrs (
-          lib.concatMap (w: [
-            (lib.nameValuePair "networking/wifi/${w.name}/ssid" { })
-            (lib.nameValuePair "networking/wifi/${w.name}/password" { })
-          ]) fields.wifi
-        ));
-      };
+        };
+      }
+      // (lib.listToAttrs (
+        lib.concatMap (w: [
+          (lib.nameValuePair "networking/wifi/${w.name}/ssid" { })
+          (lib.nameValuePair "networking/wifi/${w.name}/password" { })
+        ]) fields.wifi
+      ));
       templates = {
         "networking.env".content = lib.concatStringsSep "\n" (
           map (w: ''
