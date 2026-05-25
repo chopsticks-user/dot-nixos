@@ -27,6 +27,10 @@ flash device="/dev/sda" system=`nix eval --impure --raw --expr 'builtins.current
 
   nix build --impure .#nixosConfigurations.iso-"{{system}}".config.system.build.isoImage
   sudo dd if="$(ls result/iso/*.iso)" of="{{device}}" bs=4M status=progress oflag=sync
-  echo "Warning: sensitive values are stored in the Nix store. Run 'rm -f result && nix store gc' to remove them, or manually delete with 'nix store delete \$(readlink -f result)' before removing the symlink."
+
+  if [[ "${NIXOS_ISO_AUTO_BOOTSTRAP,,}" == "y" ]]; then
+    echo "Warning: sensitive values are stored in the Nix store. Run 'rm -f result && nix store gc' to remove them, or manually delete with 'nix store delete \$(readlink -f result)' before removing the symlink."
+  fi
+
 test args:
   @echo "{{args}}"

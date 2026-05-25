@@ -29,6 +29,7 @@ let
   bootstrapPkg = pkgs.writeShellApplication {
     name = "bootstrap";
     runtimeInputs = [
+      pkgs.curl
       nixosBootstrapPkg
       nixosHomestrapPkg
     ];
@@ -52,6 +53,12 @@ let
           printf "    nixos-homestrap ${escapedUserKeyCmd}\n" >&2
         }
         trap _bootstrap_help ERR
+
+        echo "Waiting for network..."
+        until curl -s --max-time 1 https://github.com &>/dev/null; do
+          sleep 1
+        done
+
         nixos-bootstrap --no-reboot "${hostname}" "${hostKeyCmd}"
         sudo nixos-enter --root /mnt -- su - "${username}" -c "nixos-homestrap '${userKeyCmd}'"
       '';
@@ -110,21 +117,10 @@ in
     ]
     ++ lib.optional autoBootstrap bootstrapPkg;
 
-  systemd.services.iso-auto-bootstrap = lib.mkIf autoBootstrap {
-    description = "Automated NixOS bootstrap";
-    after = [
-      "network-online.target"
-      "NetworkManager-wait-online.service"
-    ];
-    wants = [
-      "network-online.target"
-      "NetworkManager-wait-online.service"
-    ];
-    wantedBy = [ "multi-user.target" ];
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      ExecStart = "${bootstrapPkg}/bin/bootstrap";
-    };
-  };
+  environment.loginShellInit = lib.mkIf autoBootstrap ''
+    if [ -z "$NIXOS_ISO_BOOTSTRAP_DONE" ]; then
+      export NIXOS_ISO_BOOTSTRAP_DONE=1
+      bootstrap
+    fi
+  '';
 }
