@@ -2,6 +2,14 @@
 
 set -euo pipefail
 
+no_reboot=false
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --no-reboot) no_reboot=true; shift ;;
+    *) break ;;
+  esac
+done
+
 key_content=$(eval "$1")
 
 config_path_rel=$(jq -r ".directories.nixos" <(curl -s https://raw.githubusercontent.com/chopsticks-user/dot-nixos/main/meta.json))
@@ -33,6 +41,9 @@ sudo rm -rf /tmp/*
 sudo rm -rf /var/tmp/*
 
 read -rp "Reboot now? (Y/n): " reboot_now
-if [[ "${reboot_now,,}" != "n" ]]; then
-  reboot
+if [[ "$no_reboot" == false ]]; then
+  read -rp "Reboot now? (Y/n): " reboot_now
+  if [[ "${reboot_now,,}" != "n" ]]; then
+    reboot
+  fi
 fi

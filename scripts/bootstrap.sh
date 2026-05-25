@@ -2,6 +2,14 @@
 
 set -euo pipefail
 
+no_reboot=false
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --no-reboot) no_reboot=true; shift ;;
+    *) break ;;
+  esac
+done
+
 host=$1
 key_content=$(eval "$2")
 
@@ -43,6 +51,9 @@ sudo nixos-generate-config --no-filesystems --root /mnt
 sudo nixos-install --flake ".#$host" --no-root-password
 
 read -rp "Reboot now? (Y/n): " reboot_now
-if [[ "${reboot_now,,}" != "n" ]]; then
-  reboot
+if [[ "$no_reboot" == false ]]; then
+  read -rp "Reboot now? (Y/n): " reboot_now
+  if [[ "${reboot_now,,}" != "n" ]]; then
+    reboot
+  fi
 fi
