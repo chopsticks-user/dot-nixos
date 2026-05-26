@@ -149,10 +149,21 @@
       [
         # core & nix tooling
         home-manager
+        nvd
         nix-alien
         nixd
         nixfmt
         coreutils
+        (pkgs.writeShellScriptBin "nixos-homestrap" (builtins.readFile ../scripts/homestrap.sh))
+        (pkgs.writeShellScriptBin "nix-system" (builtins.readFile ../scripts/nix-system.sh))
+        (pkgs.writeShellScriptBin "nix-home" (builtins.readFile ../scripts/nix-home.sh))
+        (pkgs.writeShellScriptBin "nix" ''
+          case "''${1:-}" in
+            home) shift; nix-home "$@" ;;
+            system) shift; nix-system "$@" ;;
+            *) exec ${pkgs.nix}/bin/nix "$@" ;;
+          esac
+        '')
 
         # system administration & monitoring
         efibootmgr
@@ -195,7 +206,6 @@
         wl-clipboard
         wev
         just
-        (writeShellScriptBin "nixos-homestrap" (builtins.readFile ../scripts/homestrap.sh))
       ];
 
     programs = {
