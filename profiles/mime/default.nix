@@ -81,9 +81,7 @@
           ) constants.mime
         )
         ++ [
-          (pkgs.writeShellScriptBin "open" ''
-            xdg-open "$@"
-          '')
+          (pkgs.writeShellScriptBin "open" (builtins.readFile ../../scripts/open.sh))
         ];
 
       xdg = {
