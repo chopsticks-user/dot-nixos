@@ -1,5 +1,6 @@
 {
   lib,
+  config,
   fields,
   ...
 }:
@@ -44,6 +45,23 @@
   };
 
   configs = {
+    sops = {
+      secrets = {
+        "git/name" = { };
+        "git/email" = { };
+      };
+
+      templates = {
+        "gitconfig" = {
+          content = ''
+            [user]
+              name = ${config.sops.placeholder."git/name"}
+              email = ${config.sops.placeholder."git/email"}
+          '';
+        };
+      };
+    };
+
     programs = {
       git = {
         enable = true;
@@ -56,7 +74,7 @@
             inherit (fields) user;
           })
         ];
-        includes = fields.include;
+        includes = [ { path = config.sops.templates."gitconfig".path; } ];
       };
 
       gh = {
