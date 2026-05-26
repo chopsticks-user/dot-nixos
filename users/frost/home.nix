@@ -24,7 +24,7 @@
     obs.enable = true;
     virtualization.enable = true;
     zed.enable = true;
-    mime = with pkgs; {
+    open = with pkgs; {
       enable = true;
       html = firefox;
       image = imv;

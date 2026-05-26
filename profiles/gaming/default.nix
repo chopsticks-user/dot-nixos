@@ -34,18 +34,6 @@
       "steam-unwrapped"
     ];
 
-    # steam launch options: gamemoderun gamescope -f -e -- mangohud %command%
-    programs.steam.config = {
-      enable = true;
-      closeSteam = true;
-      defaultCompatTool = "proton_experimental";
-      apps = { };
-    };
-
-    home.sessionVariables = {
-      STEAM_EXTRA_COMPAT_TOOLS_PATHS = "$HOME/.steam/root/compatibilitytools.d";
-    };
-
     programs = {
       mangohud = {
         enable = true;
@@ -58,6 +46,17 @@
           frame_timing = true;
         };
       };
+      # steam launch options: gamemoderun gamescope -f -e -- mangohud %command%
+      steam.config = {
+        enable = true;
+        closeSteam = true;
+        defaultCompatTool = "proton_experimental";
+        apps = { };
+      };
+    };
+
+    home.sessionVariables = {
+      STEAM_EXTRA_COMPAT_TOOLS_PATHS = "$HOME/.steam/root/compatibilitytools.d";
     };
   };
 }
