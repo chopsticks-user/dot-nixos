@@ -1,16 +1,6 @@
+{ ... }:
 {
-  lib,
-  fields,
-  ...
-}:
-{
-  options = {
-    shellAliases = lib.mkOption {
-      type = lib.types.attrsOf lib.types.str;
-      default = { };
-      description = "Shell aliases to add to zsh";
-    };
-  };
+  options = { };
 
   configs = {
     programs.zsh = {
@@ -22,12 +12,6 @@
       syntaxHighlighting = {
         enable = true;
       };
-      profileExtra = ''
-        if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
-         start-hyprland
-        fi
-      '';
-      inherit (fields) shellAliases;
       history = {
         size = 10000;
         ignoreDups = true;
@@ -59,16 +43,6 @@
           nohup setsid "$@" >/dev/null 2>&1 &
         }
       '';
-      # plugins = [
-      # {
-      # name = pkgs.zsh-autosuggestions.pname;
-      # src = "${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions";
-      # }
-      # {
-      # name = pkgs.zsh-syntax-highlighting.pname;
-      # src = "${pkgs.zsh-syntax-highlighting}/share/zsh-syntax-highlighting";
-      # }
-      # ];
     };
   };
 }

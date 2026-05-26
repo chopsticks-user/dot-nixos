@@ -18,6 +18,12 @@
       extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
       config.common.default = "*";
     };
+
+    environment.loginShellInit = ''
+      if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
+       start-hyprland
+      fi
+    '';
   };
 
   persist.home = {

@@ -30,11 +30,7 @@
   };
 
   profiles = {
-    zsh = {
-      enable = true;
-      shellAliases = {
-      };
-    };
+    zsh.enable = true;
     ssh.enable = true;
     git = {
       enable = true;
