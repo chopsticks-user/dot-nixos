@@ -1,7 +1,6 @@
 {
   lib,
   fields,
-  pkgs,
   ...
 }:
 {
@@ -70,10 +69,6 @@
       # src = "${pkgs.zsh-syntax-highlighting}/share/zsh-syntax-highlighting";
       # }
       # ];
-    };
-
-    home.sessionVariables = {
-      SHELL = "${pkgs.zsh}/bin/zsh";
     };
   };
 }

@@ -316,7 +316,7 @@
           ];
         };
         colorSchemes = {
-          darkMode = true;
+          darkMode = constants.theme == "dark";
           generationMethod = "tonal-spot";
           manualSunrise = "06:30";
           manualSunset = "18:30";
@@ -773,33 +773,6 @@
         listenAddress = "any";
         startWhenNeeded = true;
       };
-    };
-
-    dconf.settings = {
-      "org/gnome/desktop/interface" = {
-        color-scheme = "prefer-dark";
-      };
-    };
-
-    gtk = {
-      enable = true;
-      gtk4.theme = {
-        name = "Adwaita-dark";
-        package = pkgs.gnome-themes-extra;
-      };
-      theme = {
-        name = "Adwaita-dark";
-        package = pkgs.gnome-themes-extra;
-      };
-    };
-
-    qt = {
-      enable = true;
-      platformTheme.name = "gtk";
-    };
-
-    home.sessionVariables = {
-      GTK_THEME = "Adwaita:dark";
     };
   };
 }

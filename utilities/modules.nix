@@ -82,4 +82,5 @@ in
       name: _: defineConfigModule "profiles" name (import (../profiles + "/${name}/default.nix"))
     ))
   ];
+  mergeImports = files: args: lib.mkMerge (map (f: import f args) files);
 }

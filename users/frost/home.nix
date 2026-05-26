@@ -63,7 +63,10 @@
         desktopEntry = {
           name = "Superfile";
           comment = "Terminal file manager";
-          exec = "${pkgs.superfile}/bin/superfile";
+          exec = "${pkgs.writeShellScriptBin "superfile-open" ''
+            ''$TERMINAL ${pkgs.superfile}/bin/superfile "$@"
+          ''}/bin/superfile-open %u";
+          terminal = false;
         };
       };
     };

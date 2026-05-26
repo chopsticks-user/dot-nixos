@@ -92,7 +92,9 @@
         "wheel",
         "networkmanager"
       ],
-      "shell": "zsh"
+      "shell": "zsh",
+      "terminal": "kitty",
+      "theme": "dark"
     },
     "tester": {
       "version": "26.05",
@@ -101,7 +103,9 @@
         "wheel",
         "networkmanager"
       ],
-      "shell": "zsh"
+      "shell": "zsh",
+      "terminal": "kitty",
+      "theme": "dark"
     }
   }
 }
