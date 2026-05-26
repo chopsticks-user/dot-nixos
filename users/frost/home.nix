@@ -50,5 +50,22 @@
     obs.enable = true;
     virtualization.enable = true;
     zed.enable = true;
+    mime = with pkgs; {
+      enable = true;
+      html = firefox;
+      image = imv;
+      pdf = {
+        package = zathura;
+        desktopEntry = "org.pwmt.zathura";
+      };
+      directory = {
+        package = superfile;
+        desktopEntry = {
+          name = "Superfile";
+          comment = "Terminal file manager";
+          exec = "${pkgs.superfile}/bin/superfile";
+        };
+      };
+    };
   };
 }

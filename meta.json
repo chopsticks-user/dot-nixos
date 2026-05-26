@@ -34,6 +34,36 @@
       "publicShare": ".local/share/.xdg-ignore"
     }
   },
+  "mime": {
+    "html": {
+      "default": null,
+      "matches": [
+        "text/html",
+        "application/xhtml+xml"
+      ]
+    },
+    "image": {
+      "default": null,
+      "matches": [
+        "image/png",
+        "image/jpeg",
+        "image/gif",
+        "image/webp"
+      ]
+    },
+    "pdf": {
+      "default": null,
+      "matches": [
+        "application/pdf"
+      ]
+    },
+    "directory": {
+      "default": null,
+      "matches": [
+        "inode/directory"
+      ]
+    }
+  },
   "hosts": {
     "andromeda": {
       "system": "x86_64-linux",
