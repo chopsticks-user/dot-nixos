@@ -24,7 +24,7 @@ let
       git
       curl
     ];
-    text = builtins.readFile ../scripts/install.sh;
+    text = builtins.readFile ../scripts/homestrap.sh;
   };
   bootstrapPkg = pkgs.writeShellApplication {
     name = "bootstrap";
