@@ -170,7 +170,6 @@
         psmisc
         lshw
         inotify-tools
-        lazyjournal
         fastfetch
         ncdu
         btop

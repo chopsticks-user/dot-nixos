@@ -1,4 +1,4 @@
-{ pkgs, config, ... }:
+{ pkgs, ... }:
 {
   nixpkgs.config.allowUnfreePackages = [
     "rider"
@@ -24,25 +24,5 @@
     obs.enable = true;
     virtualization.enable = true;
     zed.enable = true;
-    open = with pkgs; {
-      enable = true;
-      html = firefox;
-      image = imv;
-      pdf = {
-        package = zathura;
-        desktopEntry = "org.pwmt.zathura";
-      };
-      directory = {
-        package = superfile;
-        desktopEntry = {
-          name = "Superfile";
-          comment = "Terminal file manager";
-          exec = "${pkgs.writeShellScriptBin "superfile-open" ''
-            ''$TERMINAL ${pkgs.superfile}/bin/superfile "$@"
-          ''}/bin/superfile-open %u";
-          terminal = false;
-        };
-      };
-    };
   };
 }

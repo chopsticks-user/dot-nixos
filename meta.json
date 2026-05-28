@@ -57,6 +57,12 @@
         "application/pdf"
       ]
     },
+    "video": {
+      "default": null,
+      "matches": [
+        "video/mp4"
+      ]
+    },
     "directory": {
       "default": null,
       "matches": [

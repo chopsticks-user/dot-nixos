@@ -9,10 +9,8 @@
 
   configs = lib.mkMerge [
     (lib.mergeImports [
-      ./themes.nix
-      ./fonts.nix
-      ./xdg.nix
-      ./tools.nix
+      ./directories.nix
+      ./preferences.nix
     ] args)
     {
       home = {

@@ -1,24 +1,46 @@
-{ lib, ... }:
+{ ... }:
 {
   options = { };
 
   configs = {
-    nixpkgs.config.allowUnfreePackages = [
-      "discord"
-    ];
-
-    programs.discord = {
+    programs.vesktop = {
       enable = true;
-      settings = lib.mkForce {
-        DANGEROUS_ENABLE_DEVTOOLS_ONLY_ENABLE_IF_YOU_KNOW_WHAT_YOURE_DOING = false;
-        SKIP_HOST_UPDATE = true;
-        BACKGROUND_COLOR = "#121214";
-        openH264Enabled = true;
-        offloadAdmControls = true;
-        chromiumSwitches = { };
-        MINIMIZE_TO_TRAY = false;
-        IS_MAXIMIZED = true;
-        IS_MINIMIZED = false;
+      settings = {
+        appBadge = false;
+        arRPC = true;
+        checkUpdates = false;
+        customTitleBar = false;
+        disableMinSize = true;
+        minimizeToTray = false;
+        tray = false;
+        splashBackground = "#000000";
+        splashColor = "#ffffff";
+        splashTheming = true;
+        staticTitle = true;
+        hardwareAcceleration = true;
+        discordBranch = "stable";
+      };
+      vencord = {
+        settings = {
+          autoUpdate = false;
+          autoUpdateNotification = false;
+          notifyAboutUpdates = false;
+          useQuickCss = true;
+          disableMinSize = true;
+          enabledThemes = [
+            "catppuccin-mocha-pink.theme.css"
+          ];
+          plugins = {
+            MessageLogger = {
+              enabled = true;
+              ignoreSelf = true;
+            };
+            FakeNitro.enabled = true;
+            oneko.enabled = true;
+            ClientTheme.enabled = true;
+            AlwaysAnimate.enabled = true;
+          };
+        };
       };
     };
   };
