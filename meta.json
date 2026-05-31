@@ -76,6 +76,7 @@
       "version": "26.05",
       "kernel": "testing",
       "gpu": "nvidia",
+      "channel": "unstable",
       "usernames": [
         "frost"
       ]
@@ -85,6 +86,7 @@
       "version": "26.05",
       "kernel": "latest",
       "gpu": "nvidia",
+      "channel": "unstable",
       "usernames": [
         "tester"
       ]
@@ -93,6 +95,7 @@
   "users": {
     "frost": {
       "version": "26.05",
+      "channel": "unstable",
       "description": "",
       "groups": [
         "wheel",
@@ -104,6 +107,7 @@
     },
     "tester": {
       "version": "26.05",
+      "channel": "unstable",
       "description": "",
       "groups": [
         "wheel",
