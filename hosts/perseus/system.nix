@@ -6,12 +6,11 @@
     docs.enable = true;
     fcitx.enable = true;
     core = {
-      wifi = [
-        {
-          name = "home";
+      wifi = {
+        home = {
           priority = 99;
-        }
-      ];
+        };
+      };
     };
   };
 }
