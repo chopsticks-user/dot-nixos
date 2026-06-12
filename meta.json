@@ -73,7 +73,7 @@
   "hosts": {
     "andromeda": {
       "system": "x86_64-linux",
-      "version": "26.05",
+      "version": "26.11",
       "kernel": "testing",
       "gpu": "nvidia",
       "channel": "unstable",
@@ -83,7 +83,7 @@
     },
     "perseus": {
       "system": "x86_64-linux",
-      "version": "26.05",
+      "version": "26.11",
       "kernel": "latest",
       "gpu": "nvidia",
       "channel": "unstable",
@@ -94,7 +94,7 @@
   },
   "users": {
     "frost": {
-      "version": "26.05",
+      "version": "26.11",
       "channel": "unstable",
       "description": "",
       "groups": [
@@ -106,7 +106,7 @@
       "theme": "dark"
     },
     "tester": {
-      "version": "26.05",
+      "version": "26.11",
       "channel": "unstable",
       "description": "",
       "groups": [

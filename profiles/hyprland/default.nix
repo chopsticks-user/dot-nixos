@@ -53,9 +53,12 @@
             let
               workspaces = builtins.genList (i: i + 1) 10;
               wsKey = i: if i == 10 then "0" else toString i;
+              noctaliaCmd = "noctalia-shell ipc call";
             in
-            (map (i: "$mod, ${wsKey i}, workspace, ${toString i}") workspaces)
-            ++ (map (i: "$mod SHIFT, ${wsKey i}, movetoworkspace, ${toString i}") workspaces)
+            lib.concatMap (i: [
+              "$mod, ${wsKey i}, workspace, ${toString i}"
+              "$mod SHIFT, ${wsKey i}, movetoworkspace, ${toString i}"
+            ]) workspaces
             ++ [
               "$mod, right, workspace, e+1"
               "$mod, left, workspace, e-1"
@@ -64,22 +67,15 @@
               "$mod, M, togglespecialworkspace, magic"
               "$mod SHIFT, M, movetoworkspace, special:magic"
               "$mod, Tab, workspace, previous"
-            ]
-            ++ (
-              let
-                noctaliaCmd = "noctalia-shell ipc call";
-              in
-              [
-                "$mod, Return, exec, kitty"
-                "$mod, Q, killactive"
-                "$mod, SPACE, exec, ${noctaliaCmd} launcher toggle"
-                "$mod, C, exec, ${noctaliaCmd} controlCenter toggle"
-                "$mod, S, exec, ${noctaliaCmd} settings toggle"
-                "$mod, print, exec, ${noctaliaCmd} plugin:screen-recorder toggle"
-                ", print, exec, hyprshot -z -m output -o ${constants.directories.home.screenshots}"
-                "$mod, slash, exec, ${noctaliaCmd} plugin:keybind-cheatsheet toggle"
-              ]
-            );
+              "$mod, Return, exec, kitty"
+              "$mod, Q, killactive"
+              "$mod, SPACE, exec, ${noctaliaCmd} launcher toggle"
+              "$mod, C, exec, ${noctaliaCmd} controlCenter toggle"
+              "$mod, S, exec, ${noctaliaCmd} settings toggle"
+              "$mod, print, exec, ${noctaliaCmd} plugin:screen-recorder toggle"
+              ", print, exec, hyprshot -z -m output -o ${constants.directories.home.screenshots}"
+              "$mod, slash, exec, ${noctaliaCmd} plugin:keybind-cheatsheet toggle"
+            ];
         };
       };
     }
