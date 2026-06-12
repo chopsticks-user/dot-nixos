@@ -20,11 +20,9 @@
       };
     };
     wifi = lib.mkOption {
-      type = lib.types.listOf (
+      type = lib.types.attrsOf (
         lib.types.submodule {
           options = {
-            name = lib.mkOption { type = lib.types.str; };
-            password = lib.mkOption { type = lib.types.str; };
             priority = lib.mkOption {
               type = lib.types.int;
               default = 10;
@@ -36,7 +34,7 @@
           };
         }
       );
-      default = [ ];
+      default = { };
     };
   };
 
@@ -53,17 +51,19 @@
           neededForUsers = true;
         };
       }
-      // (lib.listToAttrs (
-        lib.concatMap (w: [
-          (lib.nameValuePair "networking/wifi/${w.name}/ssid" { })
-          (lib.nameValuePair "networking/wifi/${w.name}/password" { })
-        ]) fields.wifi
-      ));
+      // lib.listToAttrs (
+        lib.flatten (
+          lib.mapAttrsToList (name: _w: [
+            (lib.nameValuePair "networking/wifi/${name}/ssid" { })
+            (lib.nameValuePair "networking/wifi/${name}/password" { })
+          ]) fields.wifi
+        )
+      );
       templates = {
         "networking.env".content = lib.concatStringsSep "\n" (
-          map (w: ''
-            WIFI_${lib.toUpper w.name}_SSID=${config.sops.placeholder."networking/wifi/${w.name}/ssid"}
-            WIFI_${lib.toUpper w.name}_PASSWORD=${config.sops.placeholder."networking/wifi/${w.name}/password"}
+          lib.mapAttrsToList (name: _w: ''
+            WIFI_${lib.toUpper name}_SSID=${config.sops.placeholder."networking/wifi/${name}/ssid"}
+            WIFI_${lib.toUpper name}_PASSWORD=${config.sops.placeholder."networking/wifi/${name}/password"}
           '') fields.wifi
         );
       };
@@ -89,7 +89,7 @@
       networkmanager = {
         enable = true;
         ensureProfiles = {
-          environmentFiles = lib.mkIf (fields.wifi != [ ]) [
+          environmentFiles = lib.mkIf (fields.wifi != { }) [
             config.sops.templates."networking.env".path
           ];
           profiles = {
@@ -103,29 +103,24 @@
               ipv4.method = "auto";
             };
           }
-          // (lib.listToAttrs (
-            map (
-              w:
-              lib.nameValuePair w.name {
-                connection = {
-                  id = w.name;
-                  type = "wifi";
-                  autoconnect = lib.boolToString w.autoconnect;
-                  autoconnect-priority = toString w.priority;
-                };
-                wifi = {
-                  mode = "infrastructure";
-                  ssid = "$WIFI_${lib.toUpper w.name}_SSID";
-                };
-                wifi-security = {
-                  auth-alg = "open";
-                  key-mgmt = "wpa-psk";
-                  psk = "$WIFI_${lib.toUpper w.name}_PASSWORD";
-                };
-                ipv4.method = "auto";
-              }
-            ) fields.wifi
-          ));
+          // (lib.mapAttrs (name: w: {
+            connection = {
+              id = name;
+              type = "wifi";
+              autoconnect = lib.boolToString w.autoconnect;
+              autoconnect-priority = toString w.priority;
+            };
+            wifi = {
+              mode = "infrastructure";
+              ssid = "$WIFI_${lib.toUpper name}_SSID";
+            };
+            wifi-security = {
+              auth-alg = "open";
+              key-mgmt = "wpa-psk";
+              psk = "$WIFI_${lib.toUpper name}_PASSWORD";
+            };
+            ipv4.method = "auto";
+          }) fields.wifi);
         };
       };
     };
