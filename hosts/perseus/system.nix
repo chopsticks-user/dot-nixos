@@ -1,5 +1,4 @@
-{ ... }:
-{
+{...}: {
   features = {
     grub.enable = true;
     nh.enable = true;
@@ -9,7 +8,7 @@
       wifi = [
         {
           name = "home";
-          priority = 99;
+          priority = 101;
         }
       ];
     };
