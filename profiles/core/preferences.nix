@@ -12,6 +12,7 @@ in
   ];
 
   home.pointerCursor = {
+    enable = true;
     x11.enable = true;
     gtk.enable = true;
     package = pkgs.catppuccin-cursors.mochaPink;
@@ -47,7 +48,7 @@ in
   };
   qt = {
     enable = true;
-    platformTheme.name = "gtk";
+    platformTheme.name = "gtk3";
   };
   home.sessionVariables = {
     THEME = "${constants.theme}";

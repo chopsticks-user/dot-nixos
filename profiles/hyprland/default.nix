@@ -38,7 +38,7 @@
             resize_on_border = true;
           };
           exec-once = [
-            "noctalia-shell"
+            "noctalia"
             "fcitx5 -d"
           ];
           env = [
@@ -53,7 +53,7 @@
             let
               workspaces = builtins.genList (i: i + 1) 10;
               wsKey = i: if i == 10 then "0" else toString i;
-              noctaliaCmd = "noctalia-shell ipc call";
+              noctaliaCmd = "noctalia msg";
             in
             lib.concatMap (i: [
               "$mod, ${wsKey i}, workspace, ${toString i}"
@@ -69,12 +69,10 @@
               "$mod, Tab, workspace, previous"
               "$mod, Return, exec, kitty"
               "$mod, Q, killactive"
-              "$mod, SPACE, exec, ${noctaliaCmd} launcher toggle"
-              "$mod, C, exec, ${noctaliaCmd} controlCenter toggle"
-              "$mod, S, exec, ${noctaliaCmd} settings toggle"
-              "$mod, print, exec, ${noctaliaCmd} plugin:screen-recorder toggle"
+              "$mod, SPACE, exec, ${noctaliaCmd} panel-toggle launcher"
+              "$mod, print, exec, ${noctaliaCmd} plugin noctalia/screen-recorder:service all toggle"
               ", print, exec, hyprshot -z -m output -o ${constants.directories.home.screenshots}"
-              "$mod, slash, exec, ${noctaliaCmd} plugin:keybind-cheatsheet toggle"
+              "$mod, slash, exec, ${noctaliaCmd} plugin noctalia/keybind-cheatsheet:service all toggle"
             ];
         };
       };

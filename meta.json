@@ -74,7 +74,7 @@
     "andromeda": {
       "system": "x86_64-linux",
       "version": "26.11",
-      "kernel": "testing",
+      "kernel": "latest",
       "gpu": "nvidia",
       "channel": "unstable",
       "usernames": [

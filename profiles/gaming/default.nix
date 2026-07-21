@@ -49,7 +49,7 @@
       # steam launch options: gamemoderun gamescope -f -e -- mangohud %command%
       steam.config = {
         enable = true;
-        closeSteam = true;
+        onSteamRunning = "close";
         defaultCompatTool = "proton_experimental";
         apps = { };
       };
