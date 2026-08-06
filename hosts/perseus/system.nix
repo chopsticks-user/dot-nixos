@@ -1,4 +1,4 @@
-{ pkgs,... }:
+{ pkgs, ... }:
 {
   features = {
     grub.enable = true;
@@ -9,6 +9,10 @@
       wifi.home.priority = 101;
     };
   };
+
+  networking.firewall.allowedTCPPorts = [
+    43211
+  ];
 
   nixpkgs.config.allowUnfreePackages = [
     "steam"

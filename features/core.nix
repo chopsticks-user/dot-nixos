@@ -86,6 +86,7 @@
 
     networking = {
       hostName = constants.hostname;
+      firewall.enable = true;
       networkmanager = {
         enable = true;
         ensureProfiles = {
