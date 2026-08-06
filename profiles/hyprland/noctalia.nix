@@ -1,7 +1,5 @@
 { constants, ... }:
 {
-  #  xdg.configFile."noctalia/plugins.json".force = true;
-
   programs.noctalia = {
     enable = true;
     settings = {
