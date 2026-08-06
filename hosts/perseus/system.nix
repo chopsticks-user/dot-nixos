@@ -11,6 +11,8 @@
   };
 
   nixpkgs.config.allowUnfreePackages = [
+    "steam"
+    "steam-unwrapped"
     "steamcmd"
   ];
 
