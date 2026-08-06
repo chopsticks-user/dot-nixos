@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs,... }:
 {
   features = {
     grub.enable = true;
@@ -9,4 +9,13 @@
       wifi.home.priority = 101;
     };
   };
+
+  nixpkgs.config.allowUnfreePackages = [
+    "steamcmd"
+  ];
+
+  environment.systemPackages = with pkgs; [
+    seanime
+    steamcmd
+  ];
 }
