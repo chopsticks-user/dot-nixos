@@ -37,7 +37,7 @@ in
       ExecStart = ''
         ${pkgs.seanime}/bin/seanime
           --host 0.0.0.0
-          --port ${seanimePort}
+          --port ${toString seanimePort}
           --password encryptlater
       '';
       Restart = "always";
