@@ -6,6 +6,7 @@
     # /srv, /media, /lost+found -> not needed
 
     "/var/log"
+    "/var/db/sudo/lectured"
     "/var/lib/nixos"
     "/var/lib/sops-nix"
     "/var/lib/NetworkManager"
@@ -14,7 +15,7 @@
     "/etc/ssh"
     "/etc/NetworkManager/system-connections"
 
-    "/var/lib/seanime"
+    "/var/lib/private/seanime"
   ];
   files = [ "/etc/machine-id" ];
 }
