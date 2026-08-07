@@ -35,9 +35,9 @@ in
     wants = [ "network-online.target" ];
     serviceConfig = {
       ExecStart = ''
-        ${pkgs.seanime}/bin/seanime
-          --host 0.0.0.0
-          --port ${toString seanimePort}
+        ${pkgs.seanime}/bin/seanime \
+          --host 0.0.0.0 \
+          --port ${toString seanimePort} \
           --password encryptlater
       '';
       Restart = "always";
