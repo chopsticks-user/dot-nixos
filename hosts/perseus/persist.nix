@@ -13,6 +13,8 @@
     "/var/lib/bluetooth"
     "/etc/ssh"
     "/etc/NetworkManager/system-connections"
+
+    "/var/lib/seanime"
   ];
   files = [ "/etc/machine-id" ];
 }

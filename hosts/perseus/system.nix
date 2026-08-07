@@ -1,4 +1,7 @@
 { pkgs, ... }:
+let
+  seanimePort = 43211;
+in
 {
   features = {
     grub.enable = true;
@@ -11,7 +14,7 @@
   };
 
   networking.firewall.allowedTCPPorts = [
-    43211
+    seanimePort
   ];
 
   nixpkgs.config.allowUnfreePackages = [
@@ -24,4 +27,22 @@
     seanime
     steamcmd
   ];
+
+  systemd.services.seanime-server = {
+    description = "Seanime Server";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "network-online.target" ];
+    wants = [ "network-online.target" ];
+    serviceConfig = {
+      ExecStart = ''
+        ${pkgs.seanime}/bin/seanime
+          --host 0.0.0.0
+          --port ${seanimePort}
+          --password encryptlater
+      '';
+      Restart = "always";
+      DynamicUser = true;
+      StateDirectory = "seanime";
+    };
+  };
 }
