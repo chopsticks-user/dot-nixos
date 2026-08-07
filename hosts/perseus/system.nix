@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, constants, ... }:
 let
   seanimePort = 43211;
 in
@@ -43,6 +43,7 @@ in
       Restart = "always";
       DynamicUser = true;
       StateDirectory = "seanime";
+      Environment = "XDG_CONFIG_HOME=/var/lib/seanime/${constants.directories.home.config}";
     };
   };
 }
