@@ -23,6 +23,7 @@
       ];
 
       xdg.portal.config.common.default = "*";
+      xdg.configFile."hypr/hyprland.conf".force = true;
       wayland.windowManager.hyprland = {
         enable = true;
         configType = "hyprlang"; # todo: migrate to lua
