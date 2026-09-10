@@ -60,6 +60,12 @@
     "video": {
       "default": null,
       "matches": [
+        "audio/mp3"
+      ]
+    },
+    "audio": {
+      "default": null,
+      "matches": [
         "video/mp4"
       ]
     },
