@@ -8,10 +8,6 @@
   options = { };
 
   configs = {
-    wayland.windowManager.hyprland.settings.input = {
-      kb_options = "caps:escape_shifted_capslock";
-    };
-
     programs.nvf = {
       enable = true;
       defaultEditor = true;
