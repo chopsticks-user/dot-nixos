@@ -10,37 +10,13 @@
     programs.zed-editor = {
       enable = true;
 
-      # This populates the userSettings "auto_install_extensions"
       extensions = [
         "nix"
-        "toml"
-        "elixir"
         "make"
       ];
 
-      # Everything inside of these brackets are Zed options
       userSettings = {
-        assistant = {
-          enabled = true;
-          version = "2";
-          default_open_ai_model = null;
-
-          # Provider options:
-          # - zed.dev models (claude-3-5-sonnet-latest) requires GitHub connected
-          # - anthropic models (claude-3-5-sonnet-latest, claude-3-haiku-latest, claude-3-opus-latest) requires API_KEY
-          # - copilot_chat models (gpt-4o, gpt-4, gpt-3.5-turbo, o1-preview) requires GitHub connected
-          default_model = {
-            provider = "zed.dev";
-            model = "claude-3-5-sonnet-latest";
-          };
-
-          # inline_alternatives = [
-          #   {
-          #     provider = "copilot_chat";
-          #     model = "gpt-3.5-turbo";
-          #   }
-          # ];
-        };
+        assistant.enabled = true;
 
         node = {
           path = lib.getExe pkgs.nodejs;
@@ -49,6 +25,25 @@
 
         hour_format = "hour24";
         auto_update = false;
+
+        vim_mode = false;
+
+        load_direnv = "shell_hook";
+        base_keymap = "VSCode";
+
+        theme = {
+          mode = "system";
+          light = "One Light";
+          dark = "One Dark";
+        };
+
+        show_whitespaces = "all";
+        ui_font_size = 16;
+        buffer_font_size = 13;
+
+        project_panel = {
+          dock = "left";
+        };
 
         terminal = {
           alternate_scroll = "off";
@@ -76,9 +71,6 @@
           option_as_meta = false;
           button = false;
           shell = "system";
-          # shell = {
-          #   program = "zsh";
-          # };
           toolbar = {
             title = true;
           };
@@ -86,84 +78,27 @@
         };
 
         lsp = {
-          rust-analyzer = {
-            binary = {
-              # path = lib.getExe pkgs.rust-analyzer;
-              path_lookup = true;
-            };
-          };
-
           nix = {
             binary = {
               path_lookup = true;
             };
           };
-
-          elixir-ls = {
-            binary = {
-              path_lookup = true;
-            };
-            settings = {
-              dialyzerEnabled = true;
-            };
-          };
         };
 
         languages = {
-          "Elixir" = {
+          "Nix" = {
             language_servers = [
-              "!lexical"
-              "elixir-ls"
-              "!next-ls"
+              "nixd"
+              "!nil"
             ];
             format_on_save = {
               external = {
-                command = "mix";
-                arguments = [
-                  "format"
-                  "--stdin-filename"
-                  "{buffer_path}"
-                  "-"
-                ];
-              };
-            };
-          };
-
-          "HEEX" = {
-            language_servers = [
-              "!lexical"
-              "elixir-ls"
-              "!next-ls"
-            ];
-            format_on_save = {
-              external = {
-                command = "mix";
-                arguments = [
-                  "format"
-                  "--stdin-filename"
-                  "{buffer_path}"
-                  "-"
-                ];
+                command = "nixfmt";
+                arguments = [ ];
               };
             };
           };
         };
-
-        vim_mode = true;
-
-        # Tell Zed to use direnv and direnv can use a flake.nix environment
-        load_direnv = "shell_hook";
-        base_keymap = "VSCode";
-
-        theme = {
-          mode = "system";
-          light = "One Light";
-          dark = "One Dark";
-        };
-
-        show_whitespaces = "all";
-        ui_font_size = 16;
-        buffer_font_size = 16;
       };
     };
   };
