@@ -32,17 +32,7 @@ order = [ "default" ]
     concave_edge_corners = true
     contact_shadow = false
     enabled = true
-    end = [
-        "clock",
-        "tray",
-        "wallpaper",
-        "notifications",
-        "clipboard",
-        "volume",
-        "brightness",
-        "battery",
-        "control-center"
-    ]
+    end = [ "tray", "notifications", "brightness", "battery", "volume" ]
     font_scale = 1.0
     font_weight = 500
     hover_highlight = true
@@ -63,7 +53,7 @@ order = [ "default" ]
     shadow = true
     show_on_workspace_switch = true
     smart_auto_hide = false
-    start = [ "launcher" ]
+    start = [ "control-center", "date", "clock", "launcher" ]
     thickness = 34
     widget_spacing = 6
 

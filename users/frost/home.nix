@@ -10,6 +10,7 @@
     jetbrains.clion
     godot
     blender
+    gimp-with-plugins
   ];
 
   profiles = {
