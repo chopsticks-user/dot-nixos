@@ -22,17 +22,16 @@ order = [ "default" ]
     background_opacity = 1.0
     border = "outline"
     border_width = 0.0
-    capsule = false
+    capsule = true
     capsule_fill = "surface_variant"
-    capsule_group = []
     capsule_opacity = 1.0
     capsule_padding = 6.0
-    capsule_thickness = 0.75999999046325684
-    center = [ "workspaces" ]
+    capsule_thickness = 0.75
+    center = [ "date" ]
     concave_edge_corners = true
     contact_shadow = false
     enabled = true
-    end = [ "tray", "notifications", "brightness", "battery", "volume" ]
+    end = [ "group:g2", "group:g1", "group:g3" ]
     font_scale = 1.0
     font_weight = 500
     hover_highlight = true
@@ -53,11 +52,41 @@ order = [ "default" ]
     shadow = true
     show_on_workspace_switch = true
     smart_auto_hide = false
-    start = [ "control-center", "date", "clock", "launcher" ]
+    start = [ "workspaces", "launcher", "active_window", "audio_visualizer" ]
     thickness = 34
     widget_spacing = 6
 
         [bar.default.dead_zone]
+
+        [[bar.default.capsule_group]]
+        accordion = false
+        accordion_direction = "end"
+        enabled = true
+        fill = "surface_variant"
+        id = "g1"
+        members = [ "tray", "volume", "input_volume", "battery", "brightness" ]
+        opacity = 1.0
+        padding = 6.0
+
+        [[bar.default.capsule_group]]
+        accordion = false
+        accordion_direction = "end"
+        enabled = true
+        fill = "surface_variant"
+        id = "g2"
+        members = [ "sysmon", "temp", "ram", "network" ]
+        opacity = 1.0
+        padding = 6.0
+
+        [[bar.default.capsule_group]]
+        accordion = false
+        accordion_direction = "end"
+        enabled = true
+        fill = "surface_variant"
+        id = "g3"
+        members = [ "session", "notifications", "control-center" ]
+        opacity = 1.0
+        padding = 6.0
 
 [battery]
 warning_threshold = 10
@@ -319,7 +348,7 @@ widget_order = [ "lockscreen-login-box@HDMI-A-2", "lockscreen-login-box@HDMI-A-1
         show_weather = true
 
 [nightlight]
-enabled = false
+enabled = true
 force = false
 temperature_day = 6500
 temperature_night = 4000
@@ -410,7 +439,7 @@ launch_apps_custom_command = ""
 niri_overview_type_to_launch_enabled = false
 offline_mode = false
 password_style = "default"
-polkit_agent = false
+polkit_agent = true
 popup_borders = true
 popup_shadows = true
 screen_time_enabled = false
@@ -655,7 +684,7 @@ stat = "cpu_usage"
 type = "sysmon"
 
 [widget.date]
-format = "{:%a %d %b}"
+format = "{:%H:%M} {:%a %d %b}"
 type = "clock"
 
 [widget.input_volume]
@@ -704,3 +733,7 @@ type = "spacer"
 [widget.temp]
 stat = "cpu_temp"
 type = "sysmon"
+
+[widget.workspaces]
+style = "regular"
+type = "workspaces"

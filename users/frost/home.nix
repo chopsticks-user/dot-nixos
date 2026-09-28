@@ -3,6 +3,8 @@
   nixpkgs.config.allowUnfreePackages = [
     "rider"
     "clion"
+    "obsidian"
+    "spotify"
   ];
 
   home.packages = with pkgs; [
@@ -11,6 +13,10 @@
     godot
     blender
     gimp-with-plugins
+    krita
+    obsidian
+    hyprmod
+    spotify
   ];
 
   profiles = {

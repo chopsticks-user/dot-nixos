@@ -181,7 +181,7 @@
           };
           statusline.lualine = {
             enable = true;
-            componentSeparator = { };
+            setupOpts.options.component_separator = { };
           };
           telescope = {
             enable = true;

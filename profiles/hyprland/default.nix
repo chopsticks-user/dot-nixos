@@ -8,6 +8,7 @@
 {
   imports = [
     inputs.noctalia.homeModules.default
+    inputs.caelestia.homeManagerModules.default
   ];
 
   options = { };
@@ -69,6 +70,7 @@
       };
     };
 
+    xdg.configFile."hypr/hyprland.lua".force = true;
     xdg.portal.config.common.default = "*";
     wayland.windowManager.hyprland = {
       enable = true;
@@ -146,7 +148,6 @@
             }
           ]) workspaces
           ++ [
-            # Focus / move between workspaces
             {
               _args = [
                 (lib.generators.mkLuaInline ''mod .. " + right"'')
@@ -183,8 +184,6 @@
                 (lib.generators.mkLuaInline ''hl.dsp.window.move({ workspace = "e-1" })'')
               ];
             }
-
-            # General window management
             {
               _args = [
                 (lib.generators.mkLuaInline ''mod .. " + Return"'')
@@ -221,8 +220,6 @@
                 (lib.generators.mkLuaInline ''hl.dsp.layout("togglesplit")'')
               ];
             }
-
-            # Special workspace
             {
               _args = [
                 (lib.generators.mkLuaInline ''mod .. " + S"'')
@@ -235,8 +232,6 @@
                 (lib.generators.mkLuaInline ''hl.dsp.window.move({ workspace = "special:magic" })'')
               ];
             }
-
-            # Workspace cycling
             {
               _args = [
                 (lib.generators.mkLuaInline ''mod .. " + mouse_down"'')
@@ -249,8 +244,6 @@
                 (lib.generators.mkLuaInline ''hl.dsp.focus({ workspace = "e-1" })'')
               ];
             }
-
-            # Mouse bindings
             {
               _args = [
                 (lib.generators.mkLuaInline ''mod .. " + mouse:272"'')
@@ -265,8 +258,6 @@
               ];
               mouse = true;
             }
-
-            # Audio
             {
               _args = [
                 (lib.generators.mkLuaInline ''"XF86AudioRaiseVolume"'')
@@ -293,14 +284,27 @@
             }
             {
               _args = [
-                (lib.generators.mkLuaInline ''"XF86AudioMicMute"'')
-                (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle")'')
+                (lib.generators.mkLuaInline ''mod .. " + XF86AudioRaiseVolume"'')
+                (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("wpctl set-volume -l 1 @DEFAULT_AUDIO_SOURCE@ 5%+")'')
               ];
               locked = true;
               repeating = true;
             }
-
-            # Brightness
+            {
+              _args = [
+                (lib.generators.mkLuaInline ''mod .. " + XF86AudioLowerVolume"'')
+                (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SOURCE@ 5%-")'')
+              ];
+              locked = true;
+              repeating = true;
+            }
+            {
+              _args = [
+                (lib.generators.mkLuaInline ''mod .. " + XF86AudioMute"'')
+                (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle")'')
+              ];
+              locked = true;
+            }
             {
               _args = [
                 (lib.generators.mkLuaInline ''"XF86MonBrightnessUp"'')
@@ -349,15 +353,10 @@
             }
             {
               _args = [
-                (lib.generators.mkLuaInline ''mod .. " + SPACE"'')
+                (lib.generators.mkLuaInline ''"SUPER + SUPER_L"'')
                 (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("${noctaliaCmd} panel-toggle launcher")'')
               ];
-            }
-            {
-              _args = [
-                (lib.generators.mkLuaInline ''mod .. " + print"'')
-                (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("${noctaliaCmd} plugin noctalia/screen-recorder:service all toggle")'')
-              ];
+              release = true;
             }
             {
               _args = [
@@ -367,14 +366,14 @@
             }
             {
               _args = [
-                (lib.generators.mkLuaInline ''mod .. " + slash"'')
-                (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("${noctaliaCmd} plugin noctalia/keybind-cheatsheet:service all toggle")'')
+                (lib.generators.mkLuaInline ''mod .. " + l"'')
+                (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("${noctaliaCmd} panel-toggle session")'')
               ];
             }
             {
               _args = [
-                (lib.generators.mkLuaInline ''mod .. " + M"'')
-                (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("${noctaliaCmd} panel-toggle session")'')
+                (lib.generators.mkLuaInline ''mod .. " + m"'')
+                (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("${noctaliaCmd} settings-toggle")'')
               ];
             }
           ];
