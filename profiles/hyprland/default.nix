@@ -71,7 +71,6 @@
     };
 
     xdg.configFile."hypr/hyprland.lua".force = true;
-    # xdg.portal.config.common.default = "*";
     wayland.windowManager.hyprland = {
       enable = true;
       configType = "lua";
