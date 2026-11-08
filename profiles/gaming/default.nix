@@ -16,6 +16,7 @@
       gamescope
       steam
       steam-run
+      steamcmd
       protonup-qt
       protontricks
     ];
@@ -32,6 +33,7 @@
     nixpkgs.config.allowUnfreePackages = [
       "steam"
       "steam-unwrapped"
+      "steamcmd"
     ];
 
     programs = {

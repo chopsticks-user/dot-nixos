@@ -352,7 +352,7 @@
             }
             {
               _args = [
-                (lib.generators.mkLuaInline ''"SUPER + SUPER_L"'')
+                (lib.generators.mkLuaInline ''mod .. " + space"'')
                 (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("${noctaliaCmd} panel-toggle launcher")'')
               ];
               release = true;
