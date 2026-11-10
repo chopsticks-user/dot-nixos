@@ -38,10 +38,15 @@
             source = "github";
             repo = "DietrichGebert/ponytail";
           };
+          impeccable.source = {
+            source = "github";
+            repo = "pbakaus/impeccable";
+          };
         };
         enabledPlugins = {
           "claude-mem@thedotmack" = true;
           "ponytail@ponytail" = true;
+          "impeccable@impeccable" = true;
           "gopls-lsp@anthropic-plugin-directory" = true;
           "clangd-lsp@anthropic-plugin-directory" = true;
           "jdtls-lsp@anthropic-plugin-directory" = true;

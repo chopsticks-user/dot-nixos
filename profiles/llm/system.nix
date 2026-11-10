@@ -4,6 +4,7 @@
     directories = [
       ".claude"
       ".claude-mem"
+      ".impeccable"
     ];
     files = [ ];
   };
