@@ -6,5 +6,6 @@
     hyprland.enable = true;
     virtualization.enable = true;
     gaming.enable = true;
+    llm.enable = true;
   };
 }
