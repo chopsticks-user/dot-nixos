@@ -104,6 +104,11 @@
 
         window_rule = [
           {
+            # kitty requests maximize on start, which covers other tiled windows
+            suppress_event = "maximize";
+            match.class = "^(kitty)$";
+          }
+          {
             no_anim = true;
             match = {
               class = "^(UnrealEditor)$";
@@ -352,10 +357,11 @@
             }
             {
               _args = [
-                (lib.generators.mkLuaInline ''mod .. " + space"'')
+                (lib.generators.mkLuaInline ''"SUPER_L"'')
                 (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("${noctaliaCmd} panel-toggle launcher")'')
+                # fire on release so SUPER + <key> combos don't open the launcher
+                { release = true; }
               ];
-              release = true;
             }
             {
               _args = [

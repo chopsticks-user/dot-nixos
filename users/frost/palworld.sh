@@ -12,7 +12,7 @@
 set -euo pipefail
 
 server_dir="${PALWORLD_SERVER_DIR:-$HOME/.local/share/palworld}"
-data_dir="${PALWORLD_DATA_DIR:-$HOME/projects/pal-server}"
+data_dir="${PALWORLD_DATA_DIR:-$HOME/projects/palworld}"
 state_dir="${PALWORLD_STATE_DIR:-$HOME/.local/state/palworld}"
 
 config_dir="$data_dir/Config"

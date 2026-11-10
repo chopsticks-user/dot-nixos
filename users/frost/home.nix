@@ -28,6 +28,9 @@ in
     "clion"
     "obsidian"
     "spotify"
+    "claude-code"
+    "discord"
+    "discord-unwrapped"
   ];
 
   home.packages = with pkgs; [
@@ -41,6 +44,11 @@ in
     hyprmod
     spotify
     palworld
+    discord
+    # claude code plugins need these
+    bun
+    nodejs_latest
+    uv
   ];
 
   profiles = {
@@ -55,5 +63,9 @@ in
     obs.enable = true;
     virtualization.enable = true;
     zed.enable = true;
+  };
+
+  programs.claude-code = {
+    enable = true;
   };
 }
