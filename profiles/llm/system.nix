@@ -1,7 +1,10 @@
 { ... }:
 {
   persist.home = {
-    directories = [ ".claude" ];
+    directories = [
+      ".claude"
+      ".claude-mem"
+    ];
     files = [ ];
   };
 }
