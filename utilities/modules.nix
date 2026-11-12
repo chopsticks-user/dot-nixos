@@ -1,7 +1,8 @@
 { lib, ... }:
 let
-  defineConfigModule =
-    namespace: name: moduleFn:
+  # class: "nixos" for features/<name>/system.nix, "home" for features/<name>/home.nix
+  defineFeature =
+    class: name: moduleFn:
     {
       config,
       lib,
@@ -9,78 +10,67 @@ let
       ...
     }@moduleArgs:
     let
-      fields = config.${namespace}.${name};
+      fields = config.features.${name};
       module = moduleFn (moduleArgs // { inherit fields; });
+      isNixos = class == "nixos";
     in
     {
       imports = module.imports or [ ];
-      options.${namespace}.${name} =
+      options.features.${name} =
         (module.options or { })
         // (lib.optionalAttrs (name != "core") { enable = lib.mkEnableOption name; });
-      config = lib.mkIf (name == "core" || (fields.enable or false)) (
-        lib.mkMerge [
-          (module.configs or { })
-          (module.extraConfigs or { })
-          (lib.optionalAttrs (namespace == "features" || namespace == "systemProfiles") {
-            assertions = map (a: a // { assertion = fields.enable -> a.assertion; }) (module.assertions or [ ]);
-          })
-          (
-            let
-              sysDirs = module.persist.system.directories or [ ];
-              sysFiles = module.persist.system.files or [ ];
-            in
-            lib.optionalAttrs
-              ((sysDirs != [ ] || sysFiles != [ ]) && (namespace == "features" || namespace == "systemProfiles"))
-              {
+      # allowlisting is not enabling, so it skips the enable guard; this keeps pkgs independent of
+      # enable flags derived from home-manager, which itself needs pkgs
+      config = lib.mkMerge [
+        (lib.optionalAttrs (module ? allowUnfree) {
+          nixpkgs.config.allowUnfreePackages = module.allowUnfree;
+        })
+        (lib.mkIf (name == "core" || (fields.enable or false)) (
+          lib.mkMerge [
+            (module.configs or { })
+            (module.extraConfigs or { })
+            (lib.optionalAttrs isNixos {
+              assertions = map (a: a // { assertion = (fields.enable or true) -> a.assertion; }) (
+                module.assertions or [ ]
+              );
+            })
+            (
+              let
+                sysDirs = module.persist.system.directories or [ ];
+                sysFiles = module.persist.system.files or [ ];
+              in
+              lib.optionalAttrs (isNixos && (sysDirs != [ ] || sysFiles != [ ])) {
                 environment.persistence."/persist" = {
                   directories = sysDirs;
                   files = sysFiles;
                 };
               }
-          )
-          (
-            let
-              homePersist = module.persist.home or null;
-            in
-            lib.optionalAttrs
-              (homePersist != null && (namespace == "features" || namespace == "systemProfiles"))
-              {
-                persist.home."${namespace}.${name}" = homePersist;
-              }
-          )
-        ]
-      );
+            )
+            (lib.optionalAttrs (isNixos && module ? persist.home) {
+              persist.home.${name} = module.persist.home;
+            })
+          ]
+        ))
+      ];
     };
+
+  featureNamesWith =
+    file:
+    lib.attrNames (
+      lib.filterAttrs (
+        name: type: type == "directory" && builtins.pathExists (../features + "/${name}/${file}")
+      ) (builtins.readDir ../features)
+    );
+
+  importFeatures =
+    class: file:
+    map (name: defineFeature class name (import (../features + "/${name}/${file}"))) (
+      featureNamesWith file
+    );
 in
 {
-  mkFeature = defineConfigModule "features";
-  mkProfile = defineConfigModule "profiles";
-  importFeatures =
-    lib.pipe ../features [
-      builtins.readDir
-      (lib.filterAttrs (
-        name: type: type == "regular" && lib.hasSuffix ".nix" name && name != "default.nix"
-      ))
-      (lib.mapAttrsToList (
-        name: _:
-        defineConfigModule "features" (lib.removeSuffix ".nix" name) (import (../features + "/${name}"))
-      ))
-    ]
-    ++ lib.pipe ../profiles [
-      builtins.readDir
-      (lib.filterAttrs (
-        name: type: type == "directory" && builtins.pathExists (../profiles + "/${name}/system.nix")
-      ))
-      (lib.mapAttrsToList (
-        name: _: defineConfigModule "systemProfiles" name (import (../profiles + "/${name}/system.nix"))
-      ))
-    ];
-  importProfiles = lib.pipe ../profiles [
-    builtins.readDir
-    (lib.filterAttrs (name: type: type == "directory"))
-    (lib.mapAttrsToList (
-      name: _: defineConfigModule "profiles" name (import (../profiles + "/${name}/default.nix"))
-    ))
-  ];
+  inherit featureNamesWith;
+  systemFeatures = importFeatures "nixos" "system.nix";
+  homeFeatures = importFeatures "home" "home.nix";
   mergeImports = files: args: lib.mkMerge (map (f: import f args) files);
 }

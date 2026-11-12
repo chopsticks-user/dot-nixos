@@ -1,86 +1,100 @@
 # dot-nixos
 
-Multi-host, multi-user NixOS flake with decoupled user/host configs, SOPS-based
-secrets management, builtin impermanence, quality of life "just" recipe and
-nix library overlays for common tasks, and sensible defaults for customization
+A NixOS framework that turns a handful of Nix files into one machine with any
+number of users. It comes with SOPS-based secrets management, built-in
+impermanence, embedded Home Manager, "just" recipes, and nix library helpers.
+It provides sensible defaults for customization.
+
+## Using the framework
+
+Add this flake as an input and point `mkMachine` at a machine directory:
+
+```nix
+{
+  inputs.dot-nixos.url = "github:chopsticks-user/dot-nixos";
+  outputs = { dot-nixos, ... }: dot-nixos.lib.mkMachine ./machine;
+}
+```
+
+`mkMachine` returns `{ nixosConfigurations.<networking.hostName> = ...; }`.
+[examples/andromeda](examples/andromeda) is a complete machine with two users,
+and this repository builds it as `.#andromeda`.
+
+## Machine layout
+
+```
+machine/
+├── system.nix              required  NixOS module: hostname, stateVersion, features, anything NixOS
+├── hardware.nix            required  NixOS module, usually imports generated.nix
+├── disk.nix                required  disko layout
+├── secrets.yaml            required  sops file: password/root, password/<user>, wifi
+├── persist.nix             optional  { directories; files }, enables impermanence when present
+└── users/
+    └── <user>/             one directory per user, the name is the username
+        ├── home.nix        required  Home Manager module: user.* and features.*
+        ├── persist.nix     optional  { directories; files } for this user
+        └── secrets.yaml    optional  this user's sops file
+```
+
+Machine-wide facts use native NixOS options (`networking.hostName`,
+`system.stateVersion`, `boot.kernelPackages`, `nixpkgs.overlays`). Framework
+settings that have no native option live under `machine.*` in `system.nix`
+(see [modules/machine.nix](modules/machine.nix)). Per-user settings live under
+`user.*` in `home.nix` (see [features/core/options.nix](features/core/options.nix)).
+That includes the account fields (`description`, `groups`, `shell`), which
+the system side reads back to create the account.
+
+Overlays from [overlays/](overlays) are enabled with
+`nixpkgs.overlays = [ (lib.mkOverlay "<name>" { ...args }) ];` in `system.nix`.
+Users get the same overlays in their own nixpkgs instance.
 
 ## Project structure
 
-```
-├── docs
-├── features
-├── hosts
-├── overlays
-├── profiles
-├── scripts
-├── secrets
-├── templates
-├── users
-├── utilities
-├── flake.lock
-├── flake.nix
-├── justfile
-├── LICENSE
-├── meta.json
-└── README.md
-```
+- `flake.nix`: exports `lib.mkMachine`, `templates`, `formatter` and installer ISOs
+- `modules/`: framework internals: `mk-machine.nix` (the builder), `machine.nix`
+  (machine options), `peruser.nix` (system side of each user), `iso.nix`
+- `features/`: one directory per feature, see below
+- `utilities/`: extensions to nix `lib`, every exported name becomes `lib.<name>`
+- `overlays/`: customization on top of existing packages, or packages not in nixpkgs
+- `scripts/`: "just" modules, ISO-embedded scripts and internal scripts
+- `templates/`: nix flake templates, as generic as possible
+- `examples/`: user space: machine directories consumed by `mkMachine`
+- `docs/secrets/`: plaintext skeletons of the expected sops files
 
-- `meta.json`: hosts various public-facing host, user and general configuration
-- `justfile`: where all convenient scripts are included, run `just` for details
-- `.sop.yaml`: contains public keys and sops-nix rules
-- `modules/`: contains standalone flakes
-- `secrets/`: sops-age encrypted secrets live here
-- `scripts/`: where "just" modules, iso-embedded scripts and internal scripts live
-- `utilities/`: extended functionalities, or overlays if you will, on top of nix `lib`
-  along with standalone modules (named with suffix "-builder") to abstract away
-  common patterns
-- `templates/`: nix templates, try to be as generic as possible
-- `overlays/`: customization on top of existing packages or derivations of packages
-  not in nixpkgs
-- `features/`: contains system-level modules that can be imported to `nixosConfigurations`
-  or system configuration required by some packages, e.g., `steam` and `hyprland`
-- `profiles/`: contains user-level modules that can be imported to `homeConfigurations`
-- `hosts/`: consumer of `features/`, has an opinionated structure. `hardware-configuration`
-  is renamed to `generated.nix` and imported by `hardware.nix`. `disko.nix` and `persist.nix`
-  must always be present for partitioning and persistence, respectively
-- `users/`: likewise, has an opinionated structure and consumer of `profiles/`.
-  Worth noting that `system.nix` and `persist.nix` lives in system space rather than user space. Think of
-  `system.nix` like a bridge between the two spaces. `system.nix` exists because
-  users cannot be fully independent of the hosts they live in. For instance, user passwords,
-  impermanence and parts of some packages' configuration must live at system-level. That said, the
-  inconsistency space is quite small and has mostly been abstracted away
+## Features
+
+A feature is a directory `features/<name>/` with a `system.nix` (NixOS half),
+a `home.nix` (Home Manager half), or both. Both halves are config modules
+(see `defineFeature` in [utilities/modules.nix](utilities/modules.nix)). They
+return `options`, `configs` and optionally `imports`, `assertions`,
+`allowUnfree` and `persist`. Both halves share the `features.<name>` namespace.
+
+- Enabling a feature in a user's `home.nix` turns on its home half for that
+  user and its system half for the machine. For example, a user enabling
+  `features.gaming` gets Steam installed system-wide.
+- Enabling a feature in `system.nix` turns on its system half only, which is
+  how machine-only features such as `grub` or `nh` are used.
+- `core` is always on.
+- `allowUnfree` lists package names allowed regardless of the enable flag.
+  It has to stay outside the guard, because the system half's enable flag is
+  derived from Home Manager, which itself needs the system's nixpkgs.
+- `persist.home` in a system half lists home paths to keep under impermanence.
+  These are applied only to users who enabled that feature. Features without
+  a home half apply to every user.
+
+Adding a directory to `features/`, or a file to `utilities/` or `overlays/`, is
+picked up automatically.
 
 ## Philosophy
 
 ### 1. Anything that may be declarative, shall be, by all means, declarative
 
-### 2. User-level configuration must be, or attempted to be independent of system-level configuration
+### 2. A user is described in one place
+
+Everything about a user, from account fields to dotfiles, lives in
+`users/<user>/home.nix`. The system side follows from what users enable.
 
 ### 3. Opinionated by nature, but with sensible defaults and abstractions to support customization and extensibility
-
-For consistency, many instances of IoC exist throughout the codebase. Thus, there exists
-a few conventions:
-
-- Modules in `profiles/` and `features/` are config modules and expected to at least define the
-  `options` and `configs` fields (see [defineConfigModule](./utilities/modules.nix))
-- `persist.nix` (both user level and system level) is only an attribute set accepting
-  2 fields: `directories` and `files`
-- Each host defined in `hosts/` must contain `disko.nix`, `persist.nix`,`hardware.nix`,
-  `system.nix` and `generated.nix` (`hardware-configuration.nix`). Also, check
-  [persist-common](./modules/persist-common.nix) to see if your persistence directories
-  are already included by default
-
-You can extend `features`, `overlays`, `profiles` and `utitlities` by 
-simply adding new `.nix` files to any of the 4 directories and the files will be 
-wired to their corresponding module. For instance, adding `my-feature.nix` to `features/` 
-will automatically allow you to enable and configure `features.my-feature`, exporting 
-`myHelperFunction` in `utilities/my-helper.nix` will extend Nix builtin `lib` and 
-allow you to use your helper as `lib.myHelperFunction` (ensure, however, that you 
-don't accidentally override an existing library function), etc. In a similar manner, 
-adding a new directory under `hosts/` or `users/` will create a new host or user 
-configuration module, respectively. You can add new files to `modules/`, `scripts/` 
-and `templates/` but they need to be used or imported explicitly since they are 
-standalone modules.
 
 ## Installation guide
 
@@ -103,7 +117,7 @@ First, you need to generate an iso for installation. Make sure you know what
 output device will contain the iso by running `lsblk` and the architecture of
 the system you will be using. You can then run `just flash` with or without
 the two arguments, which default to `/dev/sda` and `x86_64-linux`, respectively.
-For supported architectures, take a look at the `supported` field in [meta.json](meta.json)
+For supported architectures, take a look at `supported` in [flake.nix](flake.nix)
 
 Create your host SSH key by enabling `openssh` simply running
 
@@ -161,4 +175,6 @@ once in a while. Once done, reboot your machine and you will be prompted to the
 nixos-homestrap <user_key_command>
 ```
 
-Reboot your machine one more time and that's it.
+This clones the flake and places your user key so your user secrets can be
+decrypted. Home Manager is part of the system build, so there is no separate
+home switch. Reboot your machine one more time and that's it.

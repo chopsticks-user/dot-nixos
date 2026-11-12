@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-flake_dir="$(jq -r ".directories.nixos" meta.json | sed "s|\$HOME|$HOME|")"
+flake_dir="${NIXOS_FLAKE_DIR:-$HOME/.config/nixos}"
 
 command_build() {
   result=$(nixos-rebuild build --flake "$flake_dir#$(hostname)" "$@")

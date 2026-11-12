@@ -1,4 +1,4 @@
 -[x] Set default shell at user level
 -[x] Reuse paths in scripts as variables for consistency
 -[x] User .directories in meta.json instead of hardcoding persistence directories
--[ ] User level persistence should not require system switch
+-[x] User level persistence should not require system switch (moot: home-manager is embedded)

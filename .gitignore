@@ -6,8 +6,5 @@ result*
 .idea
 .vscode
 
-secrets/**
-!secrets/hosts
-!secrets/hosts/**
-!secrets/users
-!secrets/users/**
+# key backups written by `just secrets backup`
+secrets/

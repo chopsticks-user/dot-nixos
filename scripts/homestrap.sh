@@ -11,17 +11,12 @@ done
 
 key_content=$(eval "$1")
 
-config_path_rel=$(jq -r ".directories.nixos" <(curl -s https://raw.githubusercontent.com/chopsticks-user/dot-nixos/main/meta.json))
-if [ -z "$config_path_rel" ] || [ "$config_path_rel" = "null" ]; then
-  echo "Could not read directories.nixos from meta.json" >&2
-  exit 1
-fi
-config_path=${config_path_rel/#\$HOME/$HOME}
+config_path="${NIXOS_FLAKE_DIR:-$HOME/.config/nixos}"
 mkdir -p "$(dirname "$config_path")"
 git clone https://github.com/chopsticks-user/dot-nixos "$config_path"
 cd "$config_path"
 
-home_identity="$HOME/$(jq -r ".directories.home.identity" meta.json)"
+home_identity="$HOME/${NIXOS_HOME_IDENTITY:-.ssh/id_ed25519}"
 if [ ! -f "$home_identity" ]; then
   mkdir -p "$(dirname "$home_identity")"
   echo "$key_content" | tee "$home_identity" > /dev/null
@@ -30,9 +25,7 @@ if [ ! -f "$home_identity" ]; then
   chmod 644 "$home_identity.pub"
 fi
 
-username=$(whoami)
-arch=$(nix eval --impure --raw --expr 'builtins.currentSystem')
-home-manager switch --flake ".#$username@$arch"
+# home-manager is part of the system build, so placing the key is all the user side needs
 nix-collect-garbage -d
 sudo nix-collect-garbage -d
 sudo nix store optimise

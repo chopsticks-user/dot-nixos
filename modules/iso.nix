@@ -18,7 +18,6 @@ let
   nixosHomestrapPkg = pkgs.writeShellApplication {
     name = "nixos-homestrap";
     runtimeInputs = with pkgs; [
-      home-manager
       openssh
       jq
       git

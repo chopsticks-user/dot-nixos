@@ -1,14 +1,18 @@
+# the machine directory these recipes operate on, relative to scripts/
+machine := "../examples/andromeda"
+host_attr := "..#nixosConfigurations.$(hostname).config"
+
 user arg="edit":
   #!/usr/bin/env bash
   set -euo pipefail
-  key_path="$HOME/$(jq -r ".directories.home.identity" ../meta.json)"
+  key_path="$HOME/$(nix eval --raw "{{host_attr}}.machine.directories.home.identity")"
   case "{{arg}}" in
     "public")
       ssh-to-age < "$key_path.pub";;
     "private")
       ssh-to-age -private-key -i $key_path;;
     "edit")
-      sops ../secrets/users/$(whoami).yaml;;
+      sops "{{machine}}/users/$(whoami)/secrets.yaml";;
     *)
       echo "error: unknown argument '{{arg}}'" >&2 && exit 1;;
   esac
@@ -16,7 +20,7 @@ user arg="edit":
 host arg="edit":
   #!/usr/bin/env bash
   set -euo pipefail
-  key_path="$(jq -r ".directories.system.identity" ../meta.json)"
+  key_path="$(nix eval --raw "{{host_attr}}.machine.directories.identity")"
   private_key_cmd="sudo ssh-to-age -private-key -i $key_path"
   case "{{arg}}" in
     "public")
@@ -24,7 +28,7 @@ host arg="edit":
     "private")
       $private_key_cmd;;
     "edit")
-      SOPS_AGE_KEY_CMD=$private_key_cmd sops ../secrets/hosts/$(hostname).yaml;;
+      SOPS_AGE_KEY_CMD=$private_key_cmd sops "{{machine}}/secrets.yaml";;
     *)
       echo "error: unknown argument '{{arg}}'" >&2 && exit 1;;
   esac
@@ -38,12 +42,12 @@ update:
 backup out_path="../secrets/$(hostname).tar.gz":
   #!/usr/bin/env bash
   set -euo pipefail
-  user_key_path_rel="$(jq -r ".directories.home.identity" ../meta.json)"
+  user_key_path_rel="$(nix eval --raw "{{host_attr}}.machine.directories.home.identity")"
   user_args=()
   while read -r username; do
     user_args+=( --transform="s|^home/$username/$user_key_path_rel|$username.key|" "/home/$username/$user_key_path_rel" )
-  done < <(jq -r ".hosts.$(hostname).usernames[]" ../meta.json)
-  host_key_path="$(jq -r ".directories.system.identity" ../meta.json)"
+  done < <(nix eval --json "{{host_attr}}.home-manager.users" --apply builtins.attrNames | jq -r ".[]")
+  host_key_path="$(nix eval --raw "{{host_attr}}.machine.directories.identity")"
   sudo tar -czvf "{{out_path}}" \
     --transform="s|^etc/ssh/ssh_host_ed25519_key$|root.key|" \
     $host_key_path "${user_args[@]}"
@@ -52,12 +56,8 @@ backup out_path="../secrets/$(hostname).tar.gz":
 new host user:
   #!/usr/bin/env bash
   set -euo pipefail
-  if ! jq -e --arg host "{{host}}" '.hosts[$host]' ../meta.json >/dev/null; then
-    echo "error: host '{{host}}' not found" >&2
-    exit 1
-  fi
-  if ! jq -e --arg host "{{host}}" --arg username "{{user}}" '.hosts[$host].usernames | index($username)' ../meta.json >/dev/null; then
-    echo "error: '{{user}}' not found in hosts.{{host}}.usernames" >&2
+  if [ ! -d "{{machine}}/users/{{user}}" ]; then
+    echo "error: {{machine}}/users/{{user}} does not exist" >&2
     exit 1
   fi
   keydir=$(mktemp -d)

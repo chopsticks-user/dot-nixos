@@ -3,7 +3,6 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-26.05";
     nixos-hardware.url = "github:nixos/nixos-hardware/master";
     disko = {
       url = "github:nix-community/disko";
@@ -58,30 +57,56 @@
   };
 
   outputs =
-    inputs:
-    import ./modules/flake-builder.nix {
-      inherit inputs;
-
-      overlays = [
-        { name = "unreal-engine"; }
-        {
-          name = "bottles";
-          args = {
-            removeWarningPopup = true;
-          };
-        }
+    { self, ... }@inputs:
+    let
+      supported = [
+        "x86_64-linux"
+        "x86_64-darwin"
+        "aarch64-linux"
+        "aarch64-darwin"
       ];
+
+      lib = inputs.nixpkgs.lib.extend (
+        final: prev:
+        let
+          utils = import ./utilities { lib = final; };
+          collisions = builtins.attrNames (builtins.intersectAttrs prev utils);
+        in
+        if collisions == [ ] then
+          utils
+        else
+          throw "utilities collide with lib: ${prev.concatStringsSep ", " collisions}"
+      );
+    in
+    {
+      lib.mkMachine = import ./modules/mk-machine.nix { inherit inputs lib; };
+
+      formatter = lib.genAttrs supported (system: inputs.nixpkgs.legacyPackages.${system}.nixfmt-tree);
+
+      nixosConfigurations =
+        (self.lib.mkMachine ./examples/andromeda).nixosConfigurations
+        // lib.listToAttrs (
+          map (
+            system:
+            lib.nameValuePair "iso-${system}" (
+              lib.nixosSystem {
+                inherit system;
+                modules = [ ./modules/iso.nix ];
+              }
+            )
+          ) (lib.filter (lib.hasSuffix "-linux") supported)
+        );
 
       templates = {
         development = {
+          path = ./templates/development;
           description = "Generic development environment";
-          welcomeText = "";
-          default = true;
         };
         development-fhs = {
+          path = ./templates/development-fhs;
           description = "Generic FHS development environment";
-          welcomeText = "";
         };
+        default = self.templates.development;
       };
     };
 }
