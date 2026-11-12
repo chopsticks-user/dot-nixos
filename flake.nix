@@ -105,17 +105,5 @@
             )
           ) (lib.filter (lib.hasSuffix "-linux") supported)
         );
-
-      templates = {
-        development = {
-          path = ./templates/development;
-          description = "Generic development environment";
-        };
-        development-fhs = {
-          path = ./templates/development-fhs;
-          description = "Generic FHS development environment";
-        };
-        default = self.templates.development;
-      };
     };
 }

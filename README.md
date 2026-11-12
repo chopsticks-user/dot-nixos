@@ -65,7 +65,7 @@ Users get the same overlays in their own nixpkgs instance.
 
 ## Project structure
 
-- `flake.nix`: exports `lib.mkMachine`, `templates`, `formatter` and installer ISOs
+- `flake.nix`: exports `lib.mkMachine`, `formatter` and installer ISOs
 - `lib/`: framework internals. `mk-machine.nix` (the builder), `peruser.nix`
   (system side of each user), `iso.nix` (installer), and the helpers listed in
   `lib/default.nix` (`attrs.nix`, `modules.nix`, `packages.nix`), whose exports
@@ -73,7 +73,6 @@ Users get the same overlays in their own nixpkgs instance.
 - `modules/`: one directory per module, see below
 - `overlays/`: customization on top of existing packages, or packages not in nixpkgs
 - `scripts/`: "just" modules, ISO-embedded scripts and internal scripts
-- `templates/`: nix flake templates, as generic as possible
 - `examples/`: user space: machine directories consumed by `mkMachine`
 - `docs/secrets/`: plaintext skeletons of the expected sops files
 
