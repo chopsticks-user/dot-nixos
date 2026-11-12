@@ -40,6 +40,7 @@
           "workbench.iconTheme" = "material-icon-theme";
           "window.autoDetectColorScheme" = true;
           "claudeCode.preferredLocation" = "sidebar";
+          "git.autofetch" = true;
 
           "files.autoSave" = "afterDelay";
           "editor.fontSize" = 13;
