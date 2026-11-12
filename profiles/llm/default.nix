@@ -27,6 +27,10 @@
         '')
       ];
 
+    # claude-mem hooks call the bare `claude-mem` launcher it installs here; the
+    # VS Code extension runs its own bundled claude, so the wrapper below doesn't cover it
+    home.sessionPath = [ "${constants.homeDirectory}/.local/bin" ];
+
     programs.claude-code = {
       enable = true;
       package = pkgs.claude-code.overrideAttrs (old: {
@@ -36,6 +40,8 @@
       });
       mutableSettings = true;
       settings = {
+        # hooks inherit this env; claude-mem lets it override ~/.claude-mem/settings.json
+        env.CLAUDE_MEM_CONTEXT_SHOW_TERMINAL_OUTPUT = "true";
         extraKnownMarketplaces = {
           thedotmack.source = {
             source = "github";
