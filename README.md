@@ -64,9 +64,9 @@ the system side reads back to create the account.
 ## Overlays and patches
 
 - **The framework's [overlays/](overlays)** are opt-in, because some of them
-  change existing packages. Enable them with
-  `nixpkgs.overlays = [ (lib.mkOverlay "<name>" { ...args }) ];` in `system/`
-  (see `examples/andromeda/system/overlays.nix`).
+  change existing packages. Enable one in `system/` with
+  `overlays.<name>.enable = true;`, plus `overlays.<name>.args` for the
+  arguments its `package.nix` accepts (see `examples/andromeda/system/overlays.nix`).
 - **A machine's own `overlays/<name>/package.nix`** files are applied
   automatically, after any framework overlays. They are called with `prev` and
   the usual `callPackage` arguments. A machine overlay with the same name as a
@@ -75,7 +75,9 @@ the system side reads back to create the account.
   package's patches in file name order. Only top-level attributes are
   supported, so `python3Packages.foo` cannot be patched this way.
 
-The system and every user see the same overlays and patches.
+All of this is wired by [lib/overlays.nix](lib/overlays.nix), so a machine
+never edits `nixpkgs.overlays` for these. The system and every user see the
+same overlays and patches.
 [examples/perseus](examples/perseus) has one of each:
 - `overlays/seanime-server` wraps seanime with its server flags and exposes the
   port, and the service and firewall use that port.

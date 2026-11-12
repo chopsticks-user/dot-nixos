@@ -1,8 +1,10 @@
-# overlays from dot-nixos overlays/, shared by the system and every user
-{ lib, ... }:
+# overlays shipped with dot-nixos are opt-in; this machine's own overlays/ and patches/ need no wiring
 {
-  nixpkgs.overlays = [
-    (lib.mkOverlay "unreal-engine" { })
-    (lib.mkOverlay "bottles" { removeWarningPopup = true; })
-  ];
+  overlays = {
+    unreal-engine.enable = true;
+    bottles = {
+      enable = true;
+      args.removeWarningPopup = true;
+    };
+  };
 }

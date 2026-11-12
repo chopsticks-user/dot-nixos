@@ -5,14 +5,10 @@
   port ? 43211,
   ...
 }:
-(writeShellApplication {
+writeShellApplication {
   name = "seanime-server";
   text = ''
     exec ${prev.seanime}/bin/seanime --host 0.0.0.0 --port ${toString port} --password encryptlater "$@"
   '';
-}).overrideAttrs
-  (old: {
-    passthru = (old.passthru or { }) // {
-      inherit port;
-    };
-  })
+  passthru = { inherit port; };
+}

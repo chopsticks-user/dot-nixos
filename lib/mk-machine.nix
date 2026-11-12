@@ -27,13 +27,7 @@ let
         (require "system/default.nix")
         (require "hardware/default.nix")
         (require "hardware/disk.nix")
-        {
-          # the machine's own overlays and patches, after any framework overlays it opted into
-          nixpkgs.overlays = lib.mkAfter (
-            lib.mkOverlaysFrom (root + "/overlays")
-            ++ lib.optional (builtins.pathExists (root + "/patches")) (lib.mkPatchOverlay (root + "/patches"))
-          );
-        }
+        (import ./overlays.nix root)
         { sops.defaultSopsFile = require "secrets.yaml"; }
 
         inputs.disko.nixosModules.disko
