@@ -84,7 +84,9 @@
       formatter = lib.genAttrs supported (system: inputs.nixpkgs.legacyPackages.${system}.nixfmt-tree);
 
       nixosConfigurations =
-        (self.lib.mkMachine ./examples/andromeda).nixosConfigurations
+        # examples are standalone flakes; calling their outputs with this flake keeps the root able to
+        # build and check them against the working tree without going through their lock files
+        ((import ./examples/andromeda/flake.nix).outputs { dot-nixos = self; }).nixosConfigurations
         // lib.listToAttrs (
           map (
             system:

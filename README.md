@@ -7,18 +7,25 @@ It provides sensible defaults for customization.
 
 ## Using the framework
 
-Add this flake as an input and point `mkMachine` at a machine directory:
+A machine is its own flake. It takes this flake as an input and points
+`mkMachine` at the directory holding the machine files, usually the flake itself:
 
 ```nix
 {
   inputs.dot-nixos.url = "github:chopsticks-user/dot-nixos";
-  outputs = { dot-nixos, ... }: dot-nixos.lib.mkMachine ./machine;
+  outputs = { dot-nixos, ... }: dot-nixos.lib.mkMachine ./.;
 }
 ```
 
-`mkMachine` returns `{ nixosConfigurations.<networking.hostName> = ...; }`.
-[examples/andromeda](examples/andromeda) is a complete machine with two users,
-and this repository builds it as `.#andromeda`.
+`mkMachine` returns `{ nixosConfigurations.<networking.hostName> = ...; }`, so
+`nixos-rebuild switch --flake .#<hostname>` works from the machine flake.
+
+Every directory in [examples/](examples) is a complete machine flake.
+[examples/andromeda](examples/andromeda) has two users. The examples point at
+this repository with `path:../..`, so they always build against the working
+tree. The root flake also exposes each example's `nixosConfigurations` by
+calling the example's `outputs` with itself, so `nix flake check` at the root
+covers them and `.#andromeda` builds from the root too.
 
 ## Machine layout
 
