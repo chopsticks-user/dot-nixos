@@ -21,11 +21,13 @@ A machine is its own flake. It takes this flake as an input and points
 `nixos-rebuild switch --flake .#<hostname>` works from the machine flake.
 
 Every directory in [examples/](examples) is a complete machine flake.
-[examples/andromeda](examples/andromeda) has two users. The examples point at
+[examples/andromeda](examples/andromeda) has two users on a persistent root.
+[examples/perseus](examples/perseus) has one user on a tmpfs root with
+impermanence (`system/persist.nix`), Wi-Fi from secrets, and a system service. The examples point at
 this repository with `path:../..`, so they always build against the working
 tree. The root flake also exposes each example's `nixosConfigurations` by
 calling the example's `outputs` with itself, so `nix flake check` at the root
-covers them and `.#andromeda` builds from the root too.
+covers them and `.#andromeda` and `.#perseus` build from the root too.
 
 ## Machine layout
 

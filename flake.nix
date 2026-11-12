@@ -86,7 +86,14 @@
       nixosConfigurations =
         # examples are standalone flakes; calling their outputs with this flake keeps the root able to
         # build and check them against the working tree without going through their lock files
-        ((import ./examples/andromeda/flake.nix).outputs { dot-nixos = self; }).nixosConfigurations
+        lib.mergeAttrsList (
+          map
+            (name: ((import ./examples/${name}/flake.nix).outputs { dot-nixos = self; }).nixosConfigurations)
+            [
+              "andromeda"
+              "perseus"
+            ]
+        )
         // lib.listToAttrs (
           map (
             system:
