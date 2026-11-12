@@ -16,7 +16,7 @@ let
     )
   );
   userFile = username: name: root + "/users/${username}/${name}";
-  persistFile = optional "persist.nix";
+  persistFile = optional "system/persist.nix";
 
   # modules with both halves; core is always on
   sharedModuleNames = lib.remove "core" (
@@ -28,7 +28,7 @@ let
     modules =
       lib.systemModules
       ++ [
-        (require "system.nix")
+        (require "system/default.nix")
         (require "hardware/default.nix")
         (require "hardware/disk.nix")
         { sops.defaultSopsFile = require "secrets.yaml"; }

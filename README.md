@@ -31,13 +31,16 @@ covers them and `.#andromeda` builds from the root too.
 
 ```
 machine/
-├── system.nix              required  NixOS module: hostname, stateVersion, modules.*, anything NixOS
+├── flake.nix               required  calls dot-nixos.lib.mkMachine ./.
+├── flake.lock
+├── secrets.yaml            required  sops file: password/root, password/<user>, wifi
+├── system/
+│   ├── default.nix         required  NixOS module: hostname, stateVersion, modules.*, anything NixOS
+│   └── persist.nix         optional  { directories; files }, enables impermanence when present
 ├── hardware/
 │   ├── default.nix         required  NixOS module for the physical machine, usually imports generated.nix
 │   ├── disk.nix            required  disko layout
 │   └── generated.nix       optional  nixos-generate-config output, by convention
-├── secrets.yaml            required  sops file: password/root, password/<user>, wifi
-├── persist.nix             optional  { directories; files }, enables impermanence when present
 └── users/
     └── <user>/             one directory per user, the name is the username
         ├── home.nix        required  Home Manager module: user.* and modules.*
@@ -47,14 +50,14 @@ machine/
 
 Machine-wide facts use native NixOS options (`networking.hostName`,
 `system.stateVersion`, `boot.kernelPackages`, `nixpkgs.overlays`). Framework
-settings that have no native option live under `machine.*` in `system.nix`
+settings that have no native option live under `machine.*` in `system/default.nix`
 (see [modules/core/machine-options.nix](modules/core/machine-options.nix)). Per-user settings live under
 `user.*` in `home.nix` (see [modules/core/user-options.nix](modules/core/user-options.nix)).
 That includes the account fields (`description`, `groups`, `shell`), which
 the system side reads back to create the account.
 
 Overlays from [overlays/](overlays) are enabled with
-`nixpkgs.overlays = [ (lib.mkOverlay "<name>" { ...args }) ];` in `system.nix`.
+`nixpkgs.overlays = [ (lib.mkOverlay "<name>" { ...args }) ];` in `system/default.nix`.
 Users get the same overlays in their own nixpkgs instance.
 
 ## Project structure
@@ -82,7 +85,7 @@ return `options`, `configs` and optionally `imports`, `assertions`,
 - Enabling a module in a user's `home.nix` turns on its home half for that
   user and its system half for the machine. For example, a user enabling
   `modules.gaming` gets Steam installed system-wide.
-- Enabling a module in `system.nix` turns on its system half only, which is
+- Enabling a module in `system/default.nix` turns on its system half only, which is
   how machine-only modules such as `grub` or `nh` are used.
 - `core` is always on.
 - `allowUnfree` lists package names allowed regardless of the enable flag.
