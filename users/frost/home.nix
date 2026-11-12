@@ -1,12 +1,9 @@
 {
   pkgs,
-  constants,
   ...
 }:
 {
   nixpkgs.config.allowUnfreePackages = [
-    "rider"
-    "clion"
     "obsidian"
     "spotify"
     "claude-code"
@@ -15,8 +12,6 @@
   ];
 
   home.packages = with pkgs; [
-    jetbrains.rider
-    jetbrains.clion
     godot
     blender
     gimp-with-plugins
