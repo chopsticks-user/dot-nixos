@@ -1,17 +1,10 @@
-{ lib, ... }:
+# machine identity; everything else is split by concern
 {
-  networking.hostName = "andromeda";
-  system.stateVersion = "26.11";
-
-  nixpkgs.overlays = [
-    (lib.mkOverlay "unreal-engine" { })
-    (lib.mkOverlay "bottles" { removeWarningPopup = true; })
+  imports = [
+    ./modules.nix
+    ./overlays.nix
   ];
 
-  modules = {
-    grub.enable = true;
-    nh.enable = true;
-    docs.enable = true;
-    fcitx.enable = true;
-  };
+  networking.hostName = "andromeda";
+  system.stateVersion = "26.11";
 }
