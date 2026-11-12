@@ -100,6 +100,7 @@ The file conventions are the same in both layers:
 - `modules/`: one directory per module, see below
 - `overlays/`, `patches/`: the framework's package layer, always applied to every machine
 - `scripts/`: "just" modules, ISO-embedded scripts and internal scripts
+- `tests/`: flake checks for `lib/` helpers, run by `nix flake check`
 - `examples/`: user space: machine directories consumed by `mkMachine`
 - `docs/secrets/`: plaintext skeletons of the expected sops files
 

@@ -16,7 +16,7 @@ Update the README, not this file, when the user-facing design changes.
 | `lib/overlays.nix` | The only place that writes `nixpkgs.overlays`: the framework's `overlays/` and `patches/` (always on), then the machine's on top. |
 | `lib/peruser.nix` | System side of one user: account, password secret, per-user persistence. Curried with `{ username, userPersist }`. |
 | `lib/packages.nix`, `lib/attrs.nix` | Helpers merged into `lib`. `lib/default.nix` lists helper files explicitly, so a new helper file must be added there. |
-| `lib/tests/` | Flake checks with fixtures (`checks.<system>.lib-packages`). |
+| `tests/` | Flake checks for `lib/` helpers, with fixtures (`checks.<system>.lib-packages`). |
 | `modules/<name>/` | Feature modules. `system.nix` is the NixOS half and `home.nix` the Home Manager half, both under the `modules.<name>` namespace. |
 | `modules/core/` | Always-on module. It declares `machine.*`, `persist.home` (NixOS) and `user.*` (Home Manager) options. |
 | `overlays/`, `patches/` | The framework package layer. It is always applied to every machine and has no options; machines layer their own on top instead. |
@@ -72,4 +72,4 @@ These are evaluation-order traps. Re-introducing any of them shows up as `infini
 
 - **Comments:** only explain a reason the code cannot show, on one line. A known limitation gets `# shortcut: <limit>, <when to upgrade>`.
 - **Nix style:** `nixfmt` style via `nix fmt`. Prefer native NixOS/Home Manager options over new framework options. Add a framework option only when no native option exists.
-- **Tests:** new non-trivial `lib/` logic gets a fixture-based check in `lib/tests/`, wired into `checks` in `flake.nix`. Confirm the check fails when the logic is broken.
+- **Tests:** new non-trivial `lib/` logic gets a fixture-based check in `tests/`, wired into `checks` in `flake.nix`. Confirm the check fails when the logic is broken.
