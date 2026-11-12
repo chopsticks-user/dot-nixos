@@ -5,7 +5,7 @@
   ...
 }@args:
 {
-  imports = [ ./options.nix ];
+  imports = [ ./user-options.nix ];
 
   options = { };
 

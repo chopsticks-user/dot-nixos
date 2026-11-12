@@ -69,17 +69,17 @@
       lib = inputs.nixpkgs.lib.extend (
         final: prev:
         let
-          utils = import ./utilities { lib = final; };
+          utils = import ./lib { lib = final; };
           collisions = builtins.attrNames (builtins.intersectAttrs prev utils);
         in
         if collisions == [ ] then
           utils
         else
-          throw "utilities collide with lib: ${prev.concatStringsSep ", " collisions}"
+          throw "lib/ helpers collide with nixpkgs lib: ${prev.concatStringsSep ", " collisions}"
       );
     in
     {
-      lib.mkMachine = import ./modules/mk-machine.nix { inherit inputs lib; };
+      lib.mkMachine = import ./lib/mk-machine.nix { inherit inputs lib; };
 
       formatter = lib.genAttrs supported (system: inputs.nixpkgs.legacyPackages.${system}.nixfmt-tree);
 
@@ -91,7 +91,7 @@
             lib.nameValuePair "iso-${system}" (
               lib.nixosSystem {
                 inherit system;
-                modules = [ ./modules/iso.nix ];
+                modules = [ ./lib/iso.nix ];
               }
             )
           ) (lib.filter (lib.hasSuffix "-linux") supported)

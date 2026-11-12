@@ -24,14 +24,14 @@ and this repository builds it as `.#andromeda`.
 
 ```
 machine/
-├── system.nix              required  NixOS module: hostname, stateVersion, features, anything NixOS
+├── system.nix              required  NixOS module: hostname, stateVersion, modules.*, anything NixOS
 ├── hardware.nix            required  NixOS module, usually imports generated.nix
 ├── disk.nix                required  disko layout
 ├── secrets.yaml            required  sops file: password/root, password/<user>, wifi
 ├── persist.nix             optional  { directories; files }, enables impermanence when present
 └── users/
     └── <user>/             one directory per user, the name is the username
-        ├── home.nix        required  Home Manager module: user.* and features.*
+        ├── home.nix        required  Home Manager module: user.* and modules.*
         ├── persist.nix     optional  { directories; files } for this user
         └── secrets.yaml    optional  this user's sops file
 ```
@@ -39,8 +39,8 @@ machine/
 Machine-wide facts use native NixOS options (`networking.hostName`,
 `system.stateVersion`, `boot.kernelPackages`, `nixpkgs.overlays`). Framework
 settings that have no native option live under `machine.*` in `system.nix`
-(see [modules/machine.nix](modules/machine.nix)). Per-user settings live under
-`user.*` in `home.nix` (see [features/core/options.nix](features/core/options.nix)).
+(see [modules/core/machine-options.nix](modules/core/machine-options.nix)). Per-user settings live under
+`user.*` in `home.nix` (see [modules/core/user-options.nix](modules/core/user-options.nix)).
 That includes the account fields (`description`, `groups`, `shell`), which
 the system side reads back to create the account.
 
@@ -51,39 +51,40 @@ Users get the same overlays in their own nixpkgs instance.
 ## Project structure
 
 - `flake.nix`: exports `lib.mkMachine`, `templates`, `formatter` and installer ISOs
-- `modules/`: framework internals: `mk-machine.nix` (the builder), `machine.nix`
-  (machine options), `peruser.nix` (system side of each user), `iso.nix`
-- `features/`: one directory per feature, see below
-- `utilities/`: extensions to nix `lib`, every exported name becomes `lib.<name>`
+- `lib/`: framework internals. `mk-machine.nix` (the builder), `peruser.nix`
+  (system side of each user), `iso.nix` (installer), and the helpers listed in
+  `lib/default.nix` (`attrs.nix`, `modules.nix`, `packages.nix`), whose exports
+  are merged into nix `lib` as `lib.<name>`
+- `modules/`: one directory per module, see below
 - `overlays/`: customization on top of existing packages, or packages not in nixpkgs
 - `scripts/`: "just" modules, ISO-embedded scripts and internal scripts
 - `templates/`: nix flake templates, as generic as possible
 - `examples/`: user space: machine directories consumed by `mkMachine`
 - `docs/secrets/`: plaintext skeletons of the expected sops files
 
-## Features
+## Modules
 
-A feature is a directory `features/<name>/` with a `system.nix` (NixOS half),
+A module is a directory `modules/<name>/` with a `system.nix` (NixOS half),
 a `home.nix` (Home Manager half), or both. Both halves are config modules
-(see `defineFeature` in [utilities/modules.nix](utilities/modules.nix)). They
+(see `defineModule` in [lib/modules.nix](lib/modules.nix)). They
 return `options`, `configs` and optionally `imports`, `assertions`,
-`allowUnfree` and `persist`. Both halves share the `features.<name>` namespace.
+`allowUnfree` and `persist`. Both halves share the `modules.<name>` namespace.
 
-- Enabling a feature in a user's `home.nix` turns on its home half for that
+- Enabling a module in a user's `home.nix` turns on its home half for that
   user and its system half for the machine. For example, a user enabling
-  `features.gaming` gets Steam installed system-wide.
-- Enabling a feature in `system.nix` turns on its system half only, which is
-  how machine-only features such as `grub` or `nh` are used.
+  `modules.gaming` gets Steam installed system-wide.
+- Enabling a module in `system.nix` turns on its system half only, which is
+  how machine-only modules such as `grub` or `nh` are used.
 - `core` is always on.
 - `allowUnfree` lists package names allowed regardless of the enable flag.
   It has to stay outside the guard, because the system half's enable flag is
   derived from Home Manager, which itself needs the system's nixpkgs.
 - `persist.home` in a system half lists home paths to keep under impermanence.
-  These are applied only to users who enabled that feature. Features without
+  These are applied only to users who enabled that module. Modules without
   a home half apply to every user.
 
-Adding a directory to `features/`, or a file to `utilities/` or `overlays/`, is
-picked up automatically.
+Adding a directory to `modules/` or `overlays/` is picked up automatically. New
+`lib/` helpers are added to the list in `lib/default.nix`.
 
 ## Philosophy
 

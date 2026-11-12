@@ -22,7 +22,7 @@
     discord
   ];
 
-  features = {
+  modules = {
     zsh.enable = true;
     ssh.enable = true;
     git.enable = true;

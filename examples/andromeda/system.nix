@@ -8,7 +8,7 @@
     (lib.mkOverlay "bottles" { removeWarningPopup = true; })
   ];
 
-  features = {
+  modules = {
     grub.enable = true;
     nh.enable = true;
     docs.enable = true;

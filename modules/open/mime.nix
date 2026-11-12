@@ -1,4 +1,4 @@
-# category -> mime types it handles; categories become features.open.<category> options
+# category -> mime types it handles; categories become modules.open.<category> options
 {
   html = [
     "text/html"

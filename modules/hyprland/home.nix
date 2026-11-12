@@ -24,7 +24,7 @@
       brightnessctl
     ];
 
-    features.open = with pkgs; {
+    modules.open = with pkgs; {
       enable = true;
       html = firefox;
       image = {

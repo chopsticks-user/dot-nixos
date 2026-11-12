@@ -1,5 +1,4 @@
 {
-  # migrate to features.core once andromeda has persist.nix
   directories = [
     "boxes"
     "documents"

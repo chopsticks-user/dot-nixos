@@ -18,18 +18,16 @@ let
   userFile = username: name: root + "/users/${username}/${name}";
   persistFile = optional "persist.nix";
 
-  # features with both halves; core is always on
-  sharedFeatureNames = lib.remove "core" (
-    lib.intersectLists (lib.featureNamesWith "system.nix") (lib.featureNamesWith "home.nix")
+  # modules with both halves; core is always on
+  sharedModuleNames = lib.remove "core" (
+    lib.intersectLists (lib.moduleNamesWith "system.nix") (lib.moduleNamesWith "home.nix")
   );
 
   machine = lib.nixosSystem {
     specialArgs = { inherit inputs; };
     modules =
-      lib.systemFeatures
+      lib.systemModules
       ++ [
-        ./machine.nix
-        ./persist-home.nix
         (require "system.nix")
         (require "hardware.nix")
         (require "disk.nix")
@@ -44,11 +42,11 @@ let
           { config, ... }:
           {
             home-manager = {
-              # features set nixpkgs.config per user, which global pkgs forbids
+              # modules set nixpkgs.config per user, which global pkgs forbids
               useGlobalPkgs = false;
               useUserPackages = true;
               extraSpecialArgs = { inherit inputs; };
-              sharedModules = lib.homeFeatures ++ [
+              sharedModules = lib.homeModules ++ [
                 inputs.sops-nix.homeManagerModules.sops
                 {
                   nixpkgs.overlays = config.nixpkgs.overlays;
@@ -65,10 +63,10 @@ let
               });
             };
 
-            # the system half of a feature is on when any user enables its home half
-            features = lib.genAttrs sharedFeatureNames (name: {
+            # the system half of a module is on when any user enables its home half
+            modules = lib.genAttrs sharedModuleNames (name: {
               enable = lib.mkDefault (
-                lib.any (username: config.home-manager.users.${username}.features.${name}.enable) usernames
+                lib.any (username: config.home-manager.users.${username}.modules.${name}.enable) usernames
               );
             });
           }

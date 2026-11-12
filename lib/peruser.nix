@@ -24,8 +24,8 @@ in
   environment = lib.optionalAttrs (options.environment ? persistence) {
     persistence."/persist".users.${username} =
       let
-        # a feature with a home half persists only for users who enable it, the rest for everyone
-        owned = lib.filterAttrs (name: _: home.features.${name}.enable or true) config.persist.home;
+        # a module with a home half persists only for users who enable it, the rest for everyone
+        owned = lib.filterAttrs (name: _: home.modules.${name}.enable or true) config.persist.home;
         materialized = lib.attrValues owned ++ [ userPersist ];
       in
       {

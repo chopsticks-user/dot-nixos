@@ -1,7 +1,7 @@
 { lib, ... }:
 let
-  # class: "nixos" for features/<name>/system.nix, "home" for features/<name>/home.nix
-  defineFeature =
+  # class: "nixos" for modules/<name>/system.nix, "home" for modules/<name>/home.nix
+  defineModule =
     class: name: moduleFn:
     {
       config,
@@ -10,13 +10,13 @@ let
       ...
     }@moduleArgs:
     let
-      fields = config.features.${name};
+      fields = config.modules.${name};
       module = moduleFn (moduleArgs // { inherit fields; });
       isNixos = class == "nixos";
     in
     {
       imports = module.imports or [ ];
-      options.features.${name} =
+      options.modules.${name} =
         (module.options or { })
         // (lib.optionalAttrs (name != "core") { enable = lib.mkEnableOption name; });
       # allowlisting is not enabling, so it skips the enable guard; this keeps pkgs independent of
@@ -54,23 +54,23 @@ let
       ];
     };
 
-  featureNamesWith =
+  moduleNamesWith =
     file:
     lib.attrNames (
       lib.filterAttrs (
-        name: type: type == "directory" && builtins.pathExists (../features + "/${name}/${file}")
-      ) (builtins.readDir ../features)
+        name: type: type == "directory" && builtins.pathExists (../modules + "/${name}/${file}")
+      ) (builtins.readDir ../modules)
     );
 
-  importFeatures =
+  importModules =
     class: file:
-    map (name: defineFeature class name (import (../features + "/${name}/${file}"))) (
-      featureNamesWith file
+    map (name: defineModule class name (import (../modules + "/${name}/${file}"))) (
+      moduleNamesWith file
     );
 in
 {
-  inherit featureNamesWith;
-  systemFeatures = importFeatures "nixos" "system.nix";
-  homeFeatures = importFeatures "home" "home.nix";
+  inherit moduleNamesWith;
+  systemModules = importModules "nixos" "system.nix";
+  homeModules = importModules "home" "home.nix";
   mergeImports = files: args: lib.mkMerge (map (f: import f args) files);
 }

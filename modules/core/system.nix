@@ -7,6 +7,11 @@
   ...
 }:
 {
+  imports = [
+    ./machine-options.nix
+    ./persist-options.nix
+  ];
+
   options = {
     timeZone = lib.mkOption {
       type = lib.types.str;
