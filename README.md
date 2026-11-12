@@ -25,8 +25,10 @@ and this repository builds it as `.#andromeda`.
 ```
 machine/
 ├── system.nix              required  NixOS module: hostname, stateVersion, modules.*, anything NixOS
-├── hardware.nix            required  NixOS module, usually imports generated.nix
-├── disk.nix                required  disko layout
+├── hardware/
+│   ├── default.nix         required  NixOS module for the physical machine, usually imports generated.nix
+│   ├── disk.nix            required  disko layout
+│   └── generated.nix       optional  nixos-generate-config output, by convention
 ├── secrets.yaml            required  sops file: password/root, password/<user>, wifi
 ├── persist.nix             optional  { directories; files }, enables impermanence when present
 └── users/

@@ -29,8 +29,8 @@ let
       lib.systemModules
       ++ [
         (require "system.nix")
-        (require "hardware.nix")
-        (require "disk.nix")
+        (require "hardware/default.nix")
+        (require "hardware/disk.nix")
         { sops.defaultSopsFile = require "secrets.yaml"; }
 
         inputs.disko.nixosModules.disko
