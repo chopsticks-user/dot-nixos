@@ -10,11 +10,7 @@ let
     else
       throw "mkMachine: ${toString root}/${name} is required";
 
-  usernames = lib.attrNames (
-    lib.filterAttrs (_: type: type == "directory") (
-      if builtins.pathExists (root + "/users") then builtins.readDir (root + "/users") else { }
-    )
-  );
+  usernames = lib.subdirs (root + "/users");
   userFile = username: name: root + "/users/${username}/${name}";
   persistFile = optional "system/persist.nix";
 
@@ -31,6 +27,13 @@ let
         (require "system/default.nix")
         (require "hardware/default.nix")
         (require "hardware/disk.nix")
+        {
+          # the machine's own overlays and patches, after any framework overlays it opted into
+          nixpkgs.overlays = lib.mkAfter (
+            lib.mkOverlaysFrom (root + "/overlays")
+            ++ lib.optional (builtins.pathExists (root + "/patches")) (lib.mkPatchOverlay (root + "/patches"))
+          );
+        }
         { sops.defaultSopsFile = require "secrets.yaml"; }
 
         inputs.disko.nixosModules.disko

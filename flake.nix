@@ -81,6 +81,13 @@
     {
       lib.mkMachine = import ./lib/mk-machine.nix { inherit inputs lib; };
 
+      checks = lib.genAttrs (lib.filter (lib.hasSuffix "-linux") supported) (system: {
+        lib-packages = import ./lib/tests/packages.nix {
+          inherit lib system;
+          inherit (inputs) nixpkgs;
+        };
+      });
+
       formatter = lib.genAttrs supported (system: inputs.nixpkgs.legacyPackages.${system}.nixfmt-tree);
 
       nixosConfigurations =

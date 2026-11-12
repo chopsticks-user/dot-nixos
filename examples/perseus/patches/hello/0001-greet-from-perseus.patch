@@ -1,0 +1,24 @@
+Greet from perseus instead of the world, updating the test that checks the greeting.
+
+--- a/src/hello.c
++++ b/src/hello.c
+@@ -145,7 +145,7 @@
+ #endif
+ 
+   /* Having initialized gettext, get the default message. */
+-  greeting_msg = _("Hello, world!");
++  greeting_msg = _("Hello from perseus!");
+ 
+   /* Even exiting has subtleties.  On exit, if any writes failed, change
+      the exit status.  The /dev/full device on GNU/Linux can be used for
+--- a/tests/hello-1
++++ b/tests/hello-1
+@@ -21,7 +21,7 @@
+ 
+ tmpfiles="hello-test1.ok"
+ cat <<EOF > hello-test1.ok
+-Hello, world!
++Hello from perseus!
+ EOF
+ 
+ tmpfiles="$tmpfiles hello-test1.out"

@@ -44,6 +44,8 @@ machine/
 │   ├── default.nix         required  NixOS module for the physical machine, usually imports generated.nix
 │   ├── disk.nix            required  disko layout
 │   └── generated.nix       optional  nixos-generate-config output, by convention
+├── overlays/               optional  <name>/package.nix becomes pkgs.<name>, applied automatically
+├── patches/                optional  <attr>/*.patch appended to pkgs.<attr>'s patches, in file name order
 └── users/
     └── <user>/             one directory per user, the name is the username
         ├── home.nix        required  Home Manager module: user.* and modules.*
@@ -59,9 +61,26 @@ settings that have no native option live under `machine.*` in `system/`
 That includes the account fields (`description`, `groups`, `shell`), which
 the system side reads back to create the account.
 
-Overlays from [overlays/](overlays) are enabled with
-`nixpkgs.overlays = [ (lib.mkOverlay "<name>" { ...args }) ];` in `system/` (see `examples/andromeda/system/overlays.nix`).
-Users get the same overlays in their own nixpkgs instance.
+## Overlays and patches
+
+- **The framework's [overlays/](overlays)** are opt-in, because some of them
+  change existing packages. Enable them with
+  `nixpkgs.overlays = [ (lib.mkOverlay "<name>" { ...args }) ];` in `system/`
+  (see `examples/andromeda/system/overlays.nix`).
+- **A machine's own `overlays/<name>/package.nix`** files are applied
+  automatically, after any framework overlays. They are called with `prev` and
+  the usual `callPackage` arguments. A machine overlay with the same name as a
+  framework overlay replaces it.
+- **A machine's `patches/<attr>/*.patch`** files are appended to that
+  package's patches in file name order. Only top-level attributes are
+  supported, so `python3Packages.foo` cannot be patched this way.
+
+The system and every user see the same overlays and patches.
+[examples/perseus](examples/perseus) has one of each:
+- `overlays/seanime-server` wraps seanime with its server flags and exposes the
+  port, and the service and firewall use that port.
+- `patches/hello` changes hello's greeting, including the upstream test that
+  checks it.
 
 ## Project structure
 
@@ -71,7 +90,7 @@ Users get the same overlays in their own nixpkgs instance.
   `lib/default.nix` (`attrs.nix`, `modules.nix`, `packages.nix`), whose exports
   are merged into nix `lib` as `lib.<name>`
 - `modules/`: one directory per module, see below
-- `overlays/`: customization on top of existing packages, or packages not in nixpkgs
+- `overlays/`: opt-in customization of existing packages, or packages not in nixpkgs
 - `scripts/`: "just" modules, ISO-embedded scripts and internal scripts
 - `examples/`: user space: machine directories consumed by `mkMachine`
 - `docs/secrets/`: plaintext skeletons of the expected sops files

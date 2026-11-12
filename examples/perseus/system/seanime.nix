@@ -1,10 +1,8 @@
-# seanime server on the LAN; its state persists through /var/lib/private/seanime in persist.nix
+# seanime server on the LAN, run through pkgs.seanime-server from overlays/;
+# its state persists through /var/lib/private/seanime in persist.nix
 { pkgs, config, ... }:
-let
-  port = 43211;
-in
 {
-  networking.firewall.allowedTCPPorts = [ port ];
+  networking.firewall.allowedTCPPorts = [ pkgs.seanime-server.port ];
 
   systemd.services.seanime-server = {
     description = "Seanime Server";
@@ -12,12 +10,7 @@ in
     after = [ "network-online.target" ];
     wants = [ "network-online.target" ];
     serviceConfig = {
-      ExecStart = ''
-        ${pkgs.seanime}/bin/seanime \
-          --host 0.0.0.0 \
-          --port ${toString port} \
-          --password encryptlater
-      '';
+      ExecStart = "${pkgs.seanime-server}/bin/seanime-server";
       Restart = "always";
       DynamicUser = true;
       StateDirectory = "seanime";
