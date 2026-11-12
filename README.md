@@ -38,13 +38,13 @@ machine/
 ├── secrets.yaml            required  sops file: password/root, password/<user>, wifi
 ├── system/
 │   ├── default.nix         required  NixOS module: hostname, stateVersion, imports the parts below
-│   ├── *.nix               optional  any further parts, e.g. modules.nix, overlays.nix, imported by default.nix
+│   ├── *.nix               optional  any further parts, e.g. modules.nix, imported by default.nix
 │   └── persist.nix         optional  { directories; files }, enables impermanence when present
 ├── hardware/
 │   ├── default.nix         required  NixOS module for the physical machine, usually imports generated.nix
 │   ├── disk.nix            required  disko layout
 │   └── generated.nix       optional  nixos-generate-config output, by convention
-├── overlays/               optional  <name>/package.nix becomes pkgs.<name>, applied automatically
+├── overlays/               optional  <name>/package.nix becomes pkgs.<name>, on top of the framework's
 ├── patches/                optional  <attr>/*.patch appended to pkgs.<attr>'s patches, in file name order
 └── users/
     └── <user>/             one directory per user, the name is the username
@@ -63,21 +63,27 @@ the system side reads back to create the account.
 
 ## Overlays and patches
 
-- **The framework's [overlays/](overlays)** are opt-in, because some of them
-  change existing packages. Enable one in `system/` with
-  `overlays.<name>.enable = true;`, plus `overlays.<name>.args` for the
-  arguments its `package.nix` accepts (see `examples/andromeda/system/overlays.nix`).
-- **A machine's own `overlays/<name>/package.nix`** files are applied
-  automatically, after any framework overlays. They are called with `prev` and
-  the usual `callPackage` arguments. A machine overlay with the same name as a
-  framework overlay replaces it.
-- **A machine's `patches/<attr>/*.patch`** files are appended to that
-  package's patches in file name order. Only top-level attributes are
-  supported, so `python3Packages.foo` cannot be patched this way.
+Overlays and patches come in two layers that use the same file layout.
+[lib/overlays.nix](lib/overlays.nix) wires both, so nobody edits
+`nixpkgs.overlays` for them. The system and every user get the same result.
 
-All of this is wired by [lib/overlays.nix](lib/overlays.nix), so a machine
-never edits `nixpkgs.overlays` for these. The system and every user see the
-same overlays and patches.
+1. **Framework layer.** The repository's `overlays/<name>/package.nix` and
+   `patches/<attr>/*.patch` are framework policy. They are always applied,
+   every machine inherits the resulting packages, and machines cannot switch
+   them off or configure them.
+2. **Machine layer.** A machine's own `overlays/` and `patches/` are applied
+   on top. A machine that needs something different writes its own overlay or
+   patch instead of touching the framework's. A machine overlay sees the
+   framework's package as `prev`. For example,
+   `examples/andromeda/overlays/bottles` adjusts the framework's bottles.
+
+The file conventions are the same in both layers:
+- `overlays/<name>/package.nix` becomes `pkgs.<name>`. It is called like any
+  `callPackage` file, and also receives `prev` if it declares that argument.
+- `patches/<attr>/*.patch` files are appended to `pkgs.<attr>`'s patches in
+  file name order. Only top-level attributes are supported, so
+  `python3Packages.foo` cannot be patched this way.
+
 [examples/perseus](examples/perseus) has one of each:
 - `overlays/seanime-server` wraps seanime with its server flags and exposes the
   port, and the service and firewall use that port.
@@ -92,7 +98,7 @@ same overlays and patches.
   `lib/default.nix` (`attrs.nix`, `modules.nix`, `packages.nix`), whose exports
   are merged into nix `lib` as `lib.<name>`
 - `modules/`: one directory per module, see below
-- `overlays/`: opt-in customization of existing packages, or packages not in nixpkgs
+- `overlays/`, `patches/`: the framework's package layer, always applied to every machine
 - `scripts/`: "just" modules, ISO-embedded scripts and internal scripts
 - `examples/`: user space: machine directories consumed by `mkMachine`
 - `docs/secrets/`: plaintext skeletons of the expected sops files
@@ -118,7 +124,7 @@ return `options`, `configs` and optionally `imports`, `assertions`,
   These are applied only to users who enabled that module. Modules without
   a home half apply to every user.
 
-Adding a directory to `modules/` or `overlays/` is picked up automatically. New
+Adding a directory to `modules/`, `overlays/` or `patches/` is picked up automatically. New
 `lib/` helpers are added to the list in `lib/default.nix`.
 
 ## Philosophy

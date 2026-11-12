@@ -1,10 +1,5 @@
 { lib, ... }:
 let
-  # dir/<name>/package.nix is called with `prev` plus args and becomes pkgs.<name>
-  mkOverlayFrom = dir: name: args: final: prev: {
-    ${name} = final.callPackage (dir + "/${name}/package.nix") ({ inherit prev; } // args);
-  };
-
   subdirs =
     dir:
     lib.optionals (builtins.pathExists dir) (
@@ -12,13 +7,22 @@ let
     );
 in
 {
-  inherit mkOverlayFrom subdirs;
+  inherit subdirs;
 
-  # opt-in overlays shipped with the framework
-  mkOverlay = mkOverlayFrom ../overlays;
-
-  # every dir/<name>/package.nix, without args
-  mkOverlaysFrom = dir: map (name: mkOverlayFrom dir name { }) (subdirs dir);
+  # every dir/<name>/package.nix becomes pkgs.<name>; it gets `prev` only if it asks for it
+  mkOverlaysFrom =
+    dir:
+    map (
+      name: final: prev:
+      let
+        file = dir + "/${name}/package.nix";
+      in
+      {
+        ${name} = final.callPackage file (
+          lib.intersectAttrs (lib.functionArgs (import file)) { inherit prev; }
+        );
+      }
+    ) (subdirs dir);
 
   # dir/<attr>/*.patch are appended to pkgs.<attr>'s patches in file name order
   # shortcut: top-level attributes only (no python3Packages.foo), add scope handling when needed

@@ -2,7 +2,6 @@
 {
   imports = [
     ./modules.nix
-    ./overlays.nix
   ];
 
   networking.hostName = "andromeda";
