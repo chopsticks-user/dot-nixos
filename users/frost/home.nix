@@ -38,6 +38,7 @@
     obs.enable = true;
     virtualization.enable = true;
     zed.enable = true;
+    vscode.enable = true;
     llm.enable = true;
   };
 }
