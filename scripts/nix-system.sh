@@ -6,7 +6,7 @@ flake_dir="${NIXOS_FLAKE_DIR:-$HOME/.config/nixos}"
 command_build() {
   result=$(nixos-rebuild build --flake "$flake_dir#$(hostname)" "$@")
   nvd diff /run/current-system "$result"
-  nix-store diff-closure "$result"
+  nix store diff-closures /run/current-system "$result"
 }
 
 command_switch() {

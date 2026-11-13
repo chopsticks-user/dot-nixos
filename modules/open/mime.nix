@@ -11,7 +11,7 @@
     "image/webp"
   ];
   pdf = [ "application/pdf" ];
-  video = [ "audio/mp3" ];
-  audio = [ "video/mp4" ];
+  video = [ "video/mp4" ];
+  audio = [ "audio/mp3" ];
   directory = [ "inode/directory" ];
 }

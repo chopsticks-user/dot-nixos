@@ -40,7 +40,7 @@
       plugins = fields.plugins;
     };
     home.activation.obsStudioConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      install -Dm644 ${pkgs.writeText "global.ini" (lib.generators.toINI { } fields.settings.user)} \
+      install -Dm644 ${pkgs.writeText "global.ini" (lib.generators.toINI { } fields.settings.global)} \
         ${config.xdg.configHome}/obs-studio/global.ini
 
       install -Dm644 ${pkgs.writeText "user.ini" (lib.generators.toINI { } fields.settings.user)} \
