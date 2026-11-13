@@ -33,6 +33,7 @@
 
     programs.claude-code = {
       enable = true;
+      context = "./claude-memory.md";
       package = pkgs.claude-code.overrideAttrs (old: {
         postFixup = (old.postFixup or "") + ''
           wrapProgram $out/bin/claude --suffix PATH : ${constants.homeDirectory}/.local/bin
