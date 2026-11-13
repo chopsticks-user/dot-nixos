@@ -5,8 +5,8 @@ NixOS machine generator: describe a machine in a few answers or a short spec,
 and get a complete, installable, encrypted machine repository, installed on
 the target and kept up to date.
 
-Small, concrete tasks are issues in [issues.md](issues.md), and finished work is
-logged in [backlog.md](backlog.md). The decisions each
+Small, concrete tasks are [GitHub issues](https://github.com/chopsticks-user/dot-nixos/issues), and finished work is merged
+through pull requests. The decisions each
 milestone revisits are numbered as in [design.md](design.md).
 
 ## Where it stands

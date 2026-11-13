@@ -548,8 +548,7 @@ allowlist.
 | `inputs` | NixOS and Home Manager modules | The framework's flake inputs: nixpkgs, nixos-hardware, disko, home-manager, sops-nix, impermanence, nix-index-database, nix-alien, nvf, noctalia, steam-config-nix, llm-agents |
 | `osConfig` | Home Manager modules | The machine's NixOS config |
 
-The machine flake's own inputs are not passed through (issue 17 in
-[issues.md](issues.md)).
+The machine flake's own inputs are not passed through ([#16](https://github.com/chopsticks-user/dot-nixos/issues/16)).
 
 ### 7.3 machine.* (NixOS)
 
@@ -622,5 +621,4 @@ environment to override `machine.directories.nixos` and
 
 ## 8. Limitations
 
-Known limitations and planned work are the open issues in
-[issues.md](issues.md).
+Known limitations and planned work are the [open issues](https://github.com/chopsticks-user/dot-nixos/issues) on GitHub.

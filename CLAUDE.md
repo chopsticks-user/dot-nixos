@@ -52,7 +52,7 @@ nix shell nixpkgs#shellcheck -c shellcheck -s bash scripts/*.sh   # installed sc
 - **Do not edit `secrets.yaml` files.** They are sops-encrypted to host or user keys you do not have. If a build needs a new secret key, tell the user which key, which file, and the command (`nixos-secrets host edit [<machine-dir>]` / `nixos-secrets user edit [<machine-dir>]`).
 - **Respect the user boundary.** Keep machine-specific content in `examples/<host>/`. Do not put host names, usernames or personal packages in `lib/` or `modules/`.
 - **Respect example flake inputs.** An example's `outputs` may only use the `dot-nixos` input, because the root flake passes nothing else. Anything else an example needs must come through the framework.
-- **Commit on the current branch only.** Branch first if on `main`.
+- **Work goes through GitHub, based on `demo`.** Follow the issue, branch, pull request, review workflow from the global instructions. Branch off `demo` and open pull requests against `demo`, not `main` (`main` is the old configuration until `demo` replaces it). Never commit directly to `demo` or `main`.
 
 ## Pitfalls already hit (and how the design avoids them)
 
@@ -83,7 +83,7 @@ These are evaluation-order traps. Re-introducing any of them shows up as `infini
 
 ## Documents
 
-Each file in `docs/` has one job. Keep them apart: do not put open tasks in the backlog or finished work in the issues.
+Each file in `docs/` has one job. Open problems and planned work are GitHub issues, and finished work is a merged pull request; neither is kept in `docs/`.
 
 | File | What it is | Update it when |
 |------|------------|----------------|
@@ -92,9 +92,12 @@ Each file in `docs/` has one job. Keep them apart: do not put open tasks in the 
 | `docs/guide.md` | The consumer guide: creating, installing and operating a machine, and the reference of every module and command. Option details live in `options.md` | Any module, command, file convention or install step changes |
 | `docs/options.md` | Generated option reference; never edit by hand | Any option changes: run `just docs` |
 | `docs/design.md` | Every design decision, numbered, with why, cost and a recommendation (keep, improve, decide) | A decision is made, reversed or its cost changes |
-| `docs/backlog.md` | The coding log, like merged pull requests: one entry per finished change (`## PR <n>: <title>`, date, commits, issues closed or opened, then Why, Changes, Verification, Notes), newest first, plus the index table | Every finished change, in the same session it is committed; the next number follows the highest in the index |
-| `docs/issues.md` | The issue tracker, like a GitHub issues tab: an index table and one entry per issue (`### #<n> <title>`, labels, opened date, status), open or closed | A problem is found or work is planned (open an issue); a fix lands (move it to Closed and name the PR) |
 | `docs/roadmap.md` | Long-term goals: milestones toward a NixOS machine generator | Goals or milestones change |
 | `docs/testing.md` | How to run the tests, what each check covers, how they are built, what is still missing, and coverage by feature | Tests are added or the plan changes |
 
-Pull requests and issues reference each other by number ("Closes issue 4", "Closed by PR 28"). Each commit message stays self-contained; the backlog entry summarises the commits of one task.
+## GitHub
+
+- **Labels:** `bug`, `security`, `enhancement`, `tests`, `documentation`, `needs-owner` (cannot be done from the repository alone).
+- **Pull requests** follow `.github/pull_request_template.md` (Why, Changes, Verification, Notes) and start with `Closes #<n>`. GitHub only acts on that for merges into the default branch (`main`), so after merging into `demo` close the issue with `gh issue close <n> --comment "Fixed by #<pr>"`. Verification names the checks run and whether every host's `drvPath` changed.
+- **Each commit message stays self-contained**; the pull request summarises the commits of one task.
+- **Links to issues from `docs/`** are full URLs (`https://github.com/chopsticks-user/dot-nixos/issues/<n>`); Markdown files do not auto-link `#<n>`.

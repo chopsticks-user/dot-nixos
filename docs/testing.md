@@ -114,8 +114,8 @@ the flake.
 
 ## Still missing
 
-Each of these is an open issue in [issues.md](issues.md) (25 to 30) and part
-of the roadmap's first milestone.
+Each of these is an open issue on GitHub ([#24](https://github.com/chopsticks-user/dot-nixos/issues/24) to [#29](https://github.com/chopsticks-user/dot-nixos/issues/29)) and
+part of the roadmap's first milestone.
 
 ### Snapshots of the examples
 

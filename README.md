@@ -27,8 +27,6 @@ itself:
 | [docs/guide.md](docs/guide.md) | Creating, installing and running a machine, with the module and command reference |
 | [docs/options.md](docs/options.md) | Every framework option with its type and default, generated from the declarations |
 | [docs/design.md](docs/design.md) | The decisions behind the framework and what each one costs |
-| [docs/backlog.md](docs/backlog.md) | The coding log: every finished change as a pull request, with why, what and how it was verified |
-| [docs/issues.md](docs/issues.md) | The issue tracker: known problems and planned work, open and closed |
 | [docs/roadmap.md](docs/roadmap.md) | Where the framework is going: a NixOS machine generator |
 | [docs/testing.md](docs/testing.md) | How to run the tests, what each one covers, and what is still missing |
 
