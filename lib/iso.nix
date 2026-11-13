@@ -10,46 +10,36 @@ let
     name = "nixos-bootstrap";
     runtimeInputs = with pkgs; [
       openssh
-      jq
       git
     ];
     text = builtins.readFile ../scripts/bootstrap.sh;
   };
-  nixosHomestrapPkg = pkgs.writeShellApplication {
-    name = "nixos-homestrap";
-    runtimeInputs = with pkgs; [
-      openssh
-      jq
-      git
-      curl
-    ];
-    text = builtins.readFile ../scripts/homestrap.sh;
-  };
+  # values baked in by `just flash`; the installed machine runs its own nixos-homestrap
   bootstrapPkg = pkgs.writeShellApplication {
     name = "bootstrap";
     runtimeInputs = [
       pkgs.curl
       nixosBootstrapPkg
-      nixosHomestrapPkg
     ];
     text =
       let
-        hostname = builtins.getEnv "NIXOS_ISO_HOSTNAME";
-        hostKeyCmd = builtins.getEnv "NIXOS_ISO_HOST_KEY_CMD";
-        username = builtins.getEnv "NIXOS_ISO_USERNAME";
-        userKeyCmd = builtins.getEnv "NIXOS_ISO_USER_KEY_CMD";
-        escapedHostKeyCmd = builtins.replaceStrings [ "'" ] [ "\\'" ] hostKeyCmd;
-        escapedUserKeyCmd = builtins.replaceStrings [ "'" ] [ "\\'" ] userKeyCmd;
+        env = name: lib.escapeShellArg (builtins.getEnv "NIXOS_ISO_${name}");
       in
       ''
+        repo=${env "REPO"}
+        host=${env "HOSTNAME"}
+        user=${env "USERNAME"}
+        host_key_cmd=${env "HOST_KEY_CMD"}
+        user_key_cmd=${env "USER_KEY_CMD"}
+
         _bootstrap_help() {
-          printf "\n" >&2
-          printf "Bootstrap failed. Fix the issue above, then either:\n" >&2
-          printf "  1. Re-run: bootstrap\n" >&2
-          printf "  2. Or manually:\n" >&2
-          printf "    nixos-bootstrap ${hostname} ${escapedHostKeyCmd}\n" >&2
-          printf "    Then reboot and log in as ${username}, then run:\n" >&2
-          printf "    nixos-homestrap ${escapedUserKeyCmd}\n" >&2
+          echo >&2
+          echo "Bootstrap failed. Fix the issue above, then either:" >&2
+          echo "  1. Re-run: bootstrap" >&2
+          echo "  2. Or manually:" >&2
+          echo "    nixos-bootstrap $(printf '%q ' "$repo" "$host" "$host_key_cmd")" >&2
+          echo "    Then reboot, log in as $user and run:" >&2
+          echo "    nixos-homestrap $(printf '%q ' "$repo" "$user_key_cmd")" >&2
         }
         trap _bootstrap_help ERR
 
@@ -58,8 +48,14 @@ let
           sleep 1
         done
 
-        nixos-bootstrap --no-reboot "${hostname}" "${hostKeyCmd}"
-        sudo nixos-enter --root /mnt -- su - "${username}" -c "nixos-homestrap '${userKeyCmd}'"
+        nixos-bootstrap --no-reboot "$repo" "$host" "$host_key_cmd"
+        sudo nixos-enter --root /mnt -- su - "$user" -c \
+          "nixos-homestrap --no-reboot $(printf '%q ' "$repo" "$user_key_cmd")"
+
+        read -rp "Reboot now? (Y/n): " reboot_now
+        if [[ "''${reboot_now,,}" != "n" ]]; then
+          reboot
+        fi
       '';
   };
 in
@@ -112,7 +108,6 @@ in
       just
 
       nixosBootstrapPkg
-      nixosHomestrapPkg
     ]
     ++ lib.optional autoBootstrap bootstrapPkg;
 

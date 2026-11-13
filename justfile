@@ -17,6 +17,7 @@ flash device="/dev/sda" system=`nix eval --impure --raw --expr 'builtins.current
       read -rsp "Wi-Fi password: " NIXOS_ISO_WIFI_PSK && export NIXOS_ISO_WIFI_PSK
       [[ -t 0 ]] && echo
     fi
+    read -rp "Machine repository URL: " NIXOS_ISO_REPO && export NIXOS_ISO_REPO
     read -rp "Hostname: " NIXOS_ISO_HOSTNAME && export NIXOS_ISO_HOSTNAME
     read -rp "Username: " NIXOS_ISO_USERNAME && export NIXOS_ISO_USERNAME
     read -rp "Host SSH key command: " NIXOS_ISO_HOST_KEY_CMD && export NIXOS_ISO_HOST_KEY_CMD

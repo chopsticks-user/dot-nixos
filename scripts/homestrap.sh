@@ -1,36 +1,46 @@
 #!/usr/bin/env bash
+# runs as the user on the installed machine: clones the machine repository to the flake checkout
+# and places the user key, so this user's secrets decrypt from the next boot on
 set -euo pipefail
+
+usage() {
+  echo "usage: nixos-homestrap [--no-reboot] <repo-url> <user-key-command>" >&2
+  exit 1
+}
 
 no_reboot=false
 while [[ $# -gt 0 ]]; do
   case $1 in
-    --no-reboot) no_reboot=true; shift ;;
+    --no-reboot)
+      no_reboot=true
+      shift
+      ;;
     *) break ;;
   esac
 done
+[[ $# -eq 2 ]] || usage
 
-key_content=$(eval "$1")
-
+repo=$1
 config_path="${NIXOS_FLAKE_DIR:-$HOME/.config/nixos}"
-mkdir -p "$(dirname "$config_path")"
-git clone https://github.com/chopsticks-user/dot-nixos "$config_path"
-cd "$config_path"
-
 home_identity="$HOME/${NIXOS_HOME_IDENTITY:-.ssh/id_ed25519}"
-if [ ! -f "$home_identity" ]; then
-  mkdir -p "$(dirname "$home_identity")"
-  echo "$key_content" | tee "$home_identity" > /dev/null
-  chmod 600 "$home_identity"
-  ssh-keygen -y -f "$home_identity" > "$home_identity.pub"
-  chmod 644 "$home_identity.pub"
+
+if [ -e "$config_path" ]; then
+  echo "$config_path exists, not cloning"
+else
+  mkdir -p "$(dirname "$config_path")"
+  git clone "$repo" "$config_path"
 fi
 
-# home-manager is part of the system build, so placing the key is all the user side needs
-nix-collect-garbage -d
-sudo nix-collect-garbage -d
-sudo nix store optimise
-sudo rm -rf /tmp/*
-sudo rm -rf /var/tmp/*
+if [ -f "$home_identity" ]; then
+  echo "$home_identity exists, not replacing it"
+else
+  key_content=$(eval "$2")
+  mkdir -p "$(dirname "$home_identity")"
+  chmod 700 "$(dirname "$home_identity")"
+  (umask 077 && echo "$key_content" >"$home_identity")
+  ssh-keygen -y -f "$home_identity" >"$home_identity.pub"
+  chmod 644 "$home_identity.pub"
+fi
 
 if [[ "$no_reboot" == false ]]; then
   read -rp "Reboot now? (Y/n): " reboot_now

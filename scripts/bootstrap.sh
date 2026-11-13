@@ -1,50 +1,53 @@
 #!/usr/bin/env bash
+# runs on the installer: partitions the disk with the machine's disko layout, places the host key
+# where sops reads it and installs the machine from its repository
 set -euo pipefail
+
+usage() {
+  echo "usage: nixos-bootstrap [--no-reboot] <repo-url> <host> <host-key-command>" >&2
+  exit 1
+}
 
 no_reboot=false
 while [[ $# -gt 0 ]]; do
   case $1 in
-    --no-reboot) no_reboot=true; shift ;;
+    --no-reboot)
+      no_reboot=true
+      shift
+      ;;
     *) break ;;
   esac
 done
+[[ $# -eq 3 ]] || usage
 
-host=$1
-key_content=$(eval "$2")
+repo=$1
+host=$2
+key_content=$(eval "$3")
 
-tmp_clone=$(mktemp -d)
-trap 'rm -rf "$tmp_clone"' EXIT
-git clone https://github.com/chopsticks-user/dot-nixos "$tmp_clone"
 export NIX_CONFIG="experimental-features = nix-command flakes"
-if [ "$(nix eval --json "$tmp_clone#nixosConfigurations" --apply "c: c ? \"$host\"")" != "true" ]; then
-  echo "Error: host '$host' not found in nixosConfigurations" >&2
+flake=$(mktemp -d)
+git clone "$repo" "$flake"
+if [ "$(nix eval --json "$flake#nixosConfigurations" --apply "c: c ? \"$host\"")" != "true" ]; then
+  echo "error: $repo has no nixosConfigurations.$host" >&2
   exit 1
 fi
-eval_host() { nix eval --raw "$tmp_clone#nixosConfigurations.$host.config.$1"; }
-config_path_rel=$(eval_host machine.directories.nixos)
-config_path=${config_path_rel/#\$HOME/$HOME}
-system_identity=$(eval_host machine.directories.identity)
-rm -rf "$config_path"
-mkdir -p "$(dirname "$config_path")"
-mv "$tmp_clone" "$config_path"
-trap - EXIT
-cd "$config_path" || exit
 
-sudo nix --experimental-features "nix-command flakes" \
-  run github:nix-community/disko/latest -- --flake \
-  ".#$host" --mode destroy,format,mount
+# sudo drops NIX_CONFIG
+sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko/latest -- \
+  --flake "$flake#$host" --mode destroy,format,mount
 
-mnt_system_identity="/mnt/persist$system_identity"
-sudo mkdir -p "$(dirname "$mnt_system_identity")"
-echo "$key_content" | sudo tee "$mnt_system_identity" > /dev/null
-sudo chmod 600 "$mnt_system_identity"
-sudo chown root:root "$mnt_system_identity"
-sudo ssh-keygen -y -f "$mnt_system_identity" \
-  | sudo tee "$mnt_system_identity.pub" > /dev/null
-sudo chmod 644 "$mnt_system_identity.pub"
+# under /persist on impermanence machines, because sops decrypts before it is bind-mounted
+key_path=/mnt$(nix eval --raw "$flake#nixosConfigurations.$host.config.sops.age.sshKeyPaths" --apply builtins.head)
+sudo mkdir -p "$(dirname "$key_path")"
+echo "$key_content" | sudo tee "$key_path" >/dev/null
+sudo chmod 600 "$key_path"
+sudo chown root:root "$key_path"
+sudo ssh-keygen -y -f "$key_path" | sudo tee "$key_path.pub" >/dev/null
+sudo chmod 644 "$key_path.pub"
 
+# a reference copy in /mnt/etc/nixos to compare against the committed hardware/generated.nix
 sudo nixos-generate-config --no-filesystems --root /mnt
-sudo nixos-install --flake ".#$host" --no-root-password
+sudo nixos-install --flake "$flake#$host" --no-root-password
 
 if [[ "$no_reboot" == false ]]; then
   read -rp "Reboot now? (Y/n): " reboot_now
