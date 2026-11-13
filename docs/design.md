@@ -65,7 +65,7 @@ than options and cannot be set conditionally. Errors for a misnamed file are
 whatever Nix says (only the required files get a clear message).
 
 **Recommendation.** Keep. Add clear assertion messages for every convention
-(issues 15, 16).
+([#14](https://github.com/chopsticks-user/dot-nixos/issues/14), [#15](https://github.com/chopsticks-user/dot-nixos/issues/15)).
 
 ## 3. Embedded Home Manager, a user in one place
 
@@ -116,7 +116,7 @@ work in system halves. Machines cannot add modules in this format, because
 discovery only reads the framework's `modules/`.
 
 **Recommendation.** Keep the format. Let machines add `modules/<name>/` by the
-same convention (issue 18), so a consumer's own features follow the same rules.
+same convention ([#17](https://github.com/chopsticks-user/dot-nixos/issues/17)), so a consumer's own features follow the same rules.
 
 ## 6. Only the framework's inputs reach machine modules
 
@@ -199,7 +199,7 @@ to manage.
 **Cost.** The host key's lifetime is the secrets' lifetime: rotating the SSH
 host key means re-encrypting. A machine installed by the old bootstrap, which
 always wrote the key under `/persist`, decrypts nothing after this round's
-change unless its key is also at `/etc/ssh` (issue 6).
+change unless its key is also at `/etc/ssh` ([#5](https://github.com/chopsticks-user/dot-nixos/issues/5)).
 
 **Recommendation.** Keep.
 
