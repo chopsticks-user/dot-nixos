@@ -25,9 +25,6 @@ let
       inherit name runtimeInputs;
       text = scriptEnv + builtins.readFile file;
     };
-
-  # paths nested in another listed path are covered by it, and impermanence rejects overlaps
-  outermost = paths: lib.filter (p: !lib.any (q: lib.hasPrefix "${q}/" p) paths) (lib.unique paths);
 in
 {
   imports = [
@@ -186,7 +183,7 @@ in
       }
     ]
     ++ lib.optional (lib.hasPrefix "$HOME/" dirs.nixos) (lib.removePrefix "$HOME/" dirs.nixos)
-    ++ outermost (
+    ++ lib.outermostPaths (
       lib.attrValues (
         lib.getAttrs [
           "documents"

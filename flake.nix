@@ -77,12 +77,21 @@
     {
       lib.mkMachine = import ./lib/mk-machine.nix { inherit inputs lib; };
 
-      checks = lib.genAttrs (lib.filter (lib.hasSuffix "-linux") supported) (system: {
-        lib-packages = import ./tests/packages.nix {
-          inherit lib system;
-          inherit (inputs) nixpkgs;
-        };
-      });
+      checks = lib.genAttrs (lib.filter (lib.hasSuffix "-linux") supported) (
+        system:
+        let
+          test = import ./tests/harness.nix {
+            inherit lib;
+            pkgs = inputs.nixpkgs.legacyPackages.${system};
+          };
+        in
+        {
+          lib = import ./tests/lib.nix {
+            inherit lib system test;
+            inherit (inputs) nixpkgs;
+          };
+        }
+      );
 
       formatter = lib.genAttrs supported (system: inputs.nixpkgs.legacyPackages.${system}.nixfmt-tree);
 

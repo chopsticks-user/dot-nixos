@@ -15,8 +15,8 @@ Update the README, not this file, when the user-facing design changes.
 | `lib/modules.nix` | `defineModule`, plus discovery of `modules/*/system.nix` and `modules/*/home.nix`. |
 | `lib/overlays.nix` | The only place that writes `nixpkgs.overlays`: flake-input overlays (`llm-agents`) and the framework's `overlays/` (always on), then the machine's on top. |
 | `lib/peruser.nix` | System side of one user: account, password secret, per-user persistence. Curried with `{ username, userPersist }`. |
-| `lib/packages.nix`, `lib/attrs.nix` | Helpers merged into `lib`. `lib/default.nix` lists helper files explicitly, so a new helper file must be added there. |
-| `tests/` | Flake checks for `lib/` helpers, with fixtures (`checks.<system>.lib-packages`). |
+| `lib/packages.nix`, `lib/attrs.nix`, `lib/paths.nix` | Helpers merged into `lib`. `lib/default.nix` lists helper files explicitly, so a new helper file must be added there. |
+| `tests/` | Flake checks. `harness.nix` runs `lib.debug.runTests` cases and reports expected and actual values; `lib.nix` unit-tests the `lib/` helpers with fixtures (`checks.<system>.lib`). |
 | `modules/<name>/` | Feature modules. `system.nix` is the NixOS half and `home.nix` the Home Manager half, both under the `modules.<name>` namespace. |
 | `modules/core/` | Always-on module. It declares `machine.*`, `persist.home` (NixOS) and `user.*` (Home Manager) options. Keep it to what every machine needs; personal defaults belong in opt-in modules such as `cli` and `theme`. |
 | `overlays/` | The framework package layer: `<attr>/package.nix` and/or `<attr>/*.patch`. It is always applied to every machine and has no options; machines layer their own on top instead. |
@@ -32,7 +32,7 @@ nix flake check --no-build                   # root: evaluates both machines, IS
 (cd examples/andromeda && nix flake check --no-build)
 nix eval .#nixosConfigurations.<host>.config.system.build.toplevel.drvPath
 nix build .#nixosConfigurations.<host>.config.system.build.toplevel -o <scratch>/result
-nix build --no-link .#checks.x86_64-linux.lib-packages
+nix build --no-link .#checks.x86_64-linux.lib
 nix fmt                                      # nixfmt-tree, run before committing
 nix shell nixpkgs#shellcheck -c shellcheck -s bash scripts/*.sh   # installed scripts are built with writeShellApplication, which fails on any finding
 ```

@@ -4,4 +4,5 @@ builtins.foldl' (acc: file: acc // import file { inherit lib; }) { } [
   ./attrs.nix
   ./modules.nix
   ./packages.nix
+  ./paths.nix
 ]
