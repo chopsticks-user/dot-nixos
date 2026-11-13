@@ -47,6 +47,7 @@ else
 fi
 
 if [ -n "$command" ]; then
+  # shellcheck disable=SC2016 # $op is a literal placeholder that sd replaces
   command="$(printf '%s' "$command" | sd '\$op' "${target[0]%/}")"
 fi
 
