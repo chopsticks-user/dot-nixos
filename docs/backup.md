@@ -1,3 +1,0 @@
-- Firefox profiles: ~/.mozilla/firefox/<name>
-- SSH keys: ~/.ssh/
-- GPG keys: ~/.gnupg/

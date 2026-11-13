@@ -18,10 +18,11 @@ Update the README, not this file, when the user-facing design changes.
 | `lib/packages.nix`, `lib/attrs.nix` | Helpers merged into `lib`. `lib/default.nix` lists helper files explicitly, so a new helper file must be added there. |
 | `tests/` | Flake checks for `lib/` helpers, with fixtures (`checks.<system>.lib-packages`). |
 | `modules/<name>/` | Feature modules. `system.nix` is the NixOS half and `home.nix` the Home Manager half, both under the `modules.<name>` namespace. |
-| `modules/core/` | Always-on module. It declares `machine.*`, `persist.home` (NixOS) and `user.*` (Home Manager) options. |
+| `modules/core/` | Always-on module. It declares `machine.*`, `persist.home` (NixOS) and `user.*` (Home Manager) options. Keep it to what every machine needs; personal defaults belong in opt-in modules such as `cli` and `theme`. |
 | `overlays/` | The framework package layer: `<attr>/package.nix` and/or `<attr>/*.patch`. It is always applied to every machine and has no options; machines layer their own on top instead. |
 | `examples/<host>/` | User space. Each is a standalone machine flake (`andromeda`, `perseus`). |
-| `scripts/` | Bootstrap, homestrap, `nix-system` and the `just secrets` module. They read config with `nix eval`, never a JSON file. |
+| `scripts/` | `bootstrap.sh` (installer), `homestrap.sh`, `secrets.sh` (`nixos-secrets`), `nix-system.sh`, `open.sh`. Installed scripts get build-time paths from `scriptEnv` in `modules/core/system.nix`; bootstrap reads the machine with `nix eval`. Never a JSON file. |
+| `docs/` | `guide.md` (consumer guide and reference), `design.md`, `backlog.md`, `roadmap.md`, `testing.md`. |
 
 ## Commands
 
@@ -33,6 +34,7 @@ nix eval .#nixosConfigurations.<host>.config.system.build.toplevel.drvPath
 nix build .#nixosConfigurations.<host>.config.system.build.toplevel -o <scratch>/result
 nix build --no-link .#checks.x86_64-linux.lib-packages
 nix fmt                                      # nixfmt-tree, run before committing
+nix shell nixpkgs#shellcheck -c shellcheck -s bash scripts/*.sh   # installed scripts are built with writeShellApplication, which fails on any finding
 ```
 
 - **Refactors must not change output.** Compare the `drvPath` of every host before and after. An identical hash is the proof. If the hash changes, explain why to the user.
@@ -44,7 +46,7 @@ nix fmt                                      # nixfmt-tree, run before committin
 ## Hard rules
 
 - **Never switch.** Do not run `nixos-rebuild switch`, `nh os switch`, `nix-system switch`, or anything that activates a system. Building is the limit. Switching is the user's call.
-- **Do not edit `secrets.yaml` files.** They are sops-encrypted to host or user keys you do not have. If a build needs a new secret key, tell the user which key, which file, and the command (`just secrets host edit` / `just secrets user edit`).
+- **Do not edit `secrets.yaml` files.** They are sops-encrypted to host or user keys you do not have. If a build needs a new secret key, tell the user which key, which file, and the command (`nixos-secrets host edit [<machine-dir>]` / `nixos-secrets user edit [<machine-dir>]`).
 - **Respect the user boundary.** Keep machine-specific content in `examples/<host>/`. Do not put host names, usernames or personal packages in `lib/` or `modules/`.
 - **Respect example flake inputs.** An example's `outputs` may only use the `dot-nixos` input, because the root flake passes nothing else. Anything else an example needs must come through the framework.
 - **Commit on the current branch only.** Branch first if on `main`.
@@ -66,10 +68,12 @@ These are evaluation-order traps. Re-introducing any of them shows up as `infini
 - **New framework overlay (package or patch):** create `overlays/<attr>/` at the repo root with a `package.nix` (receives `prev` only if it declares it), `*.patch` files, or both. There is no `patches/` directory. It applies to every machine, so check that every host's `drvPath` changes only as intended. Do not add options to configure it. Consumers who need something else write their own overlay.
 - **New machine:** copy an example. Required files are `flake.nix`, `secrets.yaml`, `system/default.nix`, `hardware/default.nix`, `hardware/disk.nix` and at least one `users/<name>/home.nix`. To build it from the root, add its name to the list in the root `flake.nix` and a creation rule to `.sops.yaml`.
 - **New user:** create `users/<name>/home.nix`. The machine's `secrets.yaml` needs `password/<name>`, which only the user can add.
+- **New installed script:** add `scripts/<name>.sh` and install it with the `script` helper in `modules/core/system.nix`, listing its runtime inputs. Values it needs from the configuration go into `scriptEnv`, not `nix eval` at runtime.
 - **Machine overlay (package or patch):** drop `package.nix` and/or `*.patch` files into `examples/<host>/overlays/<attr>/`. Patches must apply to the exact upstream source and keep upstream tests passing. Generate them with `diff -u` against the unpacked `src`.
 
 ## Conventions
 
 - **Comments:** only explain a reason the code cannot show, on one line. A known limitation gets `# shortcut: <limit>, <when to upgrade>`.
 - **Nix style:** `nixfmt` style via `nix fmt`. Prefer native NixOS/Home Manager options over new framework options. Add a framework option only when no native option exists.
-- **Tests:** new non-trivial `lib/` logic gets a fixture-based check in `tests/`, wired into `checks` in `flake.nix`. Confirm the check fails when the logic is broken.
+- **Tests:** new non-trivial `lib/` logic gets a fixture-based check in `tests/`, wired into `checks` in `flake.nix`. Confirm the check fails when the logic is broken. See `docs/testing.md` for the planned layers.
+- **Docs:** user-facing changes update `docs/guide.md` (options, modules, commands). Finished work and new small tasks go in `docs/backlog.md`.
