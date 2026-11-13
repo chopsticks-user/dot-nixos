@@ -168,6 +168,14 @@ test "machines" {
       gaming = false;
     };
   };
+  testSystemHalfNotSettableFromMachine = {
+    expr =
+      (builtins.tryEval
+        (basicSystem.extendModules { modules = [ { modules.gaming.enable = true; } ]; })
+        .config.modules.gaming.enable
+      ).success;
+    expected = false;
+  };
   testSystemOnlyModuleFromMachine = {
     expr = {
       docs = basic.modules.docs.enable;

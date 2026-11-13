@@ -20,11 +20,6 @@ let
   userFile = username: name: root + "/users/${username}/${name}";
   persistFile = optional "system/persist.nix";
 
-  # modules with both halves; core is always on
-  sharedModuleNames = lib.remove "core" (
-    lib.intersectLists (lib.moduleNamesWith "system.nix") (lib.moduleNamesWith "home.nix")
-  );
-
   machine = lib.nixosSystem {
     specialArgs = { inherit inputs; };
     modules =
@@ -68,11 +63,10 @@ let
               username: config.home-manager.users.${username}.user.allowUnfree
             ) usernames;
 
-            # the system half of a module is on when any user enables its home half
-            modules = lib.genAttrs sharedModuleNames (name: {
-              enable = lib.mkDefault (
-                lib.any (username: config.home-manager.users.${username}.modules.${name}.enable) usernames
-              );
+            # the system half of a module is on when any user enables its home half; the only definition
+            # of these read-only options
+            modules = lib.genAttrs lib.sharedModuleNames (name: {
+              enable = lib.any (username: config.home-manager.users.${username}.modules.${name}.enable) usernames;
             });
           }
         )

@@ -19,7 +19,18 @@ let
       imports = module.imports or [ ];
       options.modules.${name} =
         (module.options or { })
-        // (lib.optionalAttrs (name != "core") { enable = lib.mkEnableOption name; });
+        // (lib.optionalAttrs (name != "core") {
+          enable =
+            if isNixos && lib.elem name sharedModuleNames then
+              # mk-machine is the only writer, so setting it from system/ is an eval error, not a silent half
+              lib.mkOption {
+                type = lib.types.bool;
+                readOnly = true;
+                description = "Whether the system half of ${name} is on. Read-only: it is on when any user sets `modules.${name}.enable` in their home.nix.";
+              }
+            else
+              lib.mkEnableOption name;
+        });
       # allowlisting is not enabling, so it skips the enable guard; this keeps pkgs independent of
       # enable flags derived from home-manager, which itself needs pkgs
       config = lib.mkMerge [
@@ -66,6 +77,11 @@ let
       ) (builtins.readDir ../modules)
     );
 
+  # modules with both halves; core is always on
+  sharedModuleNames = lib.remove "core" (
+    lib.intersectLists (moduleNamesWith "system.nix") (moduleNamesWith "home.nix")
+  );
+
   importModules =
     class: file:
     map (name: defineModule class name (import (../modules + "/${name}/${file}"))) (
@@ -73,7 +89,7 @@ let
     );
 in
 {
-  inherit defineModule moduleNamesWith;
+  inherit defineModule moduleNamesWith sharedModuleNames;
   systemModules = importModules "nixos" "system.nix";
   homeModules = importModules "home" "home.nix";
 }

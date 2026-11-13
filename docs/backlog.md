@@ -12,6 +12,7 @@ the fact from their commit messages.
 
 | PR | Title | Merged | Commits |
 |----|-------|--------|---------|
+| 36 | Make the system half of a two-half module read-only | 2026-11-13 | this entry's commit |
 | 35 | Generate the option reference and give each doc topic one home | 2026-11-13 | this entry's commit |
 | 34 | Share the system's nixpkgs with every user | 2026-11-13 | `5ba8acc` |
 | 33 | Persist what every machine needs in core | 2026-11-13 | `d425570` |
@@ -47,6 +48,35 @@ the fact from their commit messages.
 | 3 | Group machine files under `hardware/` and `system/` | 2026-11-11 | `664ceba`, `c75dea1`, `ce1f42a` |
 | 2 | Rename features to modules, fold internals into `lib/` | 2026-11-11 | `c6298d2` |
 | 1 | Turn the repository into a single-machine, multi-user framework | 2026-11-11 | `fdcc2f4` |
+
+## PR 36: Make the system half of a two-half module read-only
+
+2026-11-13 · Commits: the commit that adds this entry · Closes issue 35
+
+**Why.** The system half of a module with both halves (firefox, zsh, gaming,
+...) follows the users, but its `enable` was an ordinary option set with
+`mkDefault`. Setting it in `system/` evaluated fine and did the wrong thing:
+`true` gave persistence without the program, `false` broke the users who
+enabled the home half.
+
+**Changes.** `sharedModuleNames` moves from `mk-machine.nix` into
+`lib/modules.nix`, where `defineModule` declares the system half's `enable`
+of those modules as a `readOnly` bool without a default (a read-only option
+counts its default as a definition). `mkMachine` is the only definition, now
+without `mkDefault`. Any other definition fails with "The option
+`modules.<name>.enable' is read-only, but it's set multiple times", naming
+both files. System-only and home-only modules keep `mkEnableOption`. New test
+`testSystemHalfNotSettableFromMachine`. Guide 1, 7.1 and 7.6, design 4,
+testing.md and CLAUDE.md describe the rule.
+
+**Verification.** `just verify` passes. With `mkDefault` and a writable option
+restored, the new test fails (`expected: false, actual: true`). Both examples'
+`drvPath` are unchanged. No example or fixture set a system half from
+`system/`.
+
+**Notes.** Making only `readOnly` false is not enough to fail the test: two
+plain bool definitions also conflict. The read-only error is the clearer of
+the two.
 
 ## PR 35: Generate the option reference and give each doc topic one home
 

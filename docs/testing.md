@@ -58,8 +58,8 @@ secrets files, built by the real `mkMachine` the way a consumer's flake
 does. `tests/machines.nix` checks what the framework derives from their files:
 the output name, accounts and their defaults, login shells and the programs
 they need, password and Wi-Fi secrets, network profiles, the sops host key
-path with and without impermanence, system halves following users,
-system-only modules, home halves per user, machine overlays reaching users,
+path with and without impermanence, system halves following users (and not
+settable from the machine), system-only modules, home halves per user, machine overlays reaching users,
 user secrets files, the git identity, XDG directories, installed commands,
 the persisted paths per user, and that both fixtures evaluate to whole
 systems (which also runs every NixOS assertion).

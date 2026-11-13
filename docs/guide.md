@@ -48,9 +48,10 @@ switch: building the machine builds every user's home.
 
 Features come as modules under `modules.<name>`. Each module may have a system
 half and a home half. Enabling a module in a user's `home.nix` turns on its
-home half for that user and its system half for the whole machine. Enabling it
-in `system/` turns on only the system half, which is how machine-only modules
-such as `grub` are used.
+home half for that user and its system half for the whole machine. Modules
+with only a system half, such as `grub`, are enabled in `system/`. The system
+half of a module with both halves is read-only: setting it in `system/` is an
+evaluation error, so it can only follow the users.
 
 ## 2. Prerequisites
 
@@ -536,7 +537,7 @@ directories.
    persisted paths.
 
 The system half of a module with both halves is enabled when any user enables
-its home half. `useGlobalPkgs` is on: users share the system's nixpkgs, with
+its home half, and nothing else may set it (`readOnly`). `useGlobalPkgs` is on: users share the system's nixpkgs, with
 its overlays, and every user's `user.allowUnfree` is added to its unfree
 allowlist.
 
@@ -579,8 +580,8 @@ secrets) are in [options.md](options.md#nixos-options).
 
 Enable with `modules.<name>.enable = true`. Module options are in
 [options.md](options.md). "Home" modules are enabled per user
-in `home.nix` and switch on their system half for the machine; "system" modules
-are enabled in `system/`.
+in `home.nix` and switch on their system half for the machine, which `system/`
+cannot set; "system" modules are enabled in `system/`.
 
 | Module | Halves | What it sets up | Persists |
 |--------|--------|-----------------|----------|

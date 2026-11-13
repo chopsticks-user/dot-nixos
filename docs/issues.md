@@ -45,6 +45,7 @@ Labels: `bug`, `security`, `enhancement`, `tests`, `docs`, `needs-owner`
 | 32 | Undocumented machine-wide effects of user modules | docs | Open |
 | 33 | Every user evaluates its own nixpkgs | enhancement | Closed by PR 34 |
 | 34 | Docs repeat the layout, module rules and open issues | docs | Closed by PR 35 |
+| 35 | Enabling a two-half module in `system/` silently enables only its system half | bug | Closed by PR 36 |
 
 ## Closed
 
@@ -140,6 +141,19 @@ Fixed by turning the README into an overview that links into the guide,
 replacing the guide's option tables with the generated reference and its
 limitations with a pointer to this tracker. testing.md's plans stay, since
 the test issues link to them.
+
+### #35 Enabling a two-half module in `system/` silently enables only its system half
+
+`bug` · Opened 2026-11-13 · Closed by PR 36
+
+`modules.firefox.enable = true` in `system/` evaluated, but only turned on the
+system half (persisting `~/.mozilla` for nobody) and no Firefox. Setting it to
+`false` while a user enabled the home half broke that user's half instead,
+for example a zsh login shell without `programs.zsh`. A system half has no
+valid setting of its own: it follows the users.
+
+Fixed by making the system half's `enable` read-only, defined only by
+`mkMachine`.
 
 ## Open
 

@@ -93,8 +93,9 @@ half; `modules.gaming` in one `home.nix` installs Steam for the machine.
 **Why.** The user is the unit of intent; the machine follows.
 
 **Cost.** One user's choice affects everyone (system packages, open firewall
-ports). Disabling a system half while a user wants it requires
-`lib.mkForce false`.
+ports). The system half's `enable` is read-only, so the machine cannot turn it
+on without a user (which used to give persistence without the program) or off
+while a user needs it (which broke the user's half).
 
 **Recommendation.** Keep. Document per module what its system half changes
 for the whole machine (the guide's module table is a start).
