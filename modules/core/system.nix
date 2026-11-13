@@ -37,6 +37,7 @@ in
       priority = lib.mkOption {
         type = lib.types.int;
         default = 100;
+        description = "Autoconnect priority of the ethernet profile";
       };
     };
     wifi = lib.mkOption {
@@ -46,15 +47,18 @@ in
             priority = lib.mkOption {
               type = lib.types.int;
               default = 10;
+              description = "Autoconnect priority of this network";
             };
             autoconnect = lib.mkOption {
               type = lib.types.bool;
               default = true;
+              description = "Whether to connect to this network automatically";
             };
           };
         }
       );
       default = { };
+      description = "Wi-Fi networks by name; each reads `networking/wifi/<name>/ssid` and `.../password` from the host secrets";
     };
   };
 

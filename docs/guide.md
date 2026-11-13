@@ -547,43 +547,21 @@ allowlist.
 | `inputs` | NixOS and Home Manager modules | The framework's flake inputs: nixpkgs, nixos-hardware, disko, home-manager, sops-nix, impermanence, nix-index-database, nix-alien, nvf, noctalia, steam-config-nix, llm-agents |
 | `osConfig` | Home Manager modules | The machine's NixOS config |
 
-The machine flake's own inputs are not passed through; see 8.
+The machine flake's own inputs are not passed through (issue 17 in
+[issues.md](issues.md)).
 
 ### 7.3 machine.* (NixOS)
 
-| Option | Default | Meaning |
-|--------|---------|---------|
-| `machine.directories.nixos` | `"$HOME/.config/nixos"` | Where users check out the machine repository; used by scripts and `nh`. `$HOME` is expanded at runtime |
-| `machine.directories.identity` | `"/etc/ssh/ssh_host_ed25519_key"` | Host SSH key, also the age identity for host secrets |
-| `machine.directories.home` | see below | Well-known home paths, relative to each home |
-
-Default `machine.directories.home`:
-
-| Key | Path | Key | Path |
-|-----|------|-----|------|
-| `identity` | `.ssh/id_ed25519` | `media` | `media` |
-| `cache` | `.cache` | `pictures` | `media/images` |
-| `config` | `.config` | `music` | `media/audio` |
-| `data` | `.local/share` | `videos` | `media/videos` |
-| `state` | `.local/state` | `wallpapers` | `media/images/wallpapers` |
-| `bin` | `.local/bin` | `screenshots` | `media/images/screenshots` |
-| `documents` | `documents` | `screencasts` | `media/videos/screencasts` |
-| `download` | `downloads` | `boxes` | `boxes` |
-| `projects` | `projects` | `desktop`, `templates`, `publicShare` | `.local/share/.xdg-ignore` |
-
-The user key must be inside a directory of home, because that directory is
-persisted with mode 0700.
+Framework settings without a native NixOS option, set in `system/`: where the
+repository is checked out, the host key, and the well-known home paths. Every
+option with its type and default is in [options.md](options.md#nixos-options),
+generated from the declarations.
 
 ### 7.4 user.* (Home Manager)
 
-| Option | Default | Meaning |
-|--------|---------|---------|
-| `user.description` | `""` | Account description (full name) |
-| `user.groups` | `[ "wheel" "networkmanager" ]` | Extra groups |
-| `user.shell` | `pkgs.bashInteractive` (zsh with `modules.zsh`) | Login shell, also `SHELL` |
-| `user.terminal` | `null` (kitty with `modules.hyprland`) | Terminal emulator, exported as `TERMINAL` |
-| `user.allowUnfree` | `[ ]` | Unfree package names this user installs, allowed machine-wide |
-| `user.directories` | `machine.directories.home` under this home | Absolute well-known paths; XDG user directories are set from them |
+Per-user settings, set in `home.nix`: the account fields the system reads back
+(`description`, `groups`, `shell`), the terminal, unfree package names and the
+resolved home paths. See [options.md](options.md#home-manager-options).
 
 ### 7.5 modules.core (always on)
 
@@ -594,42 +572,37 @@ and every user's password from secrets, sops with the host key, the commands in
 For every user it sets the XDG directories from `user.directories`, the user
 key as sops identity and `SOPS_AGE_KEY_CMD`.
 
-| Option | Default | Meaning |
-|--------|---------|---------|
-| `modules.core.ethernet.priority` | `100` | Autoconnect priority of the ethernet profile |
-| `modules.core.wifi.<name>.priority` | `10` | Autoconnect priority of Wi-Fi network `<name>` |
-| `modules.core.wifi.<name>.autoconnect` | `true` | Whether to connect automatically |
-
-Each Wi-Fi network reads `networking/wifi/<name>/ssid` and `.../password`
-from the host secrets.
+Its options (ethernet and Wi-Fi priorities, Wi-Fi networks from the host
+secrets) are in [options.md](options.md#nixos-options).
 
 ### 7.6 Modules
 
-Enable with `modules.<name>.enable = true`. "Home" modules are enabled per user
+Enable with `modules.<name>.enable = true`. Module options are in
+[options.md](options.md). "Home" modules are enabled per user
 in `home.nix` and switch on their system half for the machine; "system" modules
 are enabled in `system/`.
 
-| Module | Halves | What it sets up | Options | Persists |
-|--------|--------|-----------------|---------|----------|
-| `cli` | system | CLI toolkit (ripgrep, fd, jq, yq, btop matched to the GPU, ncdu, nixd, nixfmt, nvd, nix-alien, just, ...), nix-index with comma | | |
-| `docs` | system | man, info and dev documentation with a man cache, tldr, wikiman | | |
-| `fcitx` | system | fcitx5 with the Wayland frontend and a US keyboard group; add input methods through native `i18n.inputMethod.fcitx5.addons` and `settings` | | |
-| `firefox` | home, system | Firefox with a profile named after the user and a few chosen preferences | | `.mozilla`, `.cache/mozilla` |
-| `gaming` | home, system | Steam (firewall for remote play and dedicated servers), gamemode, gamescope, mangohud, protonup-qt, protontricks, steamcmd, 32-bit graphics | | `.local/share/Steam` |
-| `git` | home, system | git and gh | `user` (`{ name; email; }` in plain text), `identityFromSecrets` | `.config/gh`, `.local/state/gh` |
-| `grub` | system | GRUB for EFI as removable install, os-prober, remembers the last entry, firmware setup entry | | |
-| `hyprland` | home, system | Hyprland with the noctalia shell, keybindings, kitty, screenshots to `user.directories.screenshots`, start on tty1 login, default applications for `open`; enables `theme` | | Hyprland and noctalia config, data, cache; wireplumber state |
-| `llm` | home, system | Claude Code (settings stay writable), nix-ld for downloaded binaries | | `.claude` |
-| `neovim` | home, system | Neovim through nvf as default editor, with LSP, treesitter and formatting for several languages | | `.local/share/nvf` |
-| `nh` | system | nh, pointed at the checkout; its periodic clean keeps the last 8 generations and anything newer than 7 days | | |
-| `obs` | home | OBS Studio, recordings in `user.directories.screencasts` | `plugins`, `settings.global`, `settings.user`, `profiles` | |
-| `open` | home | An `open` command and default applications per category | `html`, `image`, `pdf`, `video`, `audio`, `directory`: a package or `{ package; desktopEntry; }` | |
-| `ssh` | home, system | sshd (password login on, root login off) and client defaults | | |
-| `theme` | home | Fira and FiraCode Nerd fonts, emoji, cursor, Adwaita GTK, Qt following GTK, dark or light | `variant` (`"dark"`, `"light"`) | |
-| `virtualization` | home, system | podman with docker compatibility, distrobox, qemu, quickemu, virt-manager, emulation of aarch64 and riscv64 | | `boxes` |
-| `vscode` | home, system | VS Code with extensions and language servers pinned to the store | | `.config/Code` |
-| `zed` | home, system | Zed with Nix support | | Zed data and cache |
-| `zsh` | home, system | zsh with completion, suggestions, highlighting and history, zoxide as `cd`, fzf; makes zsh the login shell | | `.config/zsh`, zoxide data, `.zsh_history` |
+| Module | Halves | What it sets up | Persists |
+|--------|--------|-----------------|----------|
+| `cli` | system | CLI toolkit (ripgrep, fd, jq, yq, btop matched to the GPU, ncdu, nixd, nixfmt, nvd, nix-alien, just, ...), nix-index with comma | |
+| `docs` | system | man, info and dev documentation with a man cache, tldr, wikiman | |
+| `fcitx` | system | fcitx5 with the Wayland frontend and a US keyboard group; add input methods through native `i18n.inputMethod.fcitx5.addons` and `settings` | |
+| `firefox` | home, system | Firefox with a profile named after the user and a few chosen preferences | `.mozilla`, `.cache/mozilla` |
+| `gaming` | home, system | Steam (firewall for remote play and dedicated servers), gamemode, gamescope, mangohud, protonup-qt, protontricks, steamcmd, 32-bit graphics | `.local/share/Steam` |
+| `git` | home, system | git and gh | `.config/gh`, `.local/state/gh` |
+| `grub` | system | GRUB for EFI as removable install, os-prober, remembers the last entry, firmware setup entry | |
+| `hyprland` | home, system | Hyprland with the noctalia shell, keybindings, kitty, screenshots to `user.directories.screenshots`, start on tty1 login, default applications for `open`; enables `theme` | Hyprland and noctalia config, data, cache; wireplumber state |
+| `llm` | home, system | Claude Code (settings stay writable), nix-ld for downloaded binaries | `.claude` |
+| `neovim` | home, system | Neovim through nvf as default editor, with LSP, treesitter and formatting for several languages | `.local/share/nvf` |
+| `nh` | system | nh, pointed at the checkout; its periodic clean keeps the last 8 generations and anything newer than 7 days | |
+| `obs` | home | OBS Studio, recordings in `user.directories.screencasts` | |
+| `open` | home | An `open` command and default applications per category | |
+| `ssh` | home, system | sshd (password login on, root login off) and client defaults | |
+| `theme` | home | Fira and FiraCode Nerd fonts, emoji, cursor, Adwaita GTK, Qt following GTK, dark or light | |
+| `virtualization` | home, system | podman with docker compatibility, distrobox, qemu, quickemu, virt-manager, emulation of aarch64 and riscv64 | `boxes` |
+| `vscode` | home, system | VS Code with extensions and language servers pinned to the store | `.config/Code` |
+| `zed` | home, system | Zed with Nix support | Zed data and cache |
+| `zsh` | home, system | zsh with completion, suggestions, highlighting and history, zoxide as `cd`, fzf; makes zsh the login shell | `.config/zsh`, zoxide data, `.zsh_history` |
 
 ### 7.7 Commands
 
@@ -648,14 +621,5 @@ environment to override `machine.directories.nixos` and
 
 ## 8. Limitations
 
-These are known and tracked in [issues.md](issues.md):
-
-- The machine flake's own inputs cannot reach its modules; only the
-  framework's inputs are passed. A machine needing another flake has to wait
-  for `mkMachine` to accept extra arguments.
-- Machines cannot add their own `modules/<name>` in the framework's format;
-  they write plain NixOS and Home Manager modules instead.
-- Patches apply to top-level packages only.
-- The installer scripts are tested with faked commands, but no test installs
-  onto a real or virtual disk yet.
-- Adding a user to an existing machine needs manual key generation (6.4).
+Known limitations and planned work are the open issues in
+[issues.md](issues.md).

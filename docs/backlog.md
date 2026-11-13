@@ -12,7 +12,8 @@ the fact from their commit messages.
 
 | PR | Title | Merged | Commits |
 |----|-------|--------|---------|
-| 34 | Share the system's nixpkgs with every user | 2026-11-13 | this entry's commit |
+| 35 | Generate the option reference and give each doc topic one home | 2026-11-13 | this entry's commit |
+| 34 | Share the system's nixpkgs with every user | 2026-11-13 | `5ba8acc` |
 | 33 | Persist what every machine needs in core | 2026-11-13 | `d425570` |
 | 32 | Turn the backlog into a coding log and record each doc's role | 2026-11-12 | this entry's commit |
 | 31 | Add an issue tracker and document the test suite | 2026-11-12 | `bc507f1` |
@@ -47,9 +48,40 @@ the fact from their commit messages.
 | 2 | Rename features to modules, fold internals into `lib/` | 2026-11-11 | `c6298d2` |
 | 1 | Turn the repository into a single-machine, multi-user framework | 2026-11-11 | `fdcc2f4` |
 
+## PR 35: Generate the option reference and give each doc topic one home
+
+2026-11-13 · Commits: the commit that adds this entry · Closes issues 31 and 34
+
+**Why.** The guide's option tables were written by hand and could drift from
+the declarations. The machine layout, module rules and overlay rules were
+written in the README, the guide and CLAUDE.md, and CLAUDE.md includes the
+README, so agents read them twice. README "Project structure" had already
+drifted.
+
+**Changes.** `lib/options-doc.nix` renders `docs/options.md` from the option
+declarations of the `basic` fixture with `nixosOptionsDoc`, leaving out module
+`enable` flags (the guide's module table lists those) and declaration paths.
+The flake exposes it as `packages.<system>.options-doc`; the `options-doc`
+check fails when the committed file differs, and `just docs` rewrites it.
+Every option without a description got one, mostly moved from the guide's
+tables; `machine.directories.home` and `user.directories` got a `defaultText`,
+the former built from the same attribute set as the defaults. Guide 7.3 to 7.5
+now link to the reference, 7.6 drops its options column, and section 8 points
+at the issue tracker. The README keeps the pitch, examples, philosophy and
+document index, with a short "how it works" that links into the guide.
+CLAUDE.md names the guide as the usage reference, lists the generator and
+`just docs`, and spells out the persistence rules the README used to hold.
+
+**Verification.** `just verify` passes. Changing one option description
+without `just docs` fails `options-doc` with "docs/options.md is out of date".
+Both examples' `drvPath` are unchanged.
+
+**Notes.** testing.md "Still missing" stays: issues 25 to 29 link to it for
+their plans.
+
 ## PR 34: Share the system's nixpkgs with every user
 
-2026-11-13 · Commits: the commit that adds this entry · Closes issue 33
+2026-11-13 · Commits: `5ba8acc` · Closes issue 33
 
 **Why.** Home Manager built a nixpkgs per user (`useGlobalPkgs = false`) only
 so users and home halves could allow unfree packages. On andromeda that was a

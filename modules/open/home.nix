@@ -10,7 +10,7 @@ let
 in
 {
   options = lib.mapAttrs (
-    _: _:
+    category: _:
     lib.mkOption {
       type = lib.types.nullOr (
         lib.types.either lib.types.package (
@@ -19,16 +19,19 @@ in
               package = lib.mkOption {
                 type = lib.types.nullOr lib.types.package;
                 default = null;
+                description = "Package that opens these files";
               };
               desktopEntry = lib.mkOption {
                 type = lib.types.nullOr (lib.types.either lib.types.str lib.types.attrs);
                 default = null;
+                description = "Desktop entry name, or a desktop entry to create, when the package's own does not fit";
               };
             };
           }
         )
       );
       default = null;
+      description = "Default application for ${category} files: a package, or `{ package; desktopEntry; }`";
     }
   ) mime;
 

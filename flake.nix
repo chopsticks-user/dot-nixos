@@ -100,6 +100,11 @@
           import ./tests/scripts.nix { pkgs = inputs.nixpkgs.legacyPackages.${system}; }
         )
         // {
+          options-doc = inputs.nixpkgs.legacyPackages.${system}.runCommand "test-options-doc" { } ''
+            diff -u ${./docs/options.md} ${self.packages.${system}.options-doc} \
+              || { echo "docs/options.md is out of date: run just docs"; exit 1; }
+            touch $out
+          '';
           shellcheck =
             inputs.nixpkgs.legacyPackages.${system}.runCommand "test-shellcheck"
               { nativeBuildInputs = [ inputs.nixpkgs.legacyPackages.${system}.shellcheck ]; }
@@ -109,6 +114,14 @@
               '';
         }
       );
+
+      packages = lib.genAttrs (lib.filter (lib.hasSuffix "-linux") supported) (system: {
+        options-doc = import ./lib/options-doc.nix {
+          inherit lib;
+          pkgs = inputs.nixpkgs.legacyPackages.${system};
+          machine = (self.lib.mkMachine ./tests/machines/basic).nixosConfigurations.basic;
+        };
+      });
 
       formatter = lib.genAttrs supported (system: inputs.nixpkgs.legacyPackages.${system}.nixfmt-tree);
 

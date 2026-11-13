@@ -2,9 +2,10 @@
 
 @README.md
 
-The README above is the source of truth for what the framework is and how it is
-used. This file only adds what an agent needs to work in the repo safely.
-Update the README, not this file, when the user-facing design changes.
+The README above says what the framework is. `docs/guide.md` is the source of
+truth for how it is used and `docs/options.md` (generated) for its options.
+This file only adds what an agent needs to work in the repo safely. When the
+user-facing design changes, update the guide, not this file.
 
 ## Where things live
 
@@ -22,6 +23,7 @@ Update the README, not this file, when the user-facing design changes.
 | `overlays/` | The framework package layer: `<attr>/package.nix` and/or `<attr>/*.patch`. It is always applied to every machine and has no options; machines layer their own on top instead. |
 | `examples/<host>/` | User space. Each is a standalone machine flake (`andromeda`, `perseus`). |
 | `scripts/` | `bootstrap.sh` (installer), `homestrap.sh`, `secrets.sh` (`nixos-secrets`), `nix-system.sh`, `open.sh`. Installed scripts get build-time paths from `scriptEnv` in `modules/core/system.nix`; bootstrap reads the machine with `nix eval`. Never a JSON file. |
+| `lib/options-doc.nix` | Renders `docs/options.md` from the option declarations of the `basic` fixture; exposed as `packages.<system>.options-doc` and checked by `checks.<system>.options-doc`. |
 | `docs/` | The documents described in "Documents" below. |
 
 ## Commands
@@ -34,6 +36,7 @@ nix eval .#nixosConfigurations.<host>.config.system.build.toplevel.drvPath
 nix build .#nixosConfigurations.<host>.config.system.build.toplevel -o <scratch>/result
 nix build --no-link .#checks.x86_64-linux.lib
 nix fmt                                      # nixfmt-tree, run before committing
+just docs                                    # regenerate docs/options.md after changing any option
 nix shell nixpkgs#shellcheck -c shellcheck -s bash scripts/*.sh   # installed scripts are built with writeShellApplication, which fails on any finding
 ```
 
@@ -64,7 +67,8 @@ These are evaluation-order traps. Re-introducing any of them shows up as `infini
 
 ## How to extend
 
-- **New feature module:** create `modules/<name>/home.nix` and/or `system.nix`, each returning `{ options; configs; }` plus optional `imports`, `assertions`, `allowUnfree`, `persist.home`. It is discovered automatically. Persist paths in `system.nix` are relative to home (`config.machine.directories.home.*`).
+- **New feature module:** create `modules/<name>/home.nix` and/or `system.nix`, each returning `{ options; configs; }` plus optional `imports`, `assertions`, `allowUnfree` (system halves only), `persist.home` and `persist.system`. It is discovered automatically. Persist paths are declared in `system.nix`: `persist.home` is relative to home and applies only to users who enable the module (to everyone for modules without a home half); `persist.system` applies only under impermanence.
+- **New or changed option:** give it a `description` (and `defaultText` when the default is computed or holds packages), then run `just docs`. The `options-doc` check fails until `docs/options.md` matches.
 - **New framework overlay (package or patch):** create `overlays/<attr>/` at the repo root with a `package.nix` (receives `prev` only if it declares it), `*.patch` files, or both. There is no `patches/` directory. It applies to every machine, so check that every host's `drvPath` changes only as intended. Do not add options to configure it. Consumers who need something else write their own overlay.
 - **New machine:** copy an example. Required files are `flake.nix`, `secrets.yaml`, `system/default.nix`, `hardware/default.nix`, `hardware/disk.nix` and at least one `users/<name>/home.nix`. To build it from the root, add its name to the list in the root `flake.nix` and a creation rule to `.sops.yaml`.
 - **New user:** create `users/<name>/home.nix`. The machine's `secrets.yaml` needs `password/<name>`, which only the user can add.
@@ -83,9 +87,10 @@ Each file in `docs/` has one job. Keep them apart: do not put open tasks in the 
 
 | File | What it is | Update it when |
 |------|------------|----------------|
-| `README.md` | Overview: what the framework is, the machine layout, overlays, project structure, how modules work, philosophy, and the index of these documents | The user-facing design changes |
+| `README.md` | Overview: what the framework is, how a machine flake starts, the examples, a short "how it works" with links into the guide, the philosophy, and the index of these documents. It holds no reference material of its own | The pitch, examples or document list change |
 | `CLAUDE.md` | This file: what an agent needs on top of the README | Paths, commands, rules or pitfalls change |
-| `docs/guide.md` | The consumer guide: creating, installing and operating a machine, and the reference of every option, module and command | Any option, module, command, file convention or install step changes |
+| `docs/guide.md` | The consumer guide: creating, installing and operating a machine, and the reference of every module and command. Option details live in `options.md` | Any module, command, file convention or install step changes |
+| `docs/options.md` | Generated option reference; never edit by hand | Any option changes: run `just docs` |
 | `docs/design.md` | Every design decision, numbered, with why, cost and a recommendation (keep, improve, decide) | A decision is made, reversed or its cost changes |
 | `docs/backlog.md` | The coding log, like merged pull requests: one entry per finished change (`## PR <n>: <title>`, date, commits, issues closed or opened, then Why, Changes, Verification, Notes), newest first, plus the index table | Every finished change, in the same session it is committed; the next number follows the highest in the index |
 | `docs/issues.md` | The issue tracker, like a GitHub issues tab: an index table and one entry per issue (`### #<n> <title>`, labels, opened date, status), open or closed | A problem is found or work is planned (open an issue); a fix lands (move it to Closed and name the PR) |

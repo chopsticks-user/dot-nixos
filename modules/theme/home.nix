@@ -17,6 +17,7 @@ in
         "light"
       ];
       default = "dark";
+      description = "Color scheme for GTK, Qt and the cursor";
     };
   };
 

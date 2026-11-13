@@ -31,6 +31,10 @@ flash device="/dev/sda" system=`nix eval --impure --raw --expr 'builtins.current
     echo "Warning: sensitive values are stored in the Nix store. Run 'rm -f result && nix store gc' to remove them, or manually delete with 'nix store delete \$(readlink -f result)' before removing the symlink."
   fi
 
+# regenerate docs/options.md from the option declarations
+docs:
+  install -m644 "$(nix build --no-link --print-out-paths .#options-doc)" docs/options.md
+
 # fast: formatting and every flake check (unit, fixture and script tests, shellcheck, both examples
 # evaluated); build: also builds both examples. Flakes only see tracked files, so `git add` first.
 verify tier="fast":

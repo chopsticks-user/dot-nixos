@@ -12,9 +12,11 @@
           options = {
             name = lib.mkOption {
               type = lib.types.str;
+              description = "Author name";
             };
             email = lib.mkOption {
               type = lib.types.str;
+              description = "Author email";
             };
           };
         }

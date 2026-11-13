@@ -2,27 +2,8 @@
 { lib, ... }:
 let
   inherit (lib) mkOption types;
-in
-{
-  options.machine.directories = {
-    nixos = mkOption {
-      type = types.str;
-      default = "$HOME/.config/nixos";
-      description = "Where the flake is checked out on the machine";
-    };
-    identity = mkOption {
-      type = types.str;
-      default = "/etc/ssh/ssh_host_ed25519_key";
-      description = "Host SSH key, also the sops age identity";
-    };
-    home = mkOption {
-      type = types.attrsOf types.str;
-      description = "Well-known home directories, relative to each user's home; each can be overridden on its own";
-    };
-  };
 
-  # one default per key, so overriding one directory keeps the others
-  config.machine.directories.home = lib.mapAttrs (_: lib.mkDefault) {
+  homeDefaults = {
     identity = ".ssh/id_ed25519";
     cache = ".cache";
     config = ".config";
@@ -44,4 +25,26 @@ in
     templates = ".local/share/.xdg-ignore";
     publicShare = ".local/share/.xdg-ignore";
   };
+in
+{
+  options.machine.directories = {
+    nixos = mkOption {
+      type = types.str;
+      default = "$HOME/.config/nixos";
+      description = "Where users check out the machine repository, used by the scripts and nh; `$HOME` is expanded at runtime";
+    };
+    identity = mkOption {
+      type = types.str;
+      default = "/etc/ssh/ssh_host_ed25519_key";
+      description = "Host SSH key, also the age identity for host secrets";
+    };
+    home = mkOption {
+      type = types.attrsOf types.str;
+      defaultText = lib.literalExpression (lib.generators.toPretty { } homeDefaults);
+      description = "Well-known home directories, relative to each user's home; each can be overridden on its own. The user key (`identity`) must be inside a directory of home, because that directory is persisted with mode 0700";
+    };
+  };
+
+  # one default per key, so overriding one directory keeps the others
+  config.machine.directories.home = lib.mapAttrs (_: lib.mkDefault) homeDefaults;
 }

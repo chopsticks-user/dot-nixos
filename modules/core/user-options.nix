@@ -14,6 +14,7 @@ in
     description = mkOption {
       type = types.str;
       default = "";
+      description = "Account description (full name)";
     };
     groups = mkOption {
       type = types.listOf types.str;
@@ -21,6 +22,7 @@ in
         "wheel"
         "networkmanager"
       ];
+      description = "Groups of the account";
     };
     shell = mkOption {
       type = types.package;
@@ -40,6 +42,7 @@ in
     };
     directories = mkOption {
       type = types.attrsOf types.str;
+      defaultText = lib.literalMD "each of `machine.directories.home` under `home.homeDirectory`";
       description = "Absolute paths of well-known home directories, by default machine.directories.home resolved against home.homeDirectory; each can be overridden on its own";
     };
   };

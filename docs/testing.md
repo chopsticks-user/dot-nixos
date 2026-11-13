@@ -19,6 +19,7 @@ nix build --no-link -L .#checks.x86_64-linux.<name>   # one check, with its outp
 | `machines` | `tests/machines.nix` | `mkMachine`, core and the per-user wiring, through fixture machines |
 | `script-secrets`, `script-homestrap`, `script-nix-system`, `script-bootstrap`, `script-iso-bootstrap` | `tests/scripts.nix`, `tests/scripts/*.sh` | The scripts, run for real with faked commands |
 | `shellcheck` | `flake.nix` | Every script and script test |
+| `options-doc` | `lib/options-doc.nix` | `docs/options.md` matches the option declarations (`just docs` regenerates it) |
 | (evaluation) | `nix flake check` | Both examples and both ISOs evaluate |
 
 ## How the tests are built

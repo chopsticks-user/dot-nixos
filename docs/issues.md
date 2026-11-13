@@ -41,10 +41,10 @@ Labels: `bug`, `security`, `enhancement`, `tests`, `docs`, `needs-owner`
 | 28 | No VM tests with throwaway keys | tests | Open |
 | 29 | No test of the install flow on a disk | tests | Open |
 | 30 | Error messages of `mkMachine` are not tested | tests | Open |
-| 31 | Option reference in the guide is maintained by hand | docs | Open |
+| 31 | Option reference in the guide is maintained by hand | docs | Closed by PR 35 |
 | 32 | Undocumented machine-wide effects of user modules | docs | Open |
 | 33 | Every user evaluates its own nixpkgs | enhancement | Closed by PR 34 |
-| 34 | Docs repeat the layout, module rules and open issues | docs | Open |
+| 34 | Docs repeat the layout, module rules and open issues | docs | Closed by PR 35 |
 
 ## Closed
 
@@ -105,6 +105,16 @@ though the value is meant to be literal.
 Found by `script-iso-bootstrap`, which builds the script with hostile values.
 Fixed by excluding SC2016 for that script.
 
+### #31 Option reference in the guide is maintained by hand
+
+`docs` · Opened 2026-11-12 · Closed by PR 35
+
+The tables in guide section 7 can drift from the option declarations.
+Proposal: generate them from the options.
+
+Fixed by generating `docs/options.md` from the declarations, checked by
+`options-doc`.
+
 ### #33 Every user evaluates its own nixpkgs
 
 `enhancement` · Opened 2026-11-13 · Closed by PR 34
@@ -115,6 +125,21 @@ andromeda (two users) took 13.7 s and 1.96 GB to evaluate.
 
 Fixed by sharing the system's nixpkgs and adding a `user.allowUnfree` option
 that mk-machine adds to the system's allowlist.
+
+### #34 Docs repeat the layout, module rules and open issues
+
+`docs` · Opened 2026-11-13 · Closed by PR 35
+
+The machine layout, the module rules and the overlay rules are written in the
+README, in guide.md and in CLAUDE.md, which also includes the README, so agents
+read them twice. README "Project structure" has already drifted (`tests/`,
+`justfile`). guide.md §8 and testing.md "Still missing" repeat open issues.
+Each topic should have one home that the others link to. See also #31.
+
+Fixed by turning the README into an overview that links into the guide,
+replacing the guide's option tables with the generated reference and its
+limitations with a pointer to this tracker. testing.md's plans stay, since
+the test issues link to them.
 
 ## Open
 
@@ -333,13 +358,6 @@ it fails with, because `builtins.tryEval` does not return it. Proposal: check
 messages in a derivation that runs `nix eval` on the fixtures, or accept the
 gap.
 
-### #31 Option reference in the guide is maintained by hand
-
-`docs` · Opened 2026-11-12
-
-The tables in guide section 7 can drift from the option declarations.
-Proposal: generate them from the options.
-
 ### #32 Undocumented machine-wide effects of user modules
 
 `docs` · Opened 2026-11-12
@@ -347,13 +365,3 @@ Proposal: generate them from the options.
 When one user enables a module, its system half changes the machine for
 everyone (design 4). Proposal: document per module what its system half
 changes.
-
-### #34 Docs repeat the layout, module rules and open issues
-
-`docs` · Opened 2026-11-13 · Open
-
-The machine layout, the module rules and the overlay rules are written in the
-README, in guide.md and in CLAUDE.md, which also includes the README, so agents
-read them twice. README "Project structure" has already drifted (`tests/`,
-`justfile`). guide.md §8 and testing.md "Still missing" repeat open issues.
-Each topic should have one home that the others link to. See also #31.

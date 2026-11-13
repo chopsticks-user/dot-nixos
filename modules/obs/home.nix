@@ -10,6 +10,7 @@
     plugins = lib.mkOption {
       type = lib.types.listOf lib.types.attrs;
       default = [ ];
+      description = "OBS plugin packages";
     };
     settings = lib.mkOption {
       type = lib.types.submodule {
@@ -17,20 +18,24 @@
           global = lib.mkOption {
             type = lib.types.attrs;
             default = { };
+            description = "INI sections written to `obs-studio/global.ini` on every activation";
           };
           user = lib.mkOption {
             type = lib.types.attrs;
             default = { };
+            description = "INI sections written to `obs-studio/user.ini` on every activation";
           };
         };
       };
       default = { };
+      description = "OBS settings files; changes made in OBS are overwritten on the next activation";
     };
     profiles = lib.mkOption {
       type = lib.types.attrsOf lib.types.attrs;
       default = {
         Untitled = { };
       };
+      description = "Profiles by name, each written to its `basic.ini`; recordings go to `user.directories.screencasts`";
     };
   };
 
