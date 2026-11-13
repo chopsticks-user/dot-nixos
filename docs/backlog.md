@@ -12,6 +12,7 @@ the fact from their commit messages.
 
 | PR | Title | Merged | Commits |
 |----|-------|--------|---------|
+| 33 | Persist what every machine needs in core | 2026-11-13 | this entry's commit |
 | 32 | Turn the backlog into a coding log and record each doc's role | 2026-11-12 | this entry's commit |
 | 31 | Add an issue tracker and document the test suite | 2026-11-12 | `bc507f1` |
 | 30 | Add `just verify` and a shellcheck check for every script | 2026-11-12 | `b574bbb` |
@@ -44,6 +45,29 @@ the fact from their commit messages.
 | 3 | Group machine files under `hardware/` and `system/` | 2026-11-11 | `664ceba`, `c75dea1`, `ce1f42a` |
 | 2 | Rename features to modules, fold internals into `lib/` | 2026-11-11 | `c6298d2` |
 | 1 | Turn the repository into a single-machine, multi-user framework | 2026-11-11 | `fdcc2f4` |
+
+## PR 33: Persist what every machine needs in core
+
+2026-11-13 · Commits: the commit that adds this entry
+
+**Why.** Every impermanent machine repeated the same system list (NixOS
+state, machine id, logs, NetworkManager, sops, the host key), and every user
+repeated the same home list for state the framework itself creates (nix and
+Home Manager state, user secrets). The two tester `persist.nix` files were
+identical.
+
+**Changes.** Core's system half gains `persist.system` with the NixOS and
+core-service paths plus the directory of `machine.directories.identity`, and
+its `persist.home` gains `.config/sops-nix`, `.local/state/nix`,
+`.local/state/home-manager` and `.cache/nix`. perseus's `system/persist.nix`
+keeps only bluetooth and seanime; the tester files and the impermanent
+fixture drop what core now covers. Per-user module persistence is unchanged:
+a module's home paths still apply only to users who enable it.
+
+**Verification.** `just verify` passes; the machine tests expect the new
+lists. The sorted persisted paths of perseus are identical before and after;
+its `drvPath` changes only because the list order changed. andromeda's
+`drvPath` is unchanged.
 
 ## PR 32: Turn the backlog into a coding log and record each doc's role
 

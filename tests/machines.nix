@@ -33,7 +33,11 @@ let
       files = lib.sort lib.lessThan (map (f: f.file) entry.files);
     };
   coreHome = [
+    ".cache/nix"
     ".config/nixos"
+    ".config/sops-nix"
+    ".local/state/home-manager"
+    ".local/state/nix"
     ".ssh"
     "documents"
     "downloads"
@@ -260,8 +264,13 @@ test "machines" {
     };
     expected = {
       directories = [
+        "/etc/NetworkManager/system-connections"
         "/etc/ssh"
+        "/var/db/sudo/lectured"
+        "/var/lib/NetworkManager"
         "/var/lib/nixos"
+        "/var/lib/sops-nix"
+        "/var/lib/systemd/coredump"
         "/var/log"
       ];
       files = [ "/etc/machine-id" ];

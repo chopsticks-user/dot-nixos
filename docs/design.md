@@ -17,7 +17,7 @@ keep, remove or improve. How the framework is used is in
 | 6 | Only the framework's inputs reach machine modules | Improve |
 | 7 | Opinionated modules shipped inside the framework | Improve |
 | 8 | Personal default home layout | Decide |
-| 9 | Framework persists what it creates in home | Keep |
+| 9 | Framework persists what it creates | Keep |
 | 10 | Host SSH key as the sops identity | Keep |
 | 11 | One host secrets file plus one per user | Keep |
 | 12 | Scripts installed on every machine with baked paths | Keep |
@@ -169,14 +169,17 @@ most people and applications expect.
 the XDG names and move this layout into an example. Either way it is one
 option to override.
 
-## 9. Framework persists what it creates in home
+## 9. Framework persists what it creates
 
 **What.** Under impermanence, core persists for every user the directory of
-the user key (mode 0700), the flake checkout and the data directories. Modules
-add their own paths for users who enable them.
+the user key (mode 0700), the flake checkout, nix and Home Manager state, user
+secrets and the data directories. Modules add their own paths for users who
+enable them. On the system side core keeps what NixOS and the services it
+enables need (`/var/lib/nixos`, `/etc/machine-id`, logs, NetworkManager, sops,
+the host key directory), so `system/persist.nix` lists only machine extras.
 
 **Why.** Homestrap places the key and the checkout; losing them on reboot
-breaks secrets and rebuilds. Users no longer repeat the same list.
+breaks secrets and rebuilds. Users and machines no longer repeat the same list.
 
 **Cost.** Users cannot opt out of persisting the data directories, and must
 not list them again (impermanence rejects duplicates).

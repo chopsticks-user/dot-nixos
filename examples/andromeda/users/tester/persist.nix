@@ -12,16 +12,12 @@
       mode = "0700";
     }
     ".config/dconf"
-    ".config/sops-nix"
     ".local/share/applications"
     ".local/share/icons"
     {
       directory = ".local/share/keyrings";
       mode = "0700";
     }
-    ".local/state/nix"
-    ".local/state/home-manager"
-    ".cache/nix"
   ]
   ++ [
     ".config/JetBrains"

@@ -173,14 +173,33 @@ in
     ];
   };
 
-  # every user keeps what the framework itself places in home: the user key, the flake checkout
-  # and the well-known data directories
+  # what NixOS and the services core enables need to survive a reboot; machines add the rest
+  persist.system = {
+    directories = [
+      "/var/log"
+      "/var/db/sudo/lectured"
+      "/var/lib/nixos"
+      "/var/lib/sops-nix"
+      "/var/lib/NetworkManager"
+      "/var/lib/systemd/coredump"
+      (dirOf dirs.identity)
+      "/etc/NetworkManager/system-connections"
+    ];
+    files = [ "/etc/machine-id" ];
+  };
+
+  # every user keeps what the framework itself places in home: the user key, the flake checkout,
+  # nix and home-manager state, user secrets and the well-known data directories
   persist.home = {
     directories = [
       {
         directory = dirOf dirs.home.identity;
         mode = "0700";
       }
+      ".config/sops-nix"
+      ".local/state/nix"
+      ".local/state/home-manager"
+      ".cache/nix"
     ]
     ++ lib.optional (lib.hasPrefix "$HOME/" dirs.nixos) (lib.removePrefix "$HOME/" dirs.nixos)
     ++ lib.outermostPaths (

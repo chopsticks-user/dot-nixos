@@ -185,32 +185,30 @@ expected to be temporary (tmpfs or a wiped subvolume), with a `/persist` file
 system that survives reboots. perseus shows the layout: tmpfs `/`, btrfs
 subvolumes for `/persist` and `/nix`.
 
-`system/persist.nix` is a plain attribute set, not a module:
+`system/persist.nix` is a plain attribute set, not a module. It lists only
+what the machine adds, and may be `{ }`:
 
 ```nix
 {
-  directories = [
-    "/var/log"
-    "/var/lib/nixos"
-    "/var/lib/sops-nix"
-    "/var/lib/NetworkManager"
-    "/etc/ssh"
-    "/etc/NetworkManager/system-connections"
-  ];
-  files = [ "/etc/machine-id" ];
+  directories = [ "/var/lib/bluetooth" ];
+  files = [ ];
 }
 ```
 
-Persist `/etc/ssh` so `sshd` keeps its host key. sops itself reads the host key
-from `/persist/etc/ssh/ssh_host_ed25519_key`, because it decrypts before the
-bind mounts exist.
+The framework (core) already keeps `/var/log`, `/var/db/sudo/lectured`,
+`/var/lib/nixos`, `/var/lib/sops-nix`, `/var/lib/NetworkManager`,
+`/var/lib/systemd/coredump`, `/etc/NetworkManager/system-connections`,
+`/etc/machine-id` and the directory of the host key (`/etc/ssh`), so `sshd`
+keeps its host key. sops itself reads the host key from
+`/persist/etc/ssh/ssh_host_ed25519_key`, because it decrypts before the bind
+mounts exist.
 
 What survives in home directories is assembled for each user from three
 sources, all relative to the home directory:
 
 | Source | Applies to |
 |--------|------------|
-| The framework (core) | Every user: the directory of the user key (`.ssh`, mode 0700), the flake checkout, and the data directories `documents`, `downloads`, `projects`, `media` (and any of `pictures`, `music`, `videos` moved outside them) |
+| The framework (core) | Every user: the directory of the user key (`.ssh`, mode 0700), the flake checkout, nix and Home Manager state (`.local/state/nix`, `.local/state/home-manager`, `.cache/nix`), user secrets (`.config/sops-nix`), and the data directories `documents`, `downloads`, `projects`, `media` (and any of `pictures`, `music`, `videos` moved outside them) |
 | A module's `persist.home` | Users who enabled that module, for example `.mozilla` for `firefox` |
 | `users/<name>/persist.nix` | That user: anything else, same shape as `system/persist.nix` |
 
