@@ -646,7 +646,7 @@ environment to override `machine.directories.nixos` and
 
 ## 8. Limitations
 
-These are known and tracked in [backlog.md](backlog.md):
+These are known and tracked in [issues.md](issues.md):
 
 - The machine flake's own inputs cannot reach its modules; only the
   framework's inputs are passed. A machine needing another flake has to wait
@@ -654,5 +654,6 @@ These are known and tracked in [backlog.md](backlog.md):
 - Machines cannot add their own `modules/<name>` in the framework's format;
   they write plain NixOS and Home Manager modules instead.
 - Patches apply to top-level packages only.
-- The installer flow has no automated test; it runs shellcheck only.
+- The installer scripts are tested with faked commands, but no test installs
+  onto a real or virtual disk yet.
 - Adding a user to an existing machine needs manual key generation (6.4).

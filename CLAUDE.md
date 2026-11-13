@@ -22,7 +22,7 @@ Update the README, not this file, when the user-facing design changes.
 | `overlays/` | The framework package layer: `<attr>/package.nix` and/or `<attr>/*.patch`. It is always applied to every machine and has no options; machines layer their own on top instead. |
 | `examples/<host>/` | User space. Each is a standalone machine flake (`andromeda`, `perseus`). |
 | `scripts/` | `bootstrap.sh` (installer), `homestrap.sh`, `secrets.sh` (`nixos-secrets`), `nix-system.sh`, `open.sh`. Installed scripts get build-time paths from `scriptEnv` in `modules/core/system.nix`; bootstrap reads the machine with `nix eval`. Never a JSON file. |
-| `docs/` | `guide.md` (consumer guide and reference), `design.md`, `backlog.md`, `roadmap.md`, `testing.md`. |
+| `docs/` | `guide.md` (consumer guide and reference), `design.md`, `backlog.md` (coding log, one pull request entry per finished change), `issues.md` (issue tracker), `roadmap.md`, `testing.md`. |
 
 ## Commands
 
@@ -76,4 +76,4 @@ These are evaluation-order traps. Re-introducing any of them shows up as `infini
 - **Comments:** only explain a reason the code cannot show, on one line. A known limitation gets `# shortcut: <limit>, <when to upgrade>`.
 - **Nix style:** `nixfmt` style via `nix fmt`. Prefer native NixOS/Home Manager options over new framework options. Add a framework option only when no native option exists.
 - **Tests:** new non-trivial `lib/` logic gets a fixture-based check in `tests/`, wired into `checks` in `flake.nix`. Confirm the check fails when the logic is broken. See `docs/testing.md` for the planned layers.
-- **Docs:** user-facing changes update `docs/guide.md` (options, modules, commands). Finished work and new small tasks go in `docs/backlog.md`.
+- **Docs:** user-facing changes update `docs/guide.md` (options, modules, commands). Every finished change gets a pull request entry in `docs/backlog.md` (why, what changed, verification, commits). Problems found and planned work go in `docs/issues.md`; close an issue by naming the pull request that fixed it.
