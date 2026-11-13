@@ -1,4 +1,4 @@
-{ config, ... }:
+{ ... }:
 {
   modules = {
     zsh.enable = true;
