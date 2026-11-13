@@ -9,6 +9,6 @@
   environment.systemPackages = with pkgs; [
     seanime
     steamcmd
-    hello # patched by patches/hello, prints "Hello from perseus!"
+    hello # patched by overlays/hello, prints "Hello from perseus!"
   ];
 }

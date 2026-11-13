@@ -1,22 +1,28 @@
-# checks mkOverlaysFrom and mkPatchOverlay against fixture/, evaluation only
+# checks mkOverlaysFrom against fixture/overlays, evaluation only
 {
   lib,
   nixpkgs,
   system,
 }:
 let
+  stock = import nixpkgs { inherit system; };
   pkgs = import nixpkgs {
     inherit system;
-    overlays = lib.mkOverlaysFrom ./fixture/overlays ++ [ (lib.mkPatchOverlay ./fixture/patches) ];
+    overlays = lib.mkOverlaysFrom ./fixture/overlays;
   };
-  added = map (p: baseNameOf (toString p)) (
-    lib.drop (lib.length (import nixpkgs { inherit system; }).hello.patches or 0) pkgs.hello.patches
-  );
+  added =
+    attr:
+    map (p: baseNameOf (toString p)) (
+      lib.drop (lib.length (stock.hello.patches or [ ])) pkgs.${attr}.patches
+    );
 in
 assert pkgs.greeting.name == "greeting";
 assert
-  added == [
+  added "hello" == [
     "01-first.patch"
     "02-second.patch"
   ];
+# rehello's prev.hello already carries hello/'s patches, since overlays apply in name order
+assert lib.drop 2 (added "rehello") == [ "01-only.patch" ];
+assert !(builtins.tryEval pkgs.invalid).success;
 pkgs.runCommand "lib-packages-test" { } "touch $out"

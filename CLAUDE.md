@@ -13,13 +13,13 @@ Update the README, not this file, when the user-facing design changes.
 | `flake.nix` | Framework flake: `lib.mkMachine`, `checks`, `formatter`, ISOs. It also exposes each example's `nixosConfigurations` by calling the example's `outputs { dot-nixos = self; }`. |
 | `lib/mk-machine.nix` | The builder. Reads the machine directory, wires embedded Home Manager, and auto-enables system halves. |
 | `lib/modules.nix` | `defineModule`, plus discovery of `modules/*/system.nix` and `modules/*/home.nix`. |
-| `lib/overlays.nix` | The only place that writes `nixpkgs.overlays`: the framework's `overlays/` and `patches/` (always on), then the machine's on top. |
+| `lib/overlays.nix` | The only place that writes `nixpkgs.overlays`: the framework's `overlays/` (always on), then the machine's on top. |
 | `lib/peruser.nix` | System side of one user: account, password secret, per-user persistence. Curried with `{ username, userPersist }`. |
 | `lib/packages.nix`, `lib/attrs.nix` | Helpers merged into `lib`. `lib/default.nix` lists helper files explicitly, so a new helper file must be added there. |
 | `tests/` | Flake checks for `lib/` helpers, with fixtures (`checks.<system>.lib-packages`). |
 | `modules/<name>/` | Feature modules. `system.nix` is the NixOS half and `home.nix` the Home Manager half, both under the `modules.<name>` namespace. |
 | `modules/core/` | Always-on module. It declares `machine.*`, `persist.home` (NixOS) and `user.*` (Home Manager) options. |
-| `overlays/`, `patches/` | The framework package layer. It is always applied to every machine and has no options; machines layer their own on top instead. |
+| `overlays/` | The framework package layer: `<attr>/package.nix` and/or `<attr>/*.patch`. It is always applied to every machine and has no options; machines layer their own on top instead. |
 | `examples/<host>/` | User space. Each is a standalone machine flake (`andromeda`, `perseus`). |
 | `scripts/` | Bootstrap, homestrap, `nix-system` and the `just secrets` module. They read config with `nix eval`, never a JSON file. |
 
@@ -63,10 +63,10 @@ These are evaluation-order traps. Re-introducing any of them shows up as `infini
 ## How to extend
 
 - **New feature module:** create `modules/<name>/home.nix` and/or `system.nix`, each returning `{ options; configs; }` plus optional `imports`, `assertions`, `allowUnfree`, `persist.home`. It is discovered automatically. Persist paths in `system.nix` are relative to home (`config.machine.directories.home.*`).
-- **New framework overlay or patch:** create `overlays/<name>/package.nix` (receives `prev` only if it declares it) or `patches/<attr>/*.patch` at the repo root. It applies to every machine, so check that every host's `drvPath` changes only as intended. Do not add options to configure it. Consumers who need something else write their own overlay.
+- **New framework overlay (package or patch):** create `overlays/<attr>/` at the repo root with a `package.nix` (receives `prev` only if it declares it), `*.patch` files, or both. There is no `patches/` directory. It applies to every machine, so check that every host's `drvPath` changes only as intended. Do not add options to configure it. Consumers who need something else write their own overlay.
 - **New machine:** copy an example. Required files are `flake.nix`, `secrets.yaml`, `system/default.nix`, `hardware/default.nix`, `hardware/disk.nix` and at least one `users/<name>/home.nix`. To build it from the root, add its name to the list in the root `flake.nix` and a creation rule to `.sops.yaml`.
 - **New user:** create `users/<name>/home.nix`. The machine's `secrets.yaml` needs `password/<name>`, which only the user can add.
-- **Machine overlay or patch:** drop files into `examples/<host>/overlays/<name>/package.nix` or `examples/<host>/patches/<attr>/*.patch`. Patches must apply to the exact upstream source and keep upstream tests passing. Generate them with `diff -u` against the unpacked `src`.
+- **Machine overlay (package or patch):** drop `package.nix` and/or `*.patch` files into `examples/<host>/overlays/<attr>/`. Patches must apply to the exact upstream source and keep upstream tests passing. Generate them with `diff -u` against the unpacked `src`.
 
 ## Conventions
 

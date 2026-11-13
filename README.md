@@ -44,8 +44,7 @@ machine/
 │   ├── default.nix         required  NixOS module for the physical machine, usually imports generated.nix
 │   ├── disk.nix            required  disko layout
 │   └── generated.nix       optional  nixos-generate-config output, by convention
-├── overlays/               optional  <name>/package.nix becomes pkgs.<name>, on top of the framework's
-├── patches/                optional  <attr>/*.patch appended to pkgs.<attr>'s patches, in file name order
+├── overlays/               optional  <attr>/ changes pkgs.<attr> with package.nix and/or *.patch, on top of the framework's
 └── users/
     └── <user>/             one directory per user, the name is the username
         ├── home.nix        required  Home Manager module: user.* and modules.*
@@ -61,34 +60,49 @@ settings that have no native option live under `machine.*` in `system/`
 That includes the account fields (`description`, `groups`, `shell`), which
 the system side reads back to create the account.
 
-## Overlays and patches
+## Overlays
 
-Overlays and patches come in two layers that use the same file layout.
+An overlay is any change on top of nixpkgs: a new package, a replaced or
+rewrapped package, or patches to an existing one. All of them live in
+`overlays/<attr>/`, one directory per package attribute, the same way
+nixpkgs keeps `package.nix` and its patches side by side in `pkgs/by-name`.
+There is no separate `patches/` directory.
+
+What the directory contains decides what happens to `pkgs.<attr>`:
+- `package.nix` defines or replaces `pkgs.<attr>`. It is called like any
+  `callPackage` file, and also receives `prev` if it declares that argument.
+- `*.patch` files are appended to the package's patches in file name order.
+  Without a `package.nix` they patch the existing `pkgs.<attr>`. With one,
+  they patch its result, which then has to be a `mkDerivation` package.
+- Other files, such as `versions.nix` in `overlays/unreal-engine`, are
+  ignored. A directory with neither a `package.nix` nor a patch fails
+  evaluation.
+
+Only top-level attributes are supported, so `python3Packages.foo` cannot be
+changed this way. Patches must apply to the exact upstream source and keep
+upstream tests passing.
+
+Overlays come in two layers that use the same layout.
 [lib/overlays.nix](lib/overlays.nix) wires both, so nobody edits
 `nixpkgs.overlays` for them. The system and every user get the same result.
 
-1. **Framework layer.** The repository's `overlays/<name>/package.nix` and
-   `patches/<attr>/*.patch` are framework policy. They are always applied,
-   every machine inherits the resulting packages, and machines cannot switch
-   them off or configure them.
-2. **Machine layer.** A machine's own `overlays/` and `patches/` are applied
-   on top. A machine that needs something different writes its own overlay or
-   patch instead of touching the framework's. A machine overlay sees the
-   framework's package as `prev`. For example,
-   `examples/andromeda/overlays/bottles` adjusts the framework's bottles.
+1. **Framework layer.** The repository's `overlays/` is framework policy. It
+   is always applied, every machine inherits the resulting packages, and
+   machines cannot switch it off or configure it.
+2. **Machine layer.** A machine's own `overlays/` is applied on top. A
+   machine that needs something different writes its own overlay instead of
+   touching the framework's, and sees the framework's package as `prev`. For
+   example, `examples/andromeda/overlays/bottles` adjusts the framework's
+   bottles.
 
-The file conventions are the same in both layers:
-- `overlays/<name>/package.nix` becomes `pkgs.<name>`. It is called like any
-  `callPackage` file, and also receives `prev` if it declares that argument.
-- `patches/<attr>/*.patch` files are appended to `pkgs.<attr>`'s patches in
-  file name order. Only top-level attributes are supported, so
-  `python3Packages.foo` cannot be patched this way.
+Within a layer, overlays apply in directory name order, so `prev` already
+includes the changes from directories whose names sort earlier.
 
-[examples/perseus](examples/perseus) has one of each:
-- `overlays/seanime-server` wraps seanime with its server flags and exposes the
-  port, and the service and firewall use that port.
-- `patches/hello` changes hello's greeting, including the upstream test that
-  checks it.
+[examples/perseus](examples/perseus) shows both kinds:
+- `overlays/seanime-server/package.nix` wraps seanime with its server flags
+  and exposes the port, and the service and firewall use that port.
+- `overlays/hello/0001-greet-from-perseus.patch` changes hello's greeting,
+  including the upstream test that checks it.
 
 ## Project structure
 
@@ -98,7 +112,7 @@ The file conventions are the same in both layers:
   `lib/default.nix` (`attrs.nix`, `modules.nix`, `packages.nix`), whose exports
   are merged into nix `lib` as `lib.<name>`
 - `modules/`: one directory per module, see below
-- `overlays/`, `patches/`: the framework's package layer, always applied to every machine
+- `overlays/`: the framework's package layer, always applied to every machine
 - `scripts/`: "just" modules, ISO-embedded scripts and internal scripts
 - `tests/`: flake checks for `lib/` helpers, run by `nix flake check`
 - `examples/`: user space: machine directories consumed by `mkMachine`
@@ -125,7 +139,7 @@ return `options`, `configs` and optionally `imports`, `assertions`,
   These are applied only to users who enabled that module. Modules without
   a home half apply to every user.
 
-Adding a directory to `modules/`, `overlays/` or `patches/` is picked up automatically. New
+Adding a directory to `modules/` or `overlays/` is picked up automatically. New
 `lib/` helpers are added to the list in `lib/default.nix`.
 
 ## Philosophy
