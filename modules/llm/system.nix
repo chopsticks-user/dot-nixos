@@ -3,16 +3,12 @@
   options = { };
 
   configs = {
-    # uv-downloaded Python and the prebuilt wheels claude-mem's chroma-mcp uses need a real dynamic loader
+    # agents run binaries they download themselves (uv Python, prebuilt wheels, npx tools)
     programs.nix-ld.enable = true;
   };
 
   persist.home = {
-    directories = [
-      ".claude"
-      ".claude-mem"
-      ".impeccable"
-    ];
+    directories = [ ".claude" ];
     files = [ ];
   };
 }

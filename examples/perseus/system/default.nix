@@ -2,6 +2,7 @@
 {
   imports = [
     ./modules.nix
+    ./input-method.nix
     ./packages.nix
     ./seanime.nix
   ];

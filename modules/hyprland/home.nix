@@ -112,27 +112,6 @@
             suppress_event = "maximize";
             match.class = "^(kitty)$";
           }
-          {
-            no_anim = true;
-            match = {
-              class = "^(UnrealEditor)$";
-              title = "^\\w*$";
-            };
-          }
-          {
-            no_initial_focus = true;
-            match = {
-              class = "^(UnrealEditor)$";
-              title = "^\\w*$";
-            };
-          }
-          {
-            no_focus = true;
-            match = {
-              class = "^(UnrealEditor)$";
-              title = "^$";
-            };
-          }
         ];
 
         bind =
