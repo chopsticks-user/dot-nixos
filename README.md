@@ -86,8 +86,10 @@ Overlays come in two layers that use the same layout.
 [lib/overlays.nix](lib/overlays.nix) wires both, so nobody edits
 `nixpkgs.overlays` for them. The system and every user get the same result.
 
-1. **Framework layer.** The repository's `overlays/` is framework policy. It
-   is always applied, every machine inherits the resulting packages, and
+1. **Framework layer.** The repository's `overlays/` is framework policy,
+   together with overlays from the framework's flake inputs, such as
+   `llm-agents`, whose packages appear as `pkgs.llm-agents.<name>`. It is
+   always applied, every machine inherits the resulting packages, and
    machines cannot switch it off or configure it.
 2. **Machine layer.** A machine's own `overlays/` is applied on top. A
    machine that needs something different writes its own overlay instead of

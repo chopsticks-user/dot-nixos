@@ -13,7 +13,7 @@ Update the README, not this file, when the user-facing design changes.
 | `flake.nix` | Framework flake: `lib.mkMachine`, `checks`, `formatter`, ISOs. It also exposes each example's `nixosConfigurations` by calling the example's `outputs { dot-nixos = self; }`. |
 | `lib/mk-machine.nix` | The builder. Reads the machine directory, wires embedded Home Manager, and auto-enables system halves. |
 | `lib/modules.nix` | `defineModule`, plus discovery of `modules/*/system.nix` and `modules/*/home.nix`. |
-| `lib/overlays.nix` | The only place that writes `nixpkgs.overlays`: the framework's `overlays/` (always on), then the machine's on top. |
+| `lib/overlays.nix` | The only place that writes `nixpkgs.overlays`: flake-input overlays (`llm-agents`) and the framework's `overlays/` (always on), then the machine's on top. |
 | `lib/peruser.nix` | System side of one user: account, password secret, per-user persistence. Curried with `{ username, userPersist }`. |
 | `lib/packages.nix`, `lib/attrs.nix` | Helpers merged into `lib`. `lib/default.nix` lists helper files explicitly, so a new helper file must be added there. |
 | `tests/` | Flake checks for `lib/` helpers, with fixtures (`checks.<system>.lib-packages`). |

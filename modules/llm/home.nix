@@ -1,6 +1,5 @@
 {
   pkgs,
-  inputs,
   config,
   ...
 }:
@@ -8,24 +7,19 @@
   options = { };
 
   configs = {
-    home.packages =
-      let
-        llm-pkgs = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system};
-      in
-      with pkgs;
-      [
-        bun
-        nodejs_latest
-        uv
-        llm-pkgs.claude-desktop
-        # higgsfield-faceless-video assembles videos locally with these
-        ffmpeg
-        python3
-        # unpinned on purpose: always runs the latest published Higgsfield CLI
-        (writeShellScriptBin "higgsfield" ''
-          exec ${nodejs_latest}/bin/npx --yes --package=@higgsfield/cli@latest higgsfield "$@"
-        '')
-      ];
+    home.packages = with pkgs; [
+      bun
+      nodejs_latest
+      uv
+      llm-agents.claude-desktop
+      # higgsfield-faceless-video assembles videos locally with these
+      ffmpeg
+      python3
+      # unpinned on purpose: always runs the latest published Higgsfield CLI
+      (writeShellScriptBin "higgsfield" ''
+        exec ${nodejs_latest}/bin/npx --yes --package=@higgsfield/cli@latest higgsfield "$@"
+      '')
+    ];
 
     # claude-mem hooks call the bare `claude-mem` launcher it installs here; the
     # VS Code extension runs its own bundled claude, so the wrapper below doesn't cover it
