@@ -91,6 +91,10 @@
             inherit (inputs) nixpkgs;
           };
           modules = import ./tests/modules.nix { inherit lib test; };
+          machines = import ./tests/machines.nix {
+            inherit lib test;
+            inherit (self.lib) mkMachine;
+          };
         }
       );
 

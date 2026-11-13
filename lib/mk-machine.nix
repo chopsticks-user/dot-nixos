@@ -10,6 +10,12 @@ let
     else
       throw "mkMachine: ${toString root}/${name} is required";
 
+  requiredFiles = [
+    "system/default.nix"
+    "hardware/default.nix"
+    "hardware/disk.nix"
+    "secrets.yaml"
+  ];
   usernames = lib.subdirs (root + "/users");
   userFile = username: name: root + "/users/${username}/${name}";
   persistFile = optional "system/persist.nix";
@@ -51,7 +57,7 @@ let
               ];
               users = lib.genAttrs usernames (username: {
                 imports = [
-                  (userFile username "home.nix")
+                  (require "users/${username}/home.nix")
                 ]
                 ++ lib.optional (builtins.pathExists (userFile username "secrets.yaml")) {
                   sops.defaultSopsFile = userFile username "secrets.yaml";
@@ -91,6 +97,9 @@ let
       ) usernames;
   };
 in
-{
-  nixosConfigurations.${machine.config.networking.hostName} = machine;
-}
+# checked up front: some are otherwise only read late, such as home.nix once home-manager evaluates
+# that user, or secrets.yaml once sops does
+lib.deepSeq (map require (requiredFiles ++ map (username: "users/${username}/home.nix") usernames))
+  {
+    nixosConfigurations.${machine.config.networking.hostName} = machine;
+  }
