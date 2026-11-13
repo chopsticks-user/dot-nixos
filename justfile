@@ -30,3 +30,21 @@ flash device="/dev/sda" system=`nix eval --impure --raw --expr 'builtins.current
   if [[ "${NIXOS_ISO_AUTO_BOOTSTRAP,,}" == "y" ]]; then
     echo "Warning: sensitive values are stored in the Nix store. Run 'rm -f result && nix store gc' to remove them, or manually delete with 'nix store delete \$(readlink -f result)' before removing the symlink."
   fi
+
+# fast: formatting and every flake check (unit, fixture and script tests, shellcheck, both examples
+# evaluated); build: also builds both examples. Flakes only see tracked files, so `git add` first.
+verify tier="fast":
+  #!/usr/bin/env bash
+  set -euo pipefail
+  nix fmt -- --ci
+  nix flake check
+  if [[ "{{tier}}" == build ]]; then
+    out=$(mktemp -d)
+    nix build .#nixosConfigurations.perseus.config.system.build.toplevel -o "$out/perseus"
+    # andromeda's secrets lack password/tester, which sops-nix checks at build time
+    nix build --impure -o "$out/andromeda" --expr '((builtins.getFlake (toString ./.)).nixosConfigurations.andromeda.extendModules { modules = [ { sops.validateSopsFiles = false; } ]; }).config.system.build.toplevel'
+    echo "built: $out"
+  elif [[ "{{tier}}" != fast ]]; then
+    echo "unknown tier: {{tier}} (fast or build)" >&2
+    exit 1
+  fi

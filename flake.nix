@@ -99,6 +99,15 @@
         // lib.mapAttrNames (name: "script-${name}") (
           import ./tests/scripts.nix { pkgs = inputs.nixpkgs.legacyPackages.${system}; }
         )
+        // {
+          shellcheck =
+            inputs.nixpkgs.legacyPackages.${system}.runCommand "test-shellcheck"
+              { nativeBuildInputs = [ inputs.nixpkgs.legacyPackages.${system}.shellcheck ]; }
+              ''
+                shellcheck -s bash -x -P ${./tests/scripts} ${./scripts}/*.sh ${./tests/scripts}/*.sh
+                touch $out
+              '';
+        }
       );
 
       formatter = lib.genAttrs supported (system: inputs.nixpkgs.legacyPackages.${system}.nixfmt-tree);
