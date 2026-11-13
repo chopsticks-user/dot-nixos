@@ -96,6 +96,9 @@
             inherit (self.lib) mkMachine;
           };
         }
+        // lib.mapAttrNames (name: "script-${name}") (
+          import ./tests/scripts.nix { pkgs = inputs.nixpkgs.legacyPackages.${system}; }
+        )
       );
 
       formatter = lib.genAttrs supported (system: inputs.nixpkgs.legacyPackages.${system}.nixfmt-tree);
