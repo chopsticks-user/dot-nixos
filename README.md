@@ -150,9 +150,11 @@ return `options`, `configs` and optionally `imports`, `assertions`,
 - `core` is always on. It holds only what the framework needs everywhere:
   sops, networking, the framework scripts and the home paths the framework
   creates. Personal tooling lives in opt-in modules such as `cli` and `theme`.
-- `allowUnfree` lists package names allowed regardless of the enable flag.
-  It has to stay outside the guard, because the system half's enable flag is
-  derived from Home Manager, which itself needs the system's nixpkgs.
+- `allowUnfree` in a system half lists package names allowed regardless of
+  the enable flag. It has to stay outside the guard, because the system
+  half's enable flag is derived from Home Manager, which itself needs the
+  system's nixpkgs. Users share that nixpkgs, so home halves and `home.nix`
+  add unfree names to `user.allowUnfree` instead.
 - `persist.home` in a system half lists home paths to keep under impermanence.
   These are applied only to users who enabled that module. Modules without
   a home half apply to every user. `persist.system` lists system paths and is

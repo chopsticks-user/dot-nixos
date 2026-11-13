@@ -43,6 +43,8 @@ Labels: `bug`, `security`, `enhancement`, `tests`, `docs`, `needs-owner`
 | 30 | Error messages of `mkMachine` are not tested | tests | Open |
 | 31 | Option reference in the guide is maintained by hand | docs | Open |
 | 32 | Undocumented machine-wide effects of user modules | docs | Open |
+| 33 | Every user evaluates its own nixpkgs | enhancement | Closed by PR 34 |
+| 34 | Docs repeat the layout, module rules and open issues | docs | Open |
 
 ## Closed
 
@@ -102,6 +104,17 @@ though the value is meant to be literal.
 
 Found by `script-iso-bootstrap`, which builds the script with hostile values.
 Fixed by excluding SC2016 for that script.
+
+### #33 Every user evaluates its own nixpkgs
+
+`enhancement` · Opened 2026-11-13 · Closed by PR 34
+
+`useGlobalPkgs = false` made Home Manager instantiate nixpkgs once per user,
+only so `home.nix` and home halves could set `nixpkgs.config.allowUnfreePackages`.
+andromeda (two users) took 13.7 s and 1.96 GB to evaluate.
+
+Fixed by sharing the system's nixpkgs and adding a `user.allowUnfree` option
+that mk-machine adds to the system's allowlist.
 
 ## Open
 
@@ -334,3 +347,13 @@ Proposal: generate them from the options.
 When one user enables a module, its system half changes the machine for
 everyone (design 4). Proposal: document per module what its system half
 changes.
+
+### #34 Docs repeat the layout, module rules and open issues
+
+`docs` · Opened 2026-11-13 · Open
+
+The machine layout, the module rules and the overlay rules are written in the
+README, in guide.md and in CLAUDE.md, which also includes the README, so agents
+read them twice. README "Project structure" has already drifted (`tests/`,
+`justfile`). guide.md §8 and testing.md "Still missing" repeat open issues.
+Each topic should have one home that the others link to. See also #31.

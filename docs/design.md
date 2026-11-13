@@ -333,13 +333,18 @@ depend on Home Manager).
 
 ## 20. Unfree packages by name
 
-**What.** `allowUnfree = [ ... ]` in modules and
-`nixpkgs.config.allowUnfreePackages` elsewhere.
+**What.** `allowUnfree = [ ... ]` in system halves,
+`user.allowUnfree` in home halves and `home.nix`, and
+`nixpkgs.config.allowUnfreePackages` in `system/`. All users share the
+system's nixpkgs (`useGlobalPkgs`), and every user's list is added to it.
 
 **Why.** Explicit, reviewable, and kept outside enable guards to avoid
 recursion.
 
-**Cost.** Allowlisted names apply even when the module is off (harmless).
+**Cost.** Allowlisted names apply even when the module is off, and a name one
+user allows is allowed for every user (both harmless: allowing is not
+installing). In return, Home Manager no longer builds a nixpkgs per user,
+which cut andromeda's evaluation from 13.7 s to 9.6 s with identical output.
 
 **Recommendation.** Keep.
 

@@ -30,7 +30,7 @@
       Install.WantedBy = [ "default.target" ];
     };
 
-    nixpkgs.config.allowUnfreePackages = [
+    user.allowUnfree = [
       "steam"
       "steam-unwrapped"
       "steamcmd"

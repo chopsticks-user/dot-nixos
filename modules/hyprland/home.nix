@@ -15,7 +15,7 @@ in
   options = { };
 
   configs = {
-    nixpkgs.config.allowUnfreePackages = [
+    user.allowUnfree = [
       "harmonoid"
     ];
 

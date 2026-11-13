@@ -240,7 +240,7 @@ user lives there, account fields included:
     firefox.enable = true;
   };
 
-  nixpkgs.config.allowUnfreePackages = [ "obsidian" ];
+  user.allowUnfree = [ "obsidian" ];
   home.packages = with pkgs; [ obsidian ];
 }
 ```
@@ -254,8 +254,10 @@ the host `secrets.yaml`. `home.stateVersion` defaults to the machine's
 
 Allow unfree packages by name where you install them:
 `nixpkgs.config.allowUnfreePackages = [ ... ]` in `system/` for system
-packages, in `home.nix` for that user's packages. Framework modules already
-allow what they install.
+packages, `user.allowUnfree = [ ... ]` in `home.nix` for that user's packages.
+All users share the system's nixpkgs, so a name one user allows is allowed on
+the whole machine. Home Manager rejects `nixpkgs.*` in `home.nix`. Framework
+modules already allow what they install.
 
 ### 3.8 Overlays and patches
 
@@ -534,8 +536,9 @@ directories.
    persisted paths.
 
 The system half of a module with both halves is enabled when any user enables
-its home half. `useGlobalPkgs` is off, because users set their own
-`nixpkgs.config`; users still get the system's overlays.
+its home half. `useGlobalPkgs` is on: users share the system's nixpkgs, with
+its overlays, and every user's `user.allowUnfree` is added to its unfree
+allowlist.
 
 ### 7.2 Arguments available to modules
 
@@ -579,6 +582,7 @@ persisted with mode 0700.
 | `user.groups` | `[ "wheel" "networkmanager" ]` | Extra groups |
 | `user.shell` | `pkgs.bashInteractive` (zsh with `modules.zsh`) | Login shell, also `SHELL` |
 | `user.terminal` | `null` (kitty with `modules.hyprland`) | Terminal emulator, exported as `TERMINAL` |
+| `user.allowUnfree` | `[ ]` | Unfree package names this user installs, allowed machine-wide |
 | `user.directories` | `machine.directories.home` under this home | Absolute well-known paths; XDG user directories are set from them |
 
 ### 7.5 modules.core (always on)

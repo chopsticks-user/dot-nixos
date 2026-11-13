@@ -200,9 +200,18 @@ test "machines" {
       frameworkLayer = true;
     };
   };
-  # alice installs greeting from her own pkgs, which only has it through the machine's overlays
+  # alice installs greeting, which only exists through the machine's overlays
   testUsersGetTheMachineOverlays = {
     expr = lib.elem "greeting" (map (p: p.name) alice.home.packages);
+    expected = true;
+  };
+  testUsersShareTheSystemPkgs = {
+    expr = basic.home-manager.useGlobalPkgs;
+    expected = true;
+  };
+  # the whole-system tests evaluate her unrar, which fails unless her list reaches the system
+  testUserUnfreeAllowedMachineWide = {
+    expr = lib.elem "unrar" basic.nixpkgs.config.allowUnfreePackages;
     expected = true;
   };
   testHomeStateVersionFollowsSystem = {

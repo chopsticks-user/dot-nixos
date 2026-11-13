@@ -7,7 +7,7 @@
   options = { };
 
   configs = {
-    nixpkgs.config.allowUnfreePackages = [
+    user.allowUnfree = [
       "vscode"
       "vscode-extension-anthropic-claude-code"
     ];

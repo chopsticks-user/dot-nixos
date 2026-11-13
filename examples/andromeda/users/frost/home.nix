@@ -4,7 +4,7 @@
   ...
 }:
 {
-  nixpkgs.config.allowUnfreePackages = [
+  user.allowUnfree = [
     "obsidian"
     "spotify"
     "claude-code"

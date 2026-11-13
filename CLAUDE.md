@@ -55,11 +55,11 @@ nix shell nixpkgs#shellcheck -c shellcheck -s bash scripts/*.sh   # installed sc
 
 These are evaluation-order traps. Re-introducing any of them shows up as `infinite recursion encountered` or a conflicting definition.
 
-- **`pkgs` must not depend on Home Manager.** System halves auto-enable from `config.home-manager.users.<u>.modules.<name>.enable`, and Home Manager needs the system `pkgs` to build its module list. Anything under the enable guard that feeds `nixpkgs.*` therefore creates a cycle. Unfree allowlists go in the module's top-level `allowUnfree = [ ... ]`, which `defineModule` applies unconditionally, never in `configs.nixpkgs.config`.
+- **`pkgs` must not depend on Home Manager.** System halves auto-enable from `config.home-manager.users.<u>.modules.<name>.enable`, and Home Manager needs the system `pkgs` to build its module list. Anything under the enable guard that feeds `nixpkgs.*` therefore creates a cycle. Unfree allowlists go in the module's top-level `allowUnfree = [ ... ]`, which `defineModule` applies unconditionally, never in `configs.nixpkgs.config`. Reading a Home Manager *value* into a `nixpkgs.config` list is fine (mk-machine does it for `user.allowUnfree`, and it is only forced when a license is checked); making whether `nixpkgs.*` is defined depend on Home Manager is not.
 - **Option declarations must not depend on `config`.** For example, `modules.open.*` options are generated from the static `modules/open/mime.nix`, not from an option value.
 - **Per-user values cannot go through `_module.args`.** It is shared across all users, and two users conflict. That is why `peruser.nix` is curried. Machine-wide values are options (`machine.*`); per-user values are Home Manager options (`user.*`).
 - **Module functions only receive named arguments from `_module.args`.** Inside `defineModule` modules, `config`, `lib`, `pkgs` and specialArgs (`inputs`, `osConfig` in Home Manager) are available. Name anything else explicitly in the wrapper in `lib/modules.nix`.
-- **`useGlobalPkgs` stays `false`.** Home modules set `nixpkgs.config` per user, which global pkgs forbids. Users still inherit the system's `nixpkgs.overlays`.
+- **`useGlobalPkgs` is `true`.** Users share the system's nixpkgs and overlays. Home halves and `home.nix` must not set `nixpkgs.*` (Home Manager asserts); they add unfree names to `user.allowUnfree`, and a home half must not use top-level `allowUnfree`.
 - **Guard impermanence-only config.** Use `options ? environment.persistence`, not `config.environment ? persistence` (the latter recurses). Impermanence is only imported when `system/persist.nix` exists.
 
 ## How to extend

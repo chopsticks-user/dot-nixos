@@ -12,7 +12,8 @@ the fact from their commit messages.
 
 | PR | Title | Merged | Commits |
 |----|-------|--------|---------|
-| 33 | Persist what every machine needs in core | 2026-11-13 | this entry's commit |
+| 34 | Share the system's nixpkgs with every user | 2026-11-13 | this entry's commit |
+| 33 | Persist what every machine needs in core | 2026-11-13 | `d425570` |
 | 32 | Turn the backlog into a coding log and record each doc's role | 2026-11-12 | this entry's commit |
 | 31 | Add an issue tracker and document the test suite | 2026-11-12 | `bc507f1` |
 | 30 | Add `just verify` and a shellcheck check for every script | 2026-11-12 | `b574bbb` |
@@ -46,9 +47,35 @@ the fact from their commit messages.
 | 2 | Rename features to modules, fold internals into `lib/` | 2026-11-11 | `c6298d2` |
 | 1 | Turn the repository into a single-machine, multi-user framework | 2026-11-11 | `fdcc2f4` |
 
+## PR 34: Share the system's nixpkgs with every user
+
+2026-11-13 · Commits: the commit that adds this entry · Closes issue 33
+
+**Why.** Home Manager built a nixpkgs per user (`useGlobalPkgs = false`) only
+so users and home halves could allow unfree packages. On andromeda that was a
+third of the evaluation time and half a gigabyte of memory.
+
+**Changes.** `useGlobalPkgs` is on, and the per-user overlay copy is gone,
+since users now get the system's pkgs and its overlays directly. A new
+`user.allowUnfree` option replaces `nixpkgs.config.allowUnfreePackages` in
+`home.nix` and in the gaming, vscode and hyprland home halves; mk-machine adds
+every user's list to the system's allowlist. That reads a Home Manager value
+into `nixpkgs.config` without the recursion CLAUDE.md warns about, because the
+list is only forced when a license is checked. CLAUDE.md, the README, the
+guide (3.7, 7.1, 7.4) and design 20 describe the new rule.
+
+**Verification.** `just verify` passes. The basic fixture's alice now
+installs unfree `unrar` with `user.allowUnfree`; dropping the system-side
+union makes the machine checks fail on it. A `home.nix` that still sets
+`nixpkgs.config` fails with Home Manager's assertion. Both examples' `drvPath`
+are unchanged; andromeda evaluates in 9.2 s and 1.44 GB instead of 13.7 s and
+1.96 GB, perseus in 7.8 s instead of 9.6 s.
+
+**Notes.** A name one user allows is allowed for every user of the machine.
+
 ## PR 33: Persist what every machine needs in core
 
-2026-11-13 · Commits: the commit that adds this entry
+2026-11-13 · Commits: `d425570`
 
 **Why.** Every impermanent machine repeated the same system list (NixOS
 state, machine id, logs, NetworkManager, sops, the host key), and every user

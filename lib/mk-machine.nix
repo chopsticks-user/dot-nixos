@@ -44,16 +44,13 @@ let
           { config, ... }:
           {
             home-manager = {
-              # modules set nixpkgs.config per user, which global pkgs forbids
-              useGlobalPkgs = false;
+              # one nixpkgs for the system and every user; users allow unfree names through user.allowUnfree
+              useGlobalPkgs = true;
               useUserPackages = true;
               extraSpecialArgs = { inherit inputs; };
               sharedModules = lib.homeModules ++ [
                 inputs.sops-nix.homeManagerModules.sops
-                {
-                  nixpkgs.overlays = config.nixpkgs.overlays;
-                  home.stateVersion = lib.mkDefault config.system.stateVersion;
-                }
+                { home.stateVersion = lib.mkDefault config.system.stateVersion; }
               ];
               users = lib.genAttrs usernames (username: {
                 imports = [
@@ -64,6 +61,12 @@ let
                 };
               });
             };
+
+            # a plain value read only when a package's license is checked, so pkgs stays independent
+            # of which Home Manager config exists
+            nixpkgs.config.allowUnfreePackages = lib.concatMap (
+              username: config.home-manager.users.${username}.user.allowUnfree
+            ) usernames;
 
             # the system half of a module is on when any user enables its home half
             modules = lib.genAttrs sharedModuleNames (name: {
