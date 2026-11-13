@@ -32,7 +32,6 @@ let
 
         inputs.disko.nixosModules.disko
         inputs.sops-nix.nixosModules.sops
-        inputs.nix-index-database.nixosModules.default
         inputs.home-manager.nixosModules.home-manager
 
         (

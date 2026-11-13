@@ -1,11 +1,32 @@
 {
   lib,
   config,
+  options,
   pkgs,
-  inputs,
   fields,
   ...
 }:
+let
+  dirs = config.machine.directories;
+
+  # under impermanence sops decrypts before /persist is bind-mounted, so it reads the key there
+  hostIdentity = lib.optionalString (options.environment ? persistence) "/persist" + dirs.identity;
+
+  # build-time facts the scripts need, overridable from the environment
+  scriptEnv = ''
+    export NIXOS_FLAKE_DIR="''${NIXOS_FLAKE_DIR:-${dirs.nixos}}"
+    export NIXOS_HOME_IDENTITY="''${NIXOS_HOME_IDENTITY:-${dirs.home.identity}}"
+  '';
+  script =
+    name: runtimeInputs: file:
+    pkgs.writeShellApplication {
+      inherit name runtimeInputs;
+      text = scriptEnv + builtins.readFile file;
+    };
+
+  # paths nested in another listed path are covered by it, and impermanence rejects overlaps
+  outermost = paths: lib.filter (p: !lib.any (q: lib.hasPrefix "${q}/" p) paths) (lib.unique paths);
+in
 {
   imports = [
     ./machine-options.nix
@@ -13,10 +34,6 @@
   ];
 
   options = {
-    timeZone = lib.mkOption {
-      type = lib.types.str;
-      default = "America/New_York";
-    };
     ethernet = {
       priority = lib.mkOption {
         type = lib.types.int;
@@ -42,13 +59,16 @@
     };
   };
 
+  assertions = [
+    {
+      assertion = dirOf dirs.home.identity != ".";
+      message = "machine.directories.home.identity must be inside a directory of home, which is persisted with mode 0700";
+    }
+  ];
+
   configs = {
     sops = {
-      age.sshKeyPaths = [
-        # todo: only consider /persist once andromeda supports impermanence
-        config.machine.directories.identity
-        "/persist${config.machine.directories.identity}"
-      ];
+      age.sshKeyPaths = [ hostIdentity ];
       secrets = {
         "password/root" = {
           neededForUsers = true;
@@ -82,8 +102,6 @@
     };
 
     boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
-
-    time.timeZone = fields.timeZone;
 
     networking = {
       firewall.enable = true;
@@ -130,88 +148,51 @@
       hashedPasswordFile = config.sops.secrets."password/root".path;
     };
 
-    environment.systemPackages =
-      let
-        scriptEnv = ''
-          export NIXOS_FLAKE_DIR="''${NIXOS_FLAKE_DIR:-${config.machine.directories.nixos}}"
-          export NIXOS_HOME_IDENTITY="''${NIXOS_HOME_IDENTITY:-${config.machine.directories.home.identity}}"
-        '';
-        inherit (inputs.nix-alien.packages.${pkgs.stdenv.hostPlatform.system}) nix-alien;
-        btop =
-          if lib.elem "nvidia" config.services.xserver.videoDrivers then
-            pkgs.btop-cuda
-          else if lib.elem "amdgpu" config.services.xserver.videoDrivers then
-            pkgs.btop-rocm
-          else
-            pkgs.btop;
-      in
-      with pkgs;
-      [
-        # core & nix tooling
-        home-manager
-        nvd
-        nix-alien
-        nixd
-        nixfmt
-        coreutils
-        (pkgs.writeShellScriptBin "nixos-homestrap" (
-          scriptEnv + builtins.readFile ../../scripts/homestrap.sh
-        ))
-        (pkgs.writeShellScriptBin "nix-system" (scriptEnv + builtins.readFile ../../scripts/nix-system.sh))
-        (pkgs.writeShellScriptBin "nix" ''
-          case "''${1:-}" in
-            system) shift; nix-system "$@" ;;
-            *) exec ${pkgs.nix}/bin/nix "$@" ;;
-          esac
-        '')
-
-        # system administration & monitoring
-        efibootmgr
-        psmisc
-        lshw
-        inotify-tools
-        fastfetch
-        ncdu
-        btop
-
-        # CLI wizardy kit, coreutils already includes sort, uniq, cut
-        ripgrep
-        sd
-        fd
-        jq
-        yq
-        gawk
-        findutils # xargs
-        gnused
-
-        # files & directories
+    environment.systemPackages = with pkgs; [
+      git
+      age
+      ssh-to-age
+      sops
+      (script "nixos-homestrap" [
         git
-        tree
-        cloc
-        curl
-        wget
-        zip
-        unzip
-        pkg-config
-        patchelf
-        file
+        openssh
+      ] ../../scripts/homestrap.sh)
+      (script "nix-system" [ nvd ] ../../scripts/nix-system.sh)
+      (writeShellScriptBin "nix" ''
+        case "''${1:-}" in
+          system) shift; nix-system "$@" ;;
+          *) exec ${pkgs.nix}/bin/nix "$@" ;;
+        esac
+      '')
+    ];
+  };
 
-        # secret management
-        age
-        ssh-to-age
-        sops
-
-        # miscellaneous
-        wl-clipboard
-        wev
-        just
-      ];
-
-    programs = {
-      nix-index-database.comma.enable = true;
-      nix-index.enable = true;
-      command-not-found.enable = false;
-      zsh.enable = true;
-    };
+  # every user keeps what the framework itself places in home: the user key, the flake checkout
+  # and the well-known data directories
+  persist.home = {
+    directories = [
+      {
+        directory = dirOf dirs.home.identity;
+        mode = "0700";
+      }
+    ]
+    ++ lib.optional (lib.hasPrefix "$HOME/" dirs.nixos) (lib.removePrefix "$HOME/" dirs.nixos)
+    ++ outermost (
+      lib.attrValues (
+        lib.getAttrs [
+          "documents"
+          "download"
+          "projects"
+          "media"
+          "pictures"
+          "music"
+          "videos"
+          "wallpapers"
+          "screenshots"
+          "screencasts"
+        ] dirs.home
+      )
+    );
+    files = [ ];
   };
 }

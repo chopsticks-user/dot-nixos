@@ -5,6 +5,7 @@ let
     class: name: moduleFn:
     {
       config,
+      options,
       lib,
       pkgs, # pkgs is not a specialArgs
       ...
@@ -39,12 +40,15 @@ let
                 sysDirs = module.persist.system.directories or [ ];
                 sysFiles = module.persist.system.files or [ ];
               in
-              lib.optionalAttrs (isNixos && (sysDirs != [ ] || sysFiles != [ ])) {
-                environment.persistence."/persist" = {
-                  directories = sysDirs;
-                  files = sysFiles;
-                };
-              }
+              # environment.persistence only exists when the machine imports impermanence
+              lib.optionalAttrs
+                (isNixos && options.environment ? persistence && (sysDirs != [ ] || sysFiles != [ ]))
+                {
+                  environment.persistence."/persist" = {
+                    directories = sysDirs;
+                    files = sysFiles;
+                  };
+                }
             )
             (lib.optionalAttrs (isNixos && module ? persist.home) {
               persist.home.${name} = module.persist.home;
@@ -72,5 +76,4 @@ in
   inherit moduleNamesWith;
   systemModules = importModules "nixos" "system.nix";
   homeModules = importModules "home" "home.nix";
-  mergeImports = files: args: lib.mkMerge (map (f: import f args) files);
 }

@@ -1,10 +1,6 @@
 {
   directories = [
     "boxes"
-    "documents"
-    "downloads"
-    "media"
-    "projects"
     ".xdg-ignore"
     ".doppler"
     {
@@ -15,10 +11,8 @@
       directory = ".nixops";
       mode = "0700";
     }
-    ".config/nixos"
     ".config/dconf"
     ".config/sops-nix"
-    ".local/share/zoxide"
     ".local/share/applications"
     ".local/share/icons"
     {

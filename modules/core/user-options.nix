@@ -3,6 +3,7 @@
   lib,
   config,
   osConfig,
+  pkgs,
   ...
 }:
 let
@@ -22,21 +23,15 @@ in
       ];
     };
     shell = mkOption {
-      type = types.str;
-      default = "zsh";
-      description = "Attribute name in pkgs, also used as the login shell";
+      type = types.package;
+      default = pkgs.bashInteractive;
+      defaultText = lib.literalExpression "pkgs.bashInteractive";
+      description = "Login shell, also exported as SHELL; modules.zsh makes it zsh by default";
     };
     terminal = mkOption {
-      type = types.str;
-      default = "kitty";
-      description = "Attribute name in pkgs";
-    };
-    theme = mkOption {
-      type = types.enum [
-        "dark"
-        "light"
-      ];
-      default = "dark";
+      type = types.nullOr types.package;
+      default = null;
+      description = "Terminal emulator exported as TERMINAL; modules.hyprland makes it kitty by default";
     };
     directories = mkOption {
       type = types.attrsOf types.str;

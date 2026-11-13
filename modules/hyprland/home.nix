@@ -18,6 +18,10 @@
       "harmonoid"
     ];
 
+    # a desktop needs fonts, a cursor and a terminal
+    modules.theme.enable = lib.mkDefault true;
+    user.terminal = lib.mkDefault config.programs.kitty.package;
+
     home.packages = with pkgs; [
       hyprshot
       playerctl
@@ -191,7 +195,7 @@
             {
               _args = [
                 (lib.generators.mkLuaInline ''mod .. " + Return"'')
-                (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("kitty")'')
+                (lib.generators.mkLuaInline ''hl.dsp.exec_cmd("${lib.getExe config.user.terminal}")'')
               ];
             }
             {

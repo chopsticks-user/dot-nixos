@@ -4,13 +4,19 @@
   lib,
   options,
   config,
-  pkgs,
   ...
 }:
 let
   home = config.home-manager.users.${username};
+  shell = lib.getName home.user.shell;
 in
 {
+  # NixOS refuses these login shells unless their program module is enabled; static keys keep
+  # the attribute structure independent of home-manager
+  programs = lib.genAttrs [ "zsh" "fish" "xonsh" ] (name: {
+    enable = lib.mkIf (shell == name) true;
+  });
+
   sops.secrets."password/${username}".neededForUsers = true;
 
   users.users.${username} = {
@@ -18,7 +24,7 @@ in
     isNormalUser = true;
     hashedPasswordFile = config.sops.secrets."password/${username}".path;
     extraGroups = home.user.groups;
-    shell = pkgs.${home.user.shell};
+    inherit (home.user) shell;
   };
 
   environment = lib.optionalAttrs (options.environment ? persistence) {

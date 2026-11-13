@@ -7,5 +7,6 @@
   ];
 
   networking.hostName = "perseus";
+  time.timeZone = "America/New_York";
   system.stateVersion = "26.11";
 }
