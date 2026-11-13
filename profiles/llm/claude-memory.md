@@ -36,24 +36,29 @@
 
 ## Project workflow
 
-Work in every repository goes through GitHub issues and pull requests (`gh`).
-If a repository has no GitHub remote, ask before working around it.
+Every change that will be committed goes through GitHub issues and pull
+requests (`gh`). Questions, reviews and other work that commits nothing do not.
+If a repository has no GitHub remote, ask before working around it. Set up what
+the steps rely on (a verify command, the project's CLAUDE.md) if it is missing.
 
 1. Given a task, break it into smaller tasks when it is more than one
-   reviewable change. Each task, and each problem found along the way, gets a
-   GitHub issue before any work on it starts
+   reviewable change. Each task, and each unrelated problem found along the
+   way, gets a labelled GitHub issue before any work on it starts. Fixes inside
+   the task's scope, review findings included, need no issue of their own
 2. Work on a branch `issue-<n>-<slug>` from the base branch: the default branch,
    unless the project's CLAUDE.md names another. Never commit directly to the
    base branch. Keep commits small, each passing the tests
 3. One verify command (such as `just verify`) runs formatting, linting and all
-   tests. Run it before and after a change
+   tests. Run it before and after a change and before merging
 4. Push the branch and open a pull request against the base branch, starting
-   with `Closes #<n>`, then Why, Changes, Verification and Notes
+   with a `Closes #<n>` line per issue it fixes, then Why, Changes, Verification
+   and Notes
 5. Review the pull request with /code-review, fix what it finds, and leave a
    PR comment listing the findings and what was fixed or left and why
-6. Stop and ask me to approve. Only after my approval merge with
-   `gh pr merge --merge --delete-branch`, close the issue if GitHub did not
-   (it only does for the default branch), and update the local base branch
+6. Stop and ask me to approve. Only after my approval, verify again on the
+   branch updated with the base, merge with `gh pr merge --merge
+   --delete-branch`, close every issue GitHub did not (it only does for merges
+   into the default branch), then `git switch <base> && git pull --ff-only`
 
 The project's CLAUDE.md records what each doc is for, the base branch if it is
 not the default, and the labels in use.
