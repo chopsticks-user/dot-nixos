@@ -1,8 +1,6 @@
-mod secrets "scripts/secrets.just"
-
 [private]
 default:
-  @just --list --list-submodules
+  @just --list
 
 help:
   @just
@@ -31,6 +29,3 @@ flash device="/dev/sda" system=`nix eval --impure --raw --expr 'builtins.current
   if [[ "${NIXOS_ISO_AUTO_BOOTSTRAP,,}" == "y" ]]; then
     echo "Warning: sensitive values are stored in the Nix store. Run 'rm -f result && nix store gc' to remove them, or manually delete with 'nix store delete \$(readlink -f result)' before removing the symlink."
   fi
-
-test args:
-  @echo "{{args}}"

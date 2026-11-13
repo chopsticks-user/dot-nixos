@@ -16,6 +16,8 @@ let
   scriptEnv = ''
     export NIXOS_FLAKE_DIR="''${NIXOS_FLAKE_DIR:-${dirs.nixos}}"
     export NIXOS_HOME_IDENTITY="''${NIXOS_HOME_IDENTITY:-${dirs.home.identity}}"
+    export NIXOS_HOST_IDENTITY="${hostIdentity}"
+    export NIXOS_USERS="${lib.concatStringsSep " " (lib.attrNames config.home-manager.users)}"
   '';
   script =
     name: runtimeInputs: file:
@@ -157,6 +159,13 @@ in
         git
         openssh
       ] ../../scripts/homestrap.sh)
+      (script "nixos-secrets" [
+        sops
+        ssh-to-age
+        openssh
+        gnutar
+        gzip
+      ] ../../scripts/secrets.sh)
       (script "nix-system" [ nvd ] ../../scripts/nix-system.sh)
       (writeShellScriptBin "nix" ''
         case "''${1:-}" in

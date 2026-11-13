@@ -6,5 +6,5 @@ result*
 .idea
 .vscode
 
-# key backups written by `just secrets backup`
-secrets/
+# key archives written by `nixos-secrets new` and `nixos-secrets backup`
+*.tar.gz
