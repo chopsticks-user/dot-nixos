@@ -1,5 +1,5 @@
 {
-  description = "NixOS and Home Manager configurations";
+  description = "dot-nixos: a NixOS framework that builds one machine with any number of users";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -14,10 +14,6 @@
     };
     noctalia = {
       url = "github:noctalia-dev/noctalia-shell";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    caelestia = {
-      url = "github:caelestia-dots/shell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nvf = {

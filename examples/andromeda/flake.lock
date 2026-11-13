@@ -38,56 +38,6 @@
         "type": "github"
       }
     },
-    "caelestia": {
-      "inputs": {
-        "caelestia-cli": "caelestia-cli",
-        "m3shapes": "m3shapes",
-        "nixpkgs": [
-          "dot-nixos",
-          "nixpkgs"
-        ],
-        "quickshell": "quickshell"
-      },
-      "locked": {
-        "lastModified": 1794057837,
-        "narHash": "sha256-M34xfxC5+qaYnHEbU29L2aNSSmyMTNPLVo8fO1jE+T8=",
-        "owner": "caelestia-dots",
-        "repo": "shell",
-        "rev": "cb43fc711632f0847c57a2b5974c54daddea3016",
-        "type": "github"
-      },
-      "original": {
-        "owner": "caelestia-dots",
-        "repo": "shell",
-        "type": "github"
-      }
-    },
-    "caelestia-cli": {
-      "inputs": {
-        "caelestia-shell": [
-          "dot-nixos",
-          "caelestia"
-        ],
-        "nixpkgs": [
-          "dot-nixos",
-          "caelestia",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1793423030,
-        "narHash": "sha256-90s3Me2ICTCL9bgjojzAwyzhRwhhSgPITLO2gRy606A=",
-        "owner": "caelestia-dots",
-        "repo": "cli",
-        "rev": "fdb3e47038c77ec8e7bb6010ffbcae00501d420b",
-        "type": "github"
-      },
-      "original": {
-        "owner": "caelestia-dots",
-        "repo": "cli",
-        "type": "github"
-      }
-    },
     "disko": {
       "inputs": {
         "nixpkgs": [
@@ -111,7 +61,6 @@
     },
     "dot-nixos": {
       "inputs": {
-        "caelestia": "caelestia",
         "disko": "disko",
         "home-manager": "home-manager",
         "impermanence": "impermanence",
@@ -281,29 +230,6 @@
         "type": "github"
       }
     },
-    "m3shapes": {
-      "inputs": {
-        "nixpkgs": [
-          "dot-nixos",
-          "caelestia",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1787906858,
-        "narHash": "sha256-YZelgEZflFNwGutX4/tIzBdbOeghJgE2oDw0uWYGxns=",
-        "owner": "soramanew",
-        "repo": "m3shapes",
-        "rev": "32ad9ce328bb77ed349b40a3be10ee9ea610b8ab",
-        "type": "github"
-      },
-      "original": {
-        "owner": "soramanew",
-        "repo": "m3shapes",
-        "rev": "32ad9ce328bb77ed349b40a3be10ee9ea610b8ab",
-        "type": "github"
-      }
-    },
     "mnw": {
       "locked": {
         "lastModified": 1784154424,
@@ -456,28 +382,6 @@
         "owner": "notashelf",
         "repo": "nvf",
         "type": "github"
-      }
-    },
-    "quickshell": {
-      "inputs": {
-        "nixpkgs": [
-          "dot-nixos",
-          "caelestia",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1792651682,
-        "narHash": "sha256-TiCGqLMpNIy7FERewgfKVluPsLVF96uc6x6xwZnMjdQ=",
-        "ref": "refs/heads/master",
-        "rev": "9b0f339b19057f4731bf3b48293307d7ef241671",
-        "revCount": 879,
-        "type": "git",
-        "url": "https://git.outfoxxed.me/outfoxxed/quickshell"
-      },
-      "original": {
-        "type": "git",
-        "url": "https://git.outfoxxed.me/outfoxxed/quickshell"
       }
     },
     "root": {
