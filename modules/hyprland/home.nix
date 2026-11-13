@@ -3,13 +3,14 @@
   pkgs,
   inputs,
   config,
+  osConfig,
   ...
 }:
+let
+  fcitx = osConfig.i18n.inputMethod.enable && osConfig.i18n.inputMethod.type == "fcitx5";
+in
 {
-  imports = [
-    inputs.noctalia.homeModules.default
-    inputs.caelestia.homeManagerModules.default
-  ];
+  imports = [ inputs.noctalia.homeModules.default ];
 
   options = { };
 
@@ -28,30 +29,33 @@
       brightnessctl
     ];
 
-    modules.open = with pkgs; {
-      enable = true;
-      html = firefox;
-      image = {
-        package = kdePackages.gwenview;
-        desktopEntry = "org.kde.gwenview";
-      };
-      pdf = {
-        package = kdePackages.okular;
-        desktopEntry = "org.kde.okular";
-      };
-      video = {
-        package = haruna;
-        desktopEntry = "org.kde.haruna";
-      };
-      audio = {
-        package = harmonoid;
-        desktopEntry = "org.kde.harmonoid";
-      };
-      directory = {
-        package = kdePackages.dolphin;
-        desktopEntry = "org.kde.dolphin";
-      };
-    };
+    modules.open = lib.mapAttrs (_: lib.mkDefault) (
+      with pkgs;
+      {
+        enable = true;
+        html = firefox;
+        image = {
+          package = kdePackages.gwenview;
+          desktopEntry = "org.kde.gwenview";
+        };
+        pdf = {
+          package = kdePackages.okular;
+          desktopEntry = "org.kde.okular";
+        };
+        video = {
+          package = haruna;
+          desktopEntry = "org.kde.haruna";
+        };
+        audio = {
+          package = harmonoid;
+          desktopEntry = "org.kde.harmonoid";
+        };
+        directory = {
+          package = kdePackages.dolphin;
+          desktopEntry = "org.kde.dolphin";
+        };
+      }
+    );
 
     programs = {
       kitty = {
@@ -100,7 +104,7 @@
             (lib.generators.mkLuaInline ''
               function()
                 hl.exec_cmd("noctalia")
-                hl.exec_cmd("fcitx5 -d")
+                ${lib.optionalString fcitx ''hl.exec_cmd("fcitx5 -d")''}
               end
             '')
           ];

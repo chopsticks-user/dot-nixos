@@ -20,67 +20,46 @@
         }
       );
       default = null;
+      description = "Identity written in plain text into the git config";
     };
-    include = lib.mkOption {
-      type = lib.types.listOf (
-        lib.types.submodule {
-          options = {
-            path = lib.mkOption {
-              type = lib.types.path;
-              description = "Path to a gitconfig file to include.";
-            };
-            condition = lib.mkOption {
-              type = lib.types.nullOr lib.types.str;
-              default = null;
-              description = ''
-                Optional condition for the include (e.g. "gitdir:~/work/").
-                If null, the include is unconditional.
-              '';
-            };
-          };
-        }
-      );
-      default = [ ];
-    };
+    identityFromSecrets = lib.mkEnableOption "reading the identity from git/name and git/email in the user's secrets.yaml, so it stays out of the repository";
   };
 
-  configs = {
-    sops = {
-      secrets = {
-        "git/name" = { };
-        "git/email" = { };
-      };
+  configs = lib.mkMerge [
+    {
+      programs = {
+        git = {
+          enable = true;
+          settings = lib.mkMerge [
+            {
+              init.defaultBranch = "main";
+              pull.rebase = false;
+            }
+            (lib.mkIf (fields.user != null) {
+              inherit (fields) user;
+            })
+          ];
+        };
 
-      templates = {
-        "gitconfig" = {
-          content = ''
-            [user]
-              name = ${config.sops.placeholder."git/name"}
-              email = ${config.sops.placeholder."git/email"}
-          '';
+        gh = {
+          enable = true;
+          settings = { };
         };
       };
-    };
-
-    programs = {
-      git = {
-        enable = true;
-        settings = lib.mkMerge [
-          {
-            init.defaultBranch = "main";
-            pull.rebase = false;
-          }
-          (lib.mkIf (fields.user != null) {
-            inherit (fields) user;
-          })
-        ];
-        includes = [ { path = config.sops.templates."gitconfig".path; } ];
+    }
+    (lib.mkIf fields.identityFromSecrets {
+      sops = {
+        secrets = {
+          "git/name" = { };
+          "git/email" = { };
+        };
+        templates."gitconfig".content = ''
+          [user]
+            name = ${config.sops.placeholder."git/name"}
+            email = ${config.sops.placeholder."git/email"}
+        '';
       };
-
-      gh = {
-        enable = true;
-        settings = { };
-      };
-    };
-  };
+      programs.git.includes = [ { path = config.sops.templates."gitconfig".path; } ];
+    })
+  ];
 }
