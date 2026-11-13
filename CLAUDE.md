@@ -22,7 +22,7 @@ Update the README, not this file, when the user-facing design changes.
 | `overlays/` | The framework package layer: `<attr>/package.nix` and/or `<attr>/*.patch`. It is always applied to every machine and has no options; machines layer their own on top instead. |
 | `examples/<host>/` | User space. Each is a standalone machine flake (`andromeda`, `perseus`). |
 | `scripts/` | `bootstrap.sh` (installer), `homestrap.sh`, `secrets.sh` (`nixos-secrets`), `nix-system.sh`, `open.sh`. Installed scripts get build-time paths from `scriptEnv` in `modules/core/system.nix`; bootstrap reads the machine with `nix eval`. Never a JSON file. |
-| `docs/` | `guide.md` (consumer guide and reference), `design.md`, `backlog.md` (coding log, one pull request entry per finished change), `issues.md` (issue tracker), `roadmap.md`, `testing.md`. |
+| `docs/` | The documents described in "Documents" below. |
 
 ## Commands
 
@@ -75,5 +75,21 @@ These are evaluation-order traps. Re-introducing any of them shows up as `infini
 
 - **Comments:** only explain a reason the code cannot show, on one line. A known limitation gets `# shortcut: <limit>, <when to upgrade>`.
 - **Nix style:** `nixfmt` style via `nix fmt`. Prefer native NixOS/Home Manager options over new framework options. Add a framework option only when no native option exists.
-- **Tests:** new non-trivial `lib/` logic gets a fixture-based check in `tests/`, wired into `checks` in `flake.nix`. Confirm the check fails when the logic is broken. See `docs/testing.md` for the planned layers.
-- **Docs:** user-facing changes update `docs/guide.md` (options, modules, commands). Every finished change gets a pull request entry in `docs/backlog.md` (why, what changed, verification, commits). Problems found and planned work go in `docs/issues.md`; close an issue by naming the pull request that fixed it.
+- **Tests:** new non-trivial logic gets a test: pure helpers in `tests/lib.nix` (move logic into `lib/` if it hides in a module), the module format in `tests/modules.nix`, anything `mkMachine` or core derives in `tests/machines.nix` against the fixtures in `tests/machines/`, scripts in `tests/scripts/`. Break the logic once and confirm a check fails. Run `just verify` before and after a change. See `docs/testing.md`.
+
+## Documents
+
+Each file in `docs/` has one job. Keep them apart: do not put open tasks in the backlog or finished work in the issues.
+
+| File | What it is | Update it when |
+|------|------------|----------------|
+| `README.md` | Overview: what the framework is, the machine layout, overlays, project structure, how modules work, philosophy, and the index of these documents | The user-facing design changes |
+| `CLAUDE.md` | This file: what an agent needs on top of the README | Paths, commands, rules or pitfalls change |
+| `docs/guide.md` | The consumer guide: creating, installing and operating a machine, and the reference of every option, module and command | Any option, module, command, file convention or install step changes |
+| `docs/design.md` | Every design decision, numbered, with why, cost and a recommendation (keep, improve, decide) | A decision is made, reversed or its cost changes |
+| `docs/backlog.md` | The coding log, like merged pull requests: one entry per finished change (`## PR <n>: <title>`, date, commits, issues closed or opened, then Why, Changes, Verification, Notes), newest first, plus the index table | Every finished change, in the same session it is committed; the next number follows the highest in the index |
+| `docs/issues.md` | The issue tracker, like a GitHub issues tab: an index table and one entry per issue (`### #<n> <title>`, labels, opened date, status), open or closed | A problem is found or work is planned (open an issue); a fix lands (move it to Closed and name the PR) |
+| `docs/roadmap.md` | Long-term goals: milestones toward a NixOS machine generator | Goals or milestones change |
+| `docs/testing.md` | How to run the tests, what each check covers, how they are built, what is still missing, and coverage by feature | Tests are added or the plan changes |
+
+Pull requests and issues reference each other by number ("Closes issue 4", "Closed by PR 28"). Each commit message stays self-contained; the backlog entry summarises the commits of one task.

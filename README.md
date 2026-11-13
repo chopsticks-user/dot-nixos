@@ -29,7 +29,7 @@ itself:
 | [docs/backlog.md](docs/backlog.md) | The coding log: every finished change as a pull request, with why, what and how it was verified |
 | [docs/issues.md](docs/issues.md) | The issue tracker: known problems and planned work, open and closed |
 | [docs/roadmap.md](docs/roadmap.md) | Where the framework is going: a NixOS machine generator |
-| [docs/testing.md](docs/testing.md) | How the framework is and will be tested |
+| [docs/testing.md](docs/testing.md) | How to run the tests, what each one covers, and what is still missing |
 
 Every directory in [examples/](examples) is a complete machine flake.
 [examples/andromeda](examples/andromeda) has two users on a persistent root.
