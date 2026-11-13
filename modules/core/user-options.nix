@@ -35,11 +35,12 @@ in
     };
     directories = mkOption {
       type = types.attrsOf types.str;
-      default = lib.mapAttrs (
-        _: path: "${config.home.homeDirectory}/${path}"
-      ) osConfig.machine.directories.home;
-      defaultText = "machine.directories.home resolved against home.homeDirectory";
-      description = "Absolute paths of well-known home directories";
+      description = "Absolute paths of well-known home directories, by default machine.directories.home resolved against home.homeDirectory; each can be overridden on its own";
     };
   };
+
+  # one default per key, so overriding one directory keeps the others
+  config.user.directories = lib.mapAttrs (
+    _: path: lib.mkDefault "${config.home.homeDirectory}/${path}"
+  ) osConfig.machine.directories.home;
 }

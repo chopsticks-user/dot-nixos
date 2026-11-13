@@ -17,29 +17,31 @@ in
     };
     home = mkOption {
       type = types.attrsOf types.str;
-      description = "Well-known home directories, relative to each user's home";
-      default = {
-        identity = ".ssh/id_ed25519";
-        cache = ".cache";
-        config = ".config";
-        data = ".local/share";
-        state = ".local/state";
-        bin = ".local/bin";
-        documents = "documents";
-        download = "downloads";
-        projects = "projects";
-        boxes = "boxes";
-        media = "media";
-        pictures = "media/images";
-        music = "media/audio";
-        videos = "media/videos";
-        wallpapers = "media/images/wallpapers";
-        screenshots = "media/images/screenshots";
-        screencasts = "media/videos/screencasts";
-        desktop = ".local/share/.xdg-ignore";
-        templates = ".local/share/.xdg-ignore";
-        publicShare = ".local/share/.xdg-ignore";
-      };
+      description = "Well-known home directories, relative to each user's home; each can be overridden on its own";
     };
+  };
+
+  # one default per key, so overriding one directory keeps the others
+  config.machine.directories.home = lib.mapAttrs (_: lib.mkDefault) {
+    identity = ".ssh/id_ed25519";
+    cache = ".cache";
+    config = ".config";
+    data = ".local/share";
+    state = ".local/state";
+    bin = ".local/bin";
+    documents = "documents";
+    download = "downloads";
+    projects = "projects";
+    boxes = "boxes";
+    media = "media";
+    pictures = "media/images";
+    music = "media/audio";
+    videos = "media/videos";
+    wallpapers = "media/images/wallpapers";
+    screenshots = "media/images/screenshots";
+    screencasts = "media/videos/screencasts";
+    desktop = ".local/share/.xdg-ignore";
+    templates = ".local/share/.xdg-ignore";
+    publicShare = ".local/share/.xdg-ignore";
   };
 }
