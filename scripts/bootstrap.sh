@@ -23,6 +23,7 @@ done
 repo=$1
 host=$2
 key_content=$(eval "$3")
+mnt=${NIXOS_BOOTSTRAP_MOUNT:-/mnt}
 
 export NIX_CONFIG="experimental-features = nix-command flakes"
 flake=$(mktemp -d)
@@ -34,10 +35,10 @@ fi
 
 # sudo drops NIX_CONFIG
 sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko/latest -- \
-  --flake "$flake#$host" --mode destroy,format,mount
+  --flake "$flake#$host" --mode destroy,format,mount --root-mountpoint "$mnt"
 
 # under /persist on impermanence machines, because sops decrypts before it is bind-mounted
-key_path=/mnt$(nix eval --raw "$flake#nixosConfigurations.$host.config.sops.age.sshKeyPaths" --apply builtins.head)
+key_path=$mnt$(nix eval --raw "$flake#nixosConfigurations.$host.config.sops.age.sshKeyPaths" --apply builtins.head)
 sudo mkdir -p "$(dirname "$key_path")"
 echo "$key_content" | sudo tee "$key_path" >/dev/null
 sudo chmod 600 "$key_path"
@@ -45,9 +46,9 @@ sudo chown root:root "$key_path"
 sudo ssh-keygen -y -f "$key_path" | sudo tee "$key_path.pub" >/dev/null
 sudo chmod 644 "$key_path.pub"
 
-# a reference copy in /mnt/etc/nixos to compare against the committed hardware/generated.nix
-sudo nixos-generate-config --no-filesystems --root /mnt
-sudo nixos-install --flake "$flake#$host" --no-root-password
+# a reference copy in <mount>/etc/nixos to compare against the committed hardware/generated.nix
+sudo nixos-generate-config --no-filesystems --root "$mnt"
+sudo nixos-install --flake "$flake#$host" --no-root-password --root "$mnt"
 
 if [[ "$no_reboot" == false ]]; then
   read -rp "Reboot now? (Y/n): " reboot_now

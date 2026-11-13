@@ -15,49 +15,19 @@ let
     text = builtins.readFile ../scripts/bootstrap.sh;
   };
   # values baked in by `just flash`; the installed machine runs its own nixos-homestrap
-  bootstrapPkg = pkgs.writeShellApplication {
-    name = "bootstrap";
-    runtimeInputs = [
-      pkgs.curl
-      nixosBootstrapPkg
-    ];
-    text =
-      let
-        env = name: lib.escapeShellArg (builtins.getEnv "NIXOS_ISO_${name}");
-      in
-      ''
-        repo=${env "REPO"}
-        host=${env "HOSTNAME"}
-        user=${env "USERNAME"}
-        host_key_cmd=${env "HOST_KEY_CMD"}
-        user_key_cmd=${env "USER_KEY_CMD"}
-
-        _bootstrap_help() {
-          echo >&2
-          echo "Bootstrap failed. Fix the issue above, then either:" >&2
-          echo "  1. Re-run: bootstrap" >&2
-          echo "  2. Or manually:" >&2
-          echo "    nixos-bootstrap $(printf '%q ' "$repo" "$host" "$host_key_cmd")" >&2
-          echo "    Then reboot, log in as $user and run:" >&2
-          echo "    nixos-homestrap $(printf '%q ' "$repo" "$user_key_cmd")" >&2
-        }
-        trap _bootstrap_help ERR
-
-        echo "Waiting for network..."
-        until curl -s --max-time 1 https://github.com &>/dev/null; do
-          sleep 1
-        done
-
-        nixos-bootstrap --no-reboot "$repo" "$host" "$host_key_cmd"
-        sudo nixos-enter --root /mnt -- su - "$user" -c \
-          "nixos-homestrap --no-reboot $(printf '%q ' "$repo" "$user_key_cmd")"
-
-        read -rp "Reboot now? (Y/n): " reboot_now
-        if [[ "''${reboot_now,,}" != "n" ]]; then
-          reboot
-        fi
-      '';
-  };
+  bootstrapPkg = pkgs.callPackage ./iso-bootstrap.nix (
+    let
+      env = name: builtins.getEnv "NIXOS_ISO_${name}";
+    in
+    {
+      nixos-bootstrap = nixosBootstrapPkg;
+      repo = env "REPO";
+      host = env "HOSTNAME";
+      user = env "USERNAME";
+      hostKeyCmd = env "HOST_KEY_CMD";
+      userKeyCmd = env "USER_KEY_CMD";
+    }
+  );
 in
 {
   imports = [
