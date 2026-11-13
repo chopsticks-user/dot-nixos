@@ -36,24 +36,32 @@
 
 ## Project workflow
 
-Set this up in every repository I work in, and follow it when committing:
+Every change that will be committed goes through GitHub issues and pull
+requests (`gh`). Questions, reviews and other work that commits nothing do not.
+If a repository has no GitHub remote, ask before working around it. Set up what
+the steps rely on (a verify command, the project's CLAUDE.md) if it is missing.
 
-- `docs/issues.md` is the issue tracker: an index table, then one
-  `### #<n> <title>` entry per issue with labels, opened date and status. Every
-  problem found or task planned becomes an issue
-- `docs/backlog.md` is the log of merged work, newest first: one
-  `## PR <n>: <title>` entry per task with date, commits, issues closed or
-  opened, then Why, Changes, Verification and Notes
-- Each task gets a branch `issue-<n>-<slug>` from the working branch and small
-  commits that each pass the tests. Finish it with `git merge --no-ff`, the PR
-  description as the merge message, a backlog entry, and the issue moved to
-  Closed naming the PR
-- One verify command (such as `just verify`) runs formatting, linting and all
-  tests. Run it before and after a change and before merging
-- The project's CLAUDE.md records what each doc is for and these formats
-- Note that if you are given a task not present in issues.md, record it in 
-issues.md before working on the task. If a task should be broken down to 
-multiple smaller tasks, do it and record the tasks in issues.md and backlog.md
+1. Given a task, break it into smaller tasks when it is more than one
+   reviewable change. Each task, and each unrelated problem found along the
+   way, gets a labelled GitHub issue before any work on it starts. Fixes inside
+   the task's scope, review findings included, need no issue of their own
+2. Work on a branch `issue-<n>-<slug>` from the base branch: the default branch,
+   unless the project's CLAUDE.md names another. Never commit directly to the
+   base branch. Keep commits small, each passing the tests
+3. One verify command (such as `just verify`) runs formatting, linting and all
+   tests. Run it before and after a change and before merging
+4. Push the branch and open a pull request against the base branch, starting
+   with a `Closes #<n>` line per issue it fixes, then Why, Changes, Verification
+   and Notes
+5. Review the pull request with /code-review, fix what it finds, and leave a
+   PR comment listing the findings and what was fixed or left and why
+6. Stop and ask me to approve. Only after my approval, verify again on the
+   branch updated with the base, merge with `gh pr merge --merge
+   --delete-branch`, close every issue GitHub did not (it only does for merges
+   into the default branch), then `git switch <base> && git pull --ff-only`
+
+The project's CLAUDE.md records what each doc is for, the base branch if it is
+not the default, and the labels in use.
 
 ## Environment
 
