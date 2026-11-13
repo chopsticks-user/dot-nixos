@@ -24,5 +24,5 @@ case "${1:-}" in
   build) shift; command_build "$@" ;;
   switch) shift; command_switch "$@" ;;
   info) shift; command_info "$@" ;;
-  *) exec nixos-rebuild "$@" ;;
+  *) exec nixos-rebuild "$@" --flake "$flake_dir#$(hostname)" ;;
 esac
