@@ -52,7 +52,7 @@ nix shell nixpkgs#shellcheck -c shellcheck -s bash scripts/*.sh   # installed sc
 - **Do not edit `secrets.yaml` files.** They are sops-encrypted to host or user keys you do not have. If a build needs a new secret key, tell the user which key, which file, and the command (`nixos-secrets host edit [<machine-dir>]` / `nixos-secrets user edit [<machine-dir>]`).
 - **Respect the user boundary.** Keep machine-specific content in `examples/<host>/`. Do not put host names, usernames or personal packages in `lib/` or `modules/`.
 - **Respect example flake inputs.** An example's `outputs` may only use the `dot-nixos` input, because the root flake passes nothing else. Anything else an example needs must come through the framework.
-- **Work goes through GitHub, based on `demo`.** Follow the issue, branch, pull request, review workflow from the global instructions. Branch off `demo` and open pull requests against `demo`, not `main` (`main` is the old configuration until `demo` replaces it).
+- **Work goes through GitHub, based on `demo`.** Follow the issue, branch, pull request, review workflow from the global instructions. Branch off `demo` and open pull requests against `demo`, not `main` (`main` is the old configuration until `demo` replaces it). Never commit directly to `demo` or `main`.
 
 ## Pitfalls already hit (and how the design avoids them)
 
@@ -98,6 +98,6 @@ Each file in `docs/` has one job. Open problems and planned work are GitHub issu
 ## GitHub
 
 - **Labels:** `bug`, `security`, `enhancement`, `tests`, `documentation`, `needs-owner` (cannot be done from the repository alone).
-- **Pull requests** follow `.github/pull_request_template.md` (Why, Changes, Verification, Notes) and start with `Closes #<n>`. Verification names the checks run and whether every host's `drvPath` changed.
+- **Pull requests** follow `.github/pull_request_template.md` (Why, Changes, Verification, Notes) and start with `Closes #<n>`. GitHub only acts on that for merges into the default branch (`main`), so after merging into `demo` close the issue with `gh issue close <n> --comment "Fixed by #<pr>"`. Verification names the checks run and whether every host's `drvPath` changed.
 - **Each commit message stays self-contained**; the pull request summarises the commits of one task.
 - **Links to issues from `docs/`** are full URLs (`https://github.com/chopsticks-user/dot-nixos/issues/<n>`); Markdown files do not auto-link `#<n>`.
