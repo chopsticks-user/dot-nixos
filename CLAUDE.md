@@ -60,7 +60,7 @@ These are evaluation-order traps. Re-introducing any of them shows up as `infini
 - **Per-user values cannot go through `_module.args`.** It is shared across all users, and two users conflict. That is why `peruser.nix` is curried. Machine-wide values are options (`machine.*`); per-user values are Home Manager options (`user.*`).
 - **Module functions only receive named arguments from `_module.args`.** Inside `defineModule` modules, `config`, `lib`, `pkgs` and specialArgs (`inputs`, `osConfig` in Home Manager) are available. Name anything else explicitly in the wrapper in `lib/modules.nix`.
 - **`useGlobalPkgs` stays `false`.** Home modules set `nixpkgs.config` per user, which global pkgs forbids. Users still inherit the system's `nixpkgs.overlays`.
-- **Guard impermanence-only config.** Use `options.environment ? persistence`, not `config.environment ? persistence` (the latter recurses). Impermanence is only imported when `system/persist.nix` exists.
+- **Guard impermanence-only config.** Use `options ? environment.persistence`, not `config.environment ? persistence` (the latter recurses). Impermanence is only imported when `system/persist.nix` exists.
 
 ## How to extend
 

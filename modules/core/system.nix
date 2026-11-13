@@ -10,7 +10,7 @@ let
   dirs = config.machine.directories;
 
   # under impermanence sops decrypts before /persist is bind-mounted, so it reads the key there
-  hostIdentity = lib.optionalString (options.environment ? persistence) "/persist" + dirs.identity;
+  hostIdentity = lib.optionalString (options ? environment.persistence) "/persist" + dirs.identity;
 
   # build-time facts the scripts need, overridable from the environment
   scriptEnv = ''

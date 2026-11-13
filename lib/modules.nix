@@ -42,7 +42,7 @@ let
               in
               # environment.persistence only exists when the machine imports impermanence
               lib.optionalAttrs
-                (isNixos && options.environment ? persistence && (sysDirs != [ ] || sysFiles != [ ]))
+                (isNixos && options ? environment.persistence && (sysDirs != [ ] || sysFiles != [ ]))
                 {
                   environment.persistence."/persist" = {
                     directories = sysDirs;
@@ -73,7 +73,7 @@ let
     );
 in
 {
-  inherit moduleNamesWith;
+  inherit defineModule moduleNamesWith;
   systemModules = importModules "nixos" "system.nix";
   homeModules = importModules "home" "home.nix";
 }

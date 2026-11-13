@@ -90,6 +90,7 @@
             inherit lib system test;
             inherit (inputs) nixpkgs;
           };
+          modules = import ./tests/modules.nix { inherit lib test; };
         }
       );
 

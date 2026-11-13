@@ -27,7 +27,7 @@ in
     inherit (home.user) shell;
   };
 
-  environment = lib.optionalAttrs (options.environment ? persistence) {
+  environment = lib.optionalAttrs (options ? environment.persistence) {
     persistence."/persist".users.${username} =
       let
         # a module with a home half persists only for users who enable it, the rest for everyone
