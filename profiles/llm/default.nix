@@ -18,13 +18,6 @@
         nodejs_latest
         uv
         llm-pkgs.claude-desktop
-        # higgsfield-faceless-video assembles videos locally with these
-        ffmpeg
-        python3
-        # unpinned on purpose: always runs the latest published Higgsfield CLI
-        (writeShellScriptBin "higgsfield" ''
-          exec ${nodejs_latest}/bin/npx --yes --package=@higgsfield/cli@latest higgsfield "$@"
-        '')
       ];
 
     # claude-mem hooks call the bare `claude-mem` launcher it installs here; the
@@ -56,16 +49,11 @@
             source = "github";
             repo = "pbakaus/impeccable";
           };
-          higgsfield.source = {
-            source = "github";
-            repo = "higgsfield-ai/skills";
-          };
         };
         enabledPlugins = {
           "claude-mem@thedotmack" = true;
           "ponytail@ponytail" = true;
           "impeccable@impeccable" = true;
-          "higgsfield@higgsfield" = true;
           "gopls-lsp@anthropic-plugin-directory" = true;
           "clangd-lsp@anthropic-plugin-directory" = true;
           "jdtls-lsp@anthropic-plugin-directory" = true;
