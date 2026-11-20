@@ -19,6 +19,7 @@
       steamcmd
       protonup-qt
       protontricks
+      wineWow64Packages.stable
     ];
 
     systemd.user.services.gamemoded = {
