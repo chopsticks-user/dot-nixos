@@ -17,6 +17,7 @@
       steam
       steam-run
       steamcmd
+      wineWowPackages.stable # game servers that ship only for Windows (gsm)
       protonup-qt
       protontricks
     ];
