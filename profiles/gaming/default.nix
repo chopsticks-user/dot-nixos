@@ -20,6 +20,7 @@
       protonup-qt
       protontricks
       wineWow64Packages.stable
+      inputs.gsm.packages.${pkgs.stdenv.hostPlatform.system}.default
     ];
 
     systemd.user.services.gamemoded = {

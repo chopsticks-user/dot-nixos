@@ -55,6 +55,8 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # no nixpkgs follows: gsm's vendorHash is computed against its own pinned Go
+    gsm.url = "github:chopsticks-user/gsm";
   };
 
   outputs =
