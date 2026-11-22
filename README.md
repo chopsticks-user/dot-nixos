@@ -82,6 +82,10 @@ configuration module, respectively. You can add new files to `modules/`, `script
 and `templates/` but they need to be used or imported explicitly since they are 
 standalone modules.
 
+The `overlays` list in `flake.nix` takes two kinds of entries: `{ name, args }` for a
+local overlay in `overlays/<name>/package.nix`, or an overlay function such as a flake
+input's `overlays.default` (gsm's adds `pkgs.gsm-cli`).
+
 ## Installation guide
 
 ### 1. Prerequisites

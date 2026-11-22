@@ -1,7 +1,7 @@
 # standalone, not imported by the utilities module
 {
   inputs,
-  overlays ? { },
+  overlays ? [ ],
   templates ? { },
   apps ? { },
   ...
