@@ -1,7 +1,7 @@
 # standalone, not imported by the utilities module
 {
   inputs,
-  overlays ? { },
+  overlays ? [ ],
   templates ? { },
   apps ? { },
   ...
@@ -21,12 +21,10 @@ let
       throw "utilities collide with lib: ${prev.concatStringsSep ", " collisions}"
   );
 
+  # an entry is a local overlay ({ name, args }) or an overlay function, such as a flake's
   resolvedOverlays = map (
-    {
-      name,
-      args ? { },
-    }:
-    lib.mkOverlay name args
+    overlay:
+    if builtins.isFunction overlay then overlay else lib.mkOverlay overlay.name (overlay.args or { })
   ) overlays;
 
   mkSpecializedPackage = upstream: system: lib.mkSpecializedPackage upstream system resolvedOverlays;
