@@ -26,7 +26,12 @@
   };
 
   persist.home = {
-    directories = [ "${constants.directories.home.data}/Steam" ];
+    directories = [
+      "${constants.directories.home.data}/Steam"
+      "${constants.directories.home.data}/gsm"
+      # steamcmd and the steamclient.so that gsm's servers load live here
+      ".steam"
+    ];
     files = [ ];
   };
 }
