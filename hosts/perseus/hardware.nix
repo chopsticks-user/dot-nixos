@@ -54,8 +54,8 @@
 
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
-    GBM_BACKEND = "nvidia-drm";
-    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+    # No global GBM_BACKEND or __GLX_VENDOR_LIBRARY_NAME: PRIME offload has the
+    # Intel iGPU drive the display, so those only belong on `nvidia-offload <app>`.
     WLR_NO_HARDWARE_CURSORS = "1";
     NVD_BACKEND = "direct";
   };
