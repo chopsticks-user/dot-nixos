@@ -58,7 +58,6 @@
           "claude-mem@thedotmack" = true;
           "ponytail@ponytail" = true;
           "impeccable@impeccable" = true;
-          "taskie@taskie" = true;
           "gopls-lsp@anthropic-plugin-directory" = true;
           "clangd-lsp@anthropic-plugin-directory" = true;
           "jdtls-lsp@anthropic-plugin-directory" = true;
