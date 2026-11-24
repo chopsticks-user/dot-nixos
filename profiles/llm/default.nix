@@ -58,6 +58,9 @@
           "claude-mem@thedotmack" = true;
           "ponytail@ponytail" = true;
           "impeccable@impeccable" = true;
+          # off by default; gsm and taskie enable it in their project settings.
+          # false, not absent: mutableSettings merges, so a removed key would stay true
+          "taskie@taskie" = false;
           "gopls-lsp@anthropic-plugin-directory" = true;
           "clangd-lsp@anthropic-plugin-directory" = true;
           "jdtls-lsp@anthropic-plugin-directory" = true;
